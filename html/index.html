@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://accounts.google.com/gsi/client" async defer></script>
+	<script src="https://www.google.com/recaptcha/api.js?render=6LfCHdcUAAAAAOwkHsW_7W7MfoOrvoIw9CXdLRBA"></script>
+	<style>
+		:root {
+			--default-font-size: 16pt;
+			--default-margin-padding-size: 0;
+			--default-background-color: #F0FFFFFF;
+			--default-text-color: #000000FF;
+		}
+		:root[theme=dark] {
+			--default-background-color: #000000FF;
+			--default-text-color: #F00000FF;
+		}
+		html, body {
+			margin: var(--default-margin-padding-size);
+			padding: var(--default-margin-padding-size);
+			background-color: var(--default-background-color);
+			color: var(--default-text-color);
+			font-size: var(--default-font-size);
+		}
+		body {
+			max-width: 350px;
+			margin: 0 auto;
+			width: 50%;
+			text-align: center;
+		}
+		@keyframes rotate1 {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+	</style>
+	<style>
+		div.div_button {
+			padding: 10px 15px;
+			border-radius: 50% / 100%;
+			margin-top: 1px;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<style>
+		.g_id_signin iframe {
+			margin: 0 auto !important;
+		}
+	</style>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			const html_top = document.createElement('a');
+			html_top.name='_';
+			document.querySelector('body').prepend(html_top);
+		}, false);
+	</script>
+	<script>
+		async function sha256(text){
+			/*
+			* @quote
+				https://qiita.com/economist/items/768d2f6a10d54d4fa39f
+			* @usage
+				sha256(document.querySelector(':root').innerHTML).then(hash => console.log(hash));
+			*/
+			const uint8  = new TextEncoder().encode(text)
+			const digest = await crypto.subtle.digest('SHA-256', uint8)
+			return Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2,'0')).join('')
+		}
+		function getLatestDeployGithub(requestUri) {
+			var dom_messages;
+			var dom_messages_outputs;
+			var dom_messages_code;
+			/* fetch */
+			fetch(requestUri, {
+				method: 'GET',
+			})
+			.then(response => {
+				console.debug(response);
+				if (false) {
+				} else if ( response.status === 200 ) {
+					return response.json()
+				} else if ( response.status >= 400 ) {
+					throw new Error(`[${response.status}]Error has occured. server-message:${response.message} ${response.documentation_url}`);
+				}
+			})
+			.then(response => response[0].statuses_url)
+			.then(deployLatest_url => {
+				console.log(deployLatest_url);
+				return fetch(deployLatest_url, {
+					method: 'GET',
+				}).then(response => response.json())
+				.then(response => {
+					return response[0];
+				});
+			})
+			.then(response => {
+				return response;
+			})
+			.catch(exception => {
+				console.error(exception);
+			});
+		}
+		function checkupdate_self() {
+			let latestDeployGithub = getLatestDeployGithub('https://api.github.com/repos/n138-kz/mondai_3/deployments');
+			/*
+			idが違って、stateがsuccessの時ページ再読み込み
+			*/
+		}
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github',
+			getLatestDeployGithub('https://api.github.com/repos/n138-kz/mondai_3/deployments') );
+
+			setInterval(checkupdate_self, (300 * 1000)); /* 5min */
+		}, false);
+	</script>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let g_id_signin = document.createElement('div');
+			g_id_signin.classList.add('div_button');
+			g_id_signin.classList.add('g_id_signin');
+			g_id_signin.dataset.type = 'standard';
+			g_id_signin.dataset.shape = 'rectangular';
+			g_id_signin.dataset.theme = 'outline';
+			g_id_signin.dataset.text = 'signin_with';
+			g_id_signin.dataset.size = 'large';
+			g_id_signin.dataset.logo_alignment = 'left';
+			document.querySelector('body').appendChild(g_id_signin);
+
+			let g_id_onload = document.createElement('div');
+			g_id_onload.id = 'g_id_onload';
+			g_id_onload.dataset.client_id = '784669840257-i0a06p3o6g8k0k1tk26jj09li1q2acud.apps.googleusercontent.com';
+			g_id_onload.dataset.context='signin';
+			g_id_onload.dataset.login_uri = 'https://n138-kz.github.io';
+			g_id_onload.dataset.callback = 'onSignIn';
+			g_id_onload.dataset.ux_mode='popup';
+			g_id_onload.dataset.auto_select='true';
+			g_id_onload.dataset.itp_support='true';
+			document.querySelector('body').appendChild(g_id_onload);
+
+			let github_link_block = document.createElement('div');
+			github_link_block.classList.add('div_button');
+			let github_link_a = document.createElement('a');
+			github_link_a.innerText = 'Github';
+			github_link_a.href = 'https://github.com/n138-kz/mondai_3';
+			github_link_a.target = '_blank';
+			github_link_block.appendChild(github_link_a);
+			document.querySelector('body').appendChild(github_link_block);
+		}, false);
+	</script>
+	<script>
+		function onSignIn(params) {
+			let fullscreen_wp;
+			fullscreen_wp = document.querySelectorAll('.fullscreen_wp');
+			Array.prototype.forEach.call(fullscreen_wp, (e)=>{ e.remove(); });
+			fullscreen_wp = document.createElement('div');
+			fullscreen_wp.style.backgroundColor = '#c0c0c0c0'; /* near eq silver(#C0C0C0) */
+			fullscreen_wp.style.left = '0px';
+			fullscreen_wp.style.top = '0px';
+			fullscreen_wp.style.position = 'fixed';
+			fullscreen_wp.style.width = '100%';
+			fullscreen_wp.style.height = '100%';
+			fullscreen_wp.style.zIndex = '10000';
+			fullscreen_wp.classList.add('fullscreen_wp');
+			let loading_img = document.createElement('img');
+			loading_img.src = '../lib/12675.svg';
+			loading_img.alt = '12675';
+			loading_img.style.maxWidth = '80%';
+			loading_img.style.maxHeight = '80%';
+			loading_img.style.animationName = 'rotate1';
+			loading_img.style.animationDuration = '1.5s';
+			loading_img.style.animationTimingFunction = 'ease';
+			loading_img.style.animationIterationCount = 'infinite';
+			fullscreen_wp.appendChild(loading_img);
+			document.querySelector('body').appendChild(fullscreen_wp);
+			console.log([params, JSON.stringify(params)]);
+
+			try {
+				let xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = () => {
+					if ( xhr.readyState === 4 && xhr.status === 200 ) {
+						let responseText = xhr.responseText;
+						let response = JSON.parse(responseText);
+						console.log(response);
+						console.log(
+							response.google.user.userid,
+							response.google.user.email,
+							response.google.user.name,
+							response.google.user.icon,
+							response.google.session.iat,
+							response.google.session.exp,
+						);
+						/* Authzed */
+						authz_displayblock = document.createElement('div');
+						authz_displayblock.style.backgroundImage = `url(${response.google.user.icon})`;
+						authz_displayblock.style.backgroundColor = '#F0FFFF';
+						authz_displayblock.style.backgroundRepeat = 'no-repeat';
+						authz_displayblock.style.backgroundSize = 'contain';
+						authz_displayblock.innerText = `${response.google.user.name}(${response.google.user.email})`;
+
+						document.querySelectorAll('body').forEach((e,i)=>e.prepend(authz_displayblock));
+
+						document.querySelectorAll('.g_id_signin').forEach((e,i)=>e.remove());
+						document.querySelectorAll('#credential_picker_container').forEach((e,i)=>e.remove());
+
+					} else if ( xhr.readyState === 4 && xhr.status >= 500 ) {
+						throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
+					} else if ( xhr.readyState === 4 && xhr.status >= 400 ) {
+						throw new Error(`Error has occured. error-code=${xhr.status}(Client-error).`);
+					} else {
+						console.debug( [
+							xhr.responseText,
+							xhr.readyState,
+							xhr.status,
+						] );
+					}
+				}
+				xhr.open( 'POST', 'https://authz.n138.jp/google/' );
+				xhr.setRequestHeader( 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8' );
+				xhr.send( 'ts='+(Math.floor((new Date()).getTime()/1000)) + '&credential='+params.credential + '&clientId='+params.clientId );
+				
+			} catch (excep) {
+				console.error(excep.message);
+				var result_mesg;
+				result_mesg = document.createElement('p');
+				result_mesg.innerText = excep.message;
+				document.querySelectorAll('.g_id_signin').item( (document.querySelectorAll('.g_id_signin').length-1) ).after(result_mesg);
+			} finally {
+				fullscreen_wp = document.querySelectorAll('.fullscreen_wp');
+				Array.prototype.forEach.call(fullscreen_wp, (e)=>{ e.remove(); });
+			}
+		}
+	</script>
+</head>
+<body>
+</body>
+</html>

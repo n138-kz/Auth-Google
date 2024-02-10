@@ -1,0 +1,15 @@
+# Backup files
+Backup/
+backup/
+*.bak*
+
+# Temporary files
+*.tmp
+*.dat
+
+# Builded files
+Build/
+build/
+*.exe
+*.msi
+*.jar

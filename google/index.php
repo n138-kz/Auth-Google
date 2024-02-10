@@ -100,12 +100,16 @@ $client = new Google_Client(['client_id' => CLIENT_ID]);
 $payload = $client->verifyIdToken(CLIENT_TOKEN);
 if ($payload) {
 	$result['google'] = [
-		'userid' => $payload['sub'],
-		'email'  => $payload['email'],
-		'name'   => $payload['name'],
-		'icon'   => $payload['icon'],
-		'iat'    => $payload['iat'],
-		'exp'    => $payload['exp'],
+		'user' => [
+			'userid' => $payload['sub'],
+			'name' => $payload['name'],
+			'icon' => $payload['picture'],
+			'email' => $payload['email'],
+		],
+		'session' => [
+			'iat' => $payload['iat'],
+			'exp' => $payload['exp'],
+		],
 	];
 }
 

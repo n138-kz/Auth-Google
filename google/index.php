@@ -94,29 +94,37 @@ if( ( time() - (int)$_POST['ts'] > 300 ) ) {
 define('CLIENT_ID', $_POST['clientId']);
 define('CLIENT_TOKEN', $_POST['credential']);
 
-require_once '../vendor/autoload.php';
+try {
+	require_once '../vendor/autoload.php';
+	
+	$client = new Google_Client(['client_id' => CLIENT_ID]);
+	$payload = $client->verifyIdToken(CLIENT_TOKEN);
+	if ($payload) {
+		$result['google'] = [
+			'user' => [
+				'userid' => $payload['sub'],
+				'name' => $payload['name'],
+				'icon' => $payload['picture'],
+				'email' => $payload['email'],
+			],
+			'session' => [
+				'iat' => $payload['iat'],
+				'exp' => $payload['exp'],
+			],
+		];
+	}
+	
+	set_http_response_code(200);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
 
-$client = new Google_Client(['client_id' => CLIENT_ID]);
-$payload = $client->verifyIdToken(CLIENT_TOKEN);
-if ($payload) {
-	$result['google'] = [
-		'user' => [
-			'userid' => $payload['sub'],
-			'name' => $payload['name'],
-			'icon' => $payload['picture'],
-			'email' => $payload['email'],
-		],
-		'session' => [
-			'iat' => $payload['iat'],
-			'exp' => $payload['exp'],
-		],
-	];
+	echo json_encode( $result );
+	exit(0);
+} catch (\Exception $th) {
+	set_http_response_code(500);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
+	echo json_encode( $result );
+	exit(1);
 }
-
-set_http_response_code(200);
-$result['issue_at'] = microtime(TRUE);
-$result['last_checkpoint'] = __LINE__;
-
-echo json_encode( $result );
-exit(0);
-

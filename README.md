@@ -1,4 +1,25 @@
-# DEFAULT REPOS
+# Auth-Google
+
+## Descrption
+
+This repos is test of google oauth api.
+
+## API Console
+
+- [Google Developer Console](https://console.cloud.google.com/apis/credentials?hl=ja&project=upbeat-splicer-325708)
+
+## Refs
+
+- [WEBページに「Googleアカウントでログイン」を実装する](https://qiita.com/kmtym1998/items/768212fe92dbaa384c27)
+- [Google認証（ManagementAPI利用時）にて「idpiframe_initialization_failed 」エラー](https://qiita.com/kenken1981/items/9d738687c5cfb453be19)
+- [クライアントサイド ウェブ アプリケーション用の OAuth 2.0](https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow?hl=ja#authorization-errors-origin-mismatch "Google Developers")
+- [Google ログインからの移行](https://developers.google.com/identity/gsi/web/guides/migration?hl=ja#popup-mode_1 "Google Developers")
+
+## Refs Repos
+
+- [@n138-kz/Auth-via-Google-auth](https://github.com/n138-kz/Auth-via-Google-auth)
+- [n138-kz/signIn](https://github.com/n138-kz/signIn "Basic signIn")
+- [n138-kz/homepages](https://github.com/n138-kz/homepages.git)
 
 ## License
 

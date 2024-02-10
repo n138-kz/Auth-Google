@@ -32,6 +32,21 @@ This repos is test of google oauth api.
 ## Refs Repos
 
 - [@googleapis/google-api-php-client](https://github.com/googleapis/google-api-php-client)
+
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/w/googleapis/google-api-php-client)](/../../commits)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/t/googleapis/google-api-php-client)](/../../commits)
+[![GitHub last commit](https://img.shields.io/github/last-commit/googleapis/google-api-php-client)](/../../commits)
+[![GitHub repo license](https://img.shields.io/github/license/googleapis/google-api-php-client)](/../../LICENSE)
+[![GitHub repo size](https://img.shields.io/github/repo-size/googleapis/google-api-php-client)](/../../)
+[![GitHub repo file count](https://img.shields.io/github/directory-file-count/googleapis/google-api-php-client)](/../../)
+[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/googleapis/google-api-php-client)](/../../)
+[![GitHub issues](https://img.shields.io/github/issues/googleapis/google-api-php-client)](/../../issues)
+[![GitHub issues closed](https://img.shields.io/github/issues-closed/googleapis/google-api-php-client)](/../../issues)
+[![GitHub pull requests closed](https://img.shields.io/github/issues-pr-closed/googleapis/google-api-php-client)](/../../pulls)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/googleapis/google-api-php-client)](/../../pulls)
+[![GitHub language count](https://img.shields.io/github/languages/count/googleapis/google-api-php-client)](/../../)
+[![GitHub top language](https://img.shields.io/github/languages/top/googleapis/google-api-php-client)](/../../)
+  
 - [@n138-kz/Auth-via-Google-auth](https://github.com/n138-kz/Auth-via-Google-auth)
 - [@n138-kz/signIn](https://github.com/n138-kz/signIn "Basic signIn")
 - [@n138-kz/homepages](https://github.com/n138-kz/homepages.git)

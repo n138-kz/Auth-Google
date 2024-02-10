@@ -118,6 +118,8 @@ try {
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
 
+	$_SESSION = [ 'authz' => $result ];
+
 	echo json_encode( $result );
 	exit(0);
 } catch (\Exception $th) {

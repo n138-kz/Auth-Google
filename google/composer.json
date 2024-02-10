@@ -1,6 +1,7 @@
 {
     "name": "n138-kz/authz",
     "description": "htttps://authz.n138.jp/google",
+    "license": "MIT License",
     "require": {
       "google/apiclient": "^2.0"
     }

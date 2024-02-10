@@ -13,58 +13,80 @@ $result = [];
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;
-
-function set_http_response_code ( &$result, $http_response_code, $runner_line ) {
-	$result['issue_at'] = microtime(TRUE);
-	$result['error']['code'] = 0;
-	http_response_code( $http_response_code );
-	$result['error']['http']['code'] = $http_response_code;
-	$result['last_checkpoint'] = $runner_line;
-	$result['google'] = [
+$result['http']['code'] = http_response_code();
+$result['last_checkpoint'] = $runner_line;
+$result['google'] = [
+	'user' => [
 		'userid' => '',
 		'name' => '',
 		'icon' => '',
-		'session' => [
-			'iat' => 0,
-			'exp' => 0,
-		],
-	];
+	],
+	'session' => [
+		'iat' => 0,
+		'exp' => 0,
+	],
+];
+
+function set_http_response_code ( $http ) {
+	http_response_code( $http );
+	$result['http']['code'] = $http;
 }
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) != 'post' ) {
-	setResult( $result, 405, __LINE__ );
+	set_http_response_code(405);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
 	echo json_encode( $result );
 	exit(1);
 }
 /*# Is set? #*/
 if( !isset( $_POST ) ) {
-	setResult( $result, 400, __LINE__ );
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
 	echo json_encode( $result );
 	exit(1);
 }
 if( !is_array( $_POST ) ) {
-	setResult( $result, 400, __LINE__ );
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
 	echo json_encode( $result );
 	exit(1);
 }
 if( !isset( $_POST['ts'] ) ) {
-	setResult( $result, 400, __LINE__ );
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
 	echo json_encode( $result );
 	exit(1);
 }
 if( !isset( $_POST['credential'] ) ) {
-	setResult( $result, 400, __LINE__ );
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
 	echo json_encode( $result );
 	exit(1);
 }
 if( !isset( $_POST['clientId'] ) ) {
-	setResult( $result, 400, __LINE__ );
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
 	echo json_encode( $result );
 	exit(1);
 }
 /*# Is correct? #*/
 if( ( time() - (int)$_POST['ts'] > 300 ) ) {
-	setResult( $result, 400, __LINE__ );
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
 	echo json_encode( $result );
 	exit(1);
 }

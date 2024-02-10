@@ -40,7 +40,7 @@ jobs:
 
     - name: Fund dependencies
       working-directory: google/
-      run: composer fund --no-progress --format=json
+      run: composer fund --format=json
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md

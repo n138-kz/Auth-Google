@@ -109,7 +109,10 @@ if ($payload) {
 	];
 }
 
-setResult( $result, 200, __LINE__ );
+set_http_response_code(400);
+$result['issue_at'] = microtime(TRUE);
+$result['last_checkpoint'] = __LINE__;
+
 echo json_encode( $result );
 exit(0);
 

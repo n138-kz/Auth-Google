@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Test Google OAuth</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        function onSignIn(googleUser) {
+            console.debug(googleUser);
+            console.debug(googleUser.credential);
+
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                console.debug(xhr.readyState)
+                /*
+                xhr.readyState = 
+                    0: 準備段階  まだ通信は行われていない状態
+                    1: 準備完了  通信を行う準備が完了している状態
+                    2: 通信開始  サーバーと通信が始まっている状態
+                    3: 受信中    サーバーから目的のデータを取得している状態
+                    4: 通信完了  データを取得して通信が終了している状態
+                xhr.status = 
+                    200: 成功      特に問題なく通信が成功した状態
+                    401: エラー    認証が必要なため通信できない状態
+                    403: エラー    アクセスが禁止されていて通信できない状態
+                    404: エラー    情報が存在しないために通信できない状態
+                    500: エラー    サーバー側の不具合で通信できない状態
+                    503: エラー    サーバーに負荷がかかって通信できない状態
+                */
+                if ( xhr.readyState === 4 && xhr.status === 200 ) {
+                    let responseText = xhr.responseText;
+                    console.debug( responseText );
+
+                    let response = JSON.parse(responseText);
+                    console.debug( response );
+                    console.log(
+                        response.user.google.userid,
+                        response.user.google.email,
+                        response.user.google.name,
+                        response.user.google.icon,
+                        response.user.google.session.iat,
+                        response.user.google.session.exp,
+                    );
+
+                    document.querySelector('#g_oauth_output').innerHTML = '';
+
+                    let elm_table = document.createElement('table');
+                    let elm_tr = null;
+                    let elm_th = null;
+                    let elm_td = null;
+                    let elm_img = null;
+
+                    elm_table.border = 1;
+
+                    elm_tr = document.createElement('tr');
+                    elm_th = document.createElement('th');
+                    elm_th.innerText = 'sub';
+                    elm_td = document.createElement('td');
+                    elm_td.innerText = response.user.google.userid;
+                    elm_tr.appendChild(elm_th);
+                    elm_tr.appendChild(elm_td);
+                    elm_table.appendChild(elm_tr);
+
+                    elm_tr = document.createElement('tr');
+                    elm_th = document.createElement('th');
+                    elm_th.innerText = 'email';
+                    elm_td = document.createElement('td');
+                    elm_td.innerText = response.user.google.email;
+                    elm_tr.appendChild(elm_th);
+                    elm_tr.appendChild(elm_td);
+                    elm_table.appendChild(elm_tr);
+
+                    elm_tr = document.createElement('tr');
+                    elm_th = document.createElement('th');
+                    elm_th.innerText = 'picture';
+                    elm_td = document.createElement('td');
+                    elm_img = document.createElement('img');
+                    elm_img.src = response.user.google.icon;
+                    elm_img.style.width = '32px';
+                    elm_img.style.height = elm_img.style.width;
+                    elm_img.alt = response.user.google.email;
+                    elm_td.appendChild(elm_img);
+                    elm_tr.appendChild(elm_th);
+                    elm_tr.appendChild(elm_td);
+                    elm_table.appendChild(elm_tr);
+
+                    elm_tr = document.createElement('tr');
+                    elm_th = document.createElement('th');
+                    elm_th.innerText = 'name';
+                    elm_td = document.createElement('td');
+                    elm_td.innerText = response.user.google.name;
+                    elm_tr.appendChild(elm_th);
+                    elm_tr.appendChild(elm_td);
+                    elm_table.appendChild(elm_tr);
+
+                    elm_tr = document.createElement('tr');
+                    elm_th = document.createElement('th');
+                    elm_th.innerText = 'iat';
+                    elm_td = document.createElement('td');
+                    elm_td.innerText = (new Date(response.user.google.session.iat*1000));
+                    elm_tr.appendChild(elm_th);
+                    elm_tr.appendChild(elm_td);
+                    elm_table.appendChild(elm_tr);
+
+                    elm_tr = document.createElement('tr');
+                    elm_th = document.createElement('th');
+                    elm_th.innerText = 'exp';
+                    elm_td = document.createElement('td');
+                    elm_td.innerText = (new Date(response.user.google.session.exp*1000));
+                    elm_tr.appendChild(elm_th);
+                    elm_tr.appendChild(elm_td);
+                    elm_table.appendChild(elm_tr);
+
+                    document.querySelector('#g_oauth_output').appendChild(elm_table);
+                } else {
+                    console.debug( [xhr.responseText,xhr.readyState,xhr.status] );
+                }
+            }
+            xhr.open('POST','./gsi-server.php');
+            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            xhr.send( 'ts='+(Math.floor((new Date()).getTime()/1000)) + '&credential='+googleUser.credential );
+        }
+    </script>
+</head>
+<body>
+    <div id="g_id_onload"
+        data-client_id="784669840257-i0a06p3o6g8k0k1tk26jj09li1q2acud.apps.googleusercontent.com"
+        data-login_uri="https://labs.n138.jp"
+        data-callback="onSignIn">
+    </div>
+    <div class="g_id_signin" data-type="standard" data-logo_alignment="left"></div>
+    <div id="g_oauth_output"></div>
+    <p><a target="_blank" href="https://github.com/n138-kz/Auth-via-Google-auth.git">https://github.com/n138-kz/Auth-via-Google-auth.git</a></p>
+</body>
+</html>

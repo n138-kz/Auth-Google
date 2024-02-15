@@ -14,6 +14,10 @@
 [![GitHub language count](https://img.shields.io/github/languages/count/n138-kz/Auth-Google)](/../../)
 [![GitHub top language](https://img.shields.io/github/languages/top/n138-kz/Auth-Google)](/../../)
 
+## Github actions page
+
+[![https://n138-kz.github.io/Auth-Google/html/](https://img.shields.io/website?url=https%3A%2F%2Fauthz.n138.jp&up_message=in-operating&down_message=in-maintenance&cacheSeconds=3600)](https://n138-kz.github.io/Auth-Google/html/)
+
 ## Server status
 
 [![authz.n138.jp](https://img.shields.io/website?url=https%3A%2F%2Fauthz.n138.jp&up_message=in-operating&down_message=in-maintenance&cacheSeconds=3600)](https://authz.n138.jp/)

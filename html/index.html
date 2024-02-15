@@ -236,7 +236,7 @@
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'issue_at';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'issue_at';authz_displayblock_table_td.colSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
-						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.issue_at;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = (new Date(response.issue_at*1000)).toLocaleString();authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'remote';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
@@ -247,11 +247,11 @@
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'google';authz_displayblock_table_td.rowSpan = 7;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'session';authz_displayblock_table_td.rowSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'iat';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
-						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.google.session.iat;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = (new Date(response.google.session.iat*1000)).toLocaleString();authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'exp';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
-						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.google.session.exp;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = (new Date(response.google.session.exp*1000)).toLocaleString();authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'user';authz_displayblock_table_td.rowSpan = 4;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);

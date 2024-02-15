@@ -190,14 +190,6 @@
 						let responseText = xhr.responseText;
 						let response = JSON.parse(responseText);
 						console.log(response);
-						console.log(
-							response.google.user.userid,
-							response.google.user.email,
-							response.google.user.name,
-							response.google.user.icon,
-							response.google.session.iat,
-							response.google.session.exp,
-						);
 						/* Authzed */
 						authz_displayblock = document.createElement('div');
 						authz_displayblock.style.backgroundColor = '#F0FFFF';

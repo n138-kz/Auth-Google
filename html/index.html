@@ -120,6 +120,16 @@
 
 			setInterval(checkupdate_self, (300 * 1000)); /* 5min */
 		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let favicon;
+			['icon', 'apple-touch-icon', 'favicon'].forEach((e)=>{
+				favicon = document.createElement('link');
+				favicon.rel = '<link rel="icon" href="/favicon.ico">';
+				favicon.rel = 'icon';
+				favicon.href = 'https://www.google.com/s2/favicons?size=64&domain=https://google.com/';
+				document.querySelectorAll('head').forEach((e)=>e.prepend(favicon));
+			});
+		}, false);
 	</script>
 	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{

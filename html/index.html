@@ -190,12 +190,7 @@
 						);
 						/* Authzed */
 						authz_displayblock = document.createElement('div');
-						authz_displayblock.style.backgroundImage = `url(${response.google.user.icon})`;
 						authz_displayblock.style.backgroundColor = '#F0FFFF';
-						authz_displayblock.style.backgroundRepeat = 'no-repeat';
-						authz_displayblock.style.backgroundSize = 'contain';
-						authz_displayblock.innerText = `${response.google.user.name}(${response.google.user.email})`;
-
 						document.querySelectorAll('body').forEach((e,i)=>e.prepend(authz_displayblock));
 
 						document.querySelectorAll('.g_id_signin').forEach((e,i)=>e.remove());

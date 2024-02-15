@@ -239,6 +239,11 @@
 						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = (new Date(response.issue_at*1000)).toLocaleString();authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
+						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'last_checkpoint';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = '__LINE__';authz_displayblock_table_td.colSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.last_checkpoint;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
+						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'remote';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'address';authz_displayblock_table_td.colSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.remote;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);

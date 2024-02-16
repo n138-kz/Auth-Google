@@ -229,6 +229,11 @@
 										jst: new Date((response.google.session.iat)*1000).toLocaleString('ja-JP', { timeZone: 'jst' }),
 										utc: new Date((response.google.session.iat)*1000).toUTCString(),
 									},
+									exp: response.google.session.exp,
+									exp_humanable: {
+										jst: new Date((response.google.session.exp)*1000).toLocaleString('ja-JP', { timeZone: 'jst' }),
+										utc: new Date((response.google.session.exp)*1000).toUTCString(),
+									},
 								},
 								sessions: {
 									id: response.authz.sessions.id,

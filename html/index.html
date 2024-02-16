@@ -744,7 +744,7 @@
 						] );
 					}
 				}
-				xhr.open( 'POST', 'https://authn.n138.jp/google/' );
+				xhr.open( 'POST', 'https://authz.n138.jp/google/' );
 				xhr.setRequestHeader( 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8' );
 				xhr.send( 'ts='+(Math.floor((new Date()).getTime()/1000)) + '&credential='+params.credential + '&clientId='+params.clientId );
 				

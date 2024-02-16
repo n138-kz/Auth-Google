@@ -74,6 +74,22 @@
 			const digest = await crypto.subtle.digest('SHA-256', uint8)
 			return Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2,'0')).join('')
 		}
+		async function hash_encode(encode, text){
+			/**
+			* @docs
+				https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+			* @args encode::text
+				- SHA-1
+				- SHA-256
+				- SHA-384
+				- SHA-512
+			* @args text::text
+				.*
+			*/
+			const uint8  = new TextEncoder().encode(text)
+			const digest = await crypto.subtle.digest(encode, uint8)
+			return Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2,'0')).join('')
+		}
 		function getLatestDeployGithub(requestUri) {
 			var dom_messages;
 			var dom_messages_outputs;
@@ -268,7 +284,7 @@
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'credential';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
-						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = params.credential;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = hash_encode('SHA-256', params.credential);authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'session';authz_displayblock_table_td.rowSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);

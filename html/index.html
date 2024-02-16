@@ -157,6 +157,8 @@
 
 			checkupdate_self();
 			setInterval(checkupdate_self, (300 * 1000)); /* 5min */
+
+			setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100);
 		}, false);
 	</script>
 	<script defer>

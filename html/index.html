@@ -306,7 +306,7 @@
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'google';authz_displayblock_table_td.rowSpan = 8;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'token';authz_displayblock_table_td.rowSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'clientId';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
-						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = params.clientId;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = (params.clientId + '.' + location.host).split('.')[0];authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'credential';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);

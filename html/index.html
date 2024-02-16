@@ -225,6 +225,10 @@
 									clientId: params.clientId,
 									client_id: params.clientId,
 								},
+								sessions: {
+									id: response.authz.sessions.id,
+									name: response.authz.sessions.name,
+								},
 								iat: (new Date()).getTime()/1000,
 							})
 						);
@@ -287,6 +291,15 @@
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'remote';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'address';authz_displayblock_table_td.colSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.remote;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
+						authz_displayblock_table_tr = document.createElement('tr');
+						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'sessions';authz_displayblock_table_td.rowSpan = 2;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'id';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.authz.sessions.id;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
+						authz_displayblock_table_tr = document.createElement('tr');
+						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'name';authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
+						authz_displayblock_table_td = document.createElement('td');authz_displayblock_table_td.innerText = response.authz.sessions.name;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);
 						authz_displayblock_table_section.appendChild(authz_displayblock_table_tr);
 						authz_displayblock_table_tr = document.createElement('tr');
 						authz_displayblock_table_td = document.createElement('th');authz_displayblock_table_td.innerText = 'google';authz_displayblock_table_td.rowSpan = 8;authz_displayblock_table_tr.appendChild(authz_displayblock_table_td);

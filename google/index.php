@@ -26,6 +26,12 @@ $result['google'] = [
 		'exp' => 0,
 	],
 ];
+$result['authz'] = [
+	'sessions' => [
+		'id' => '',
+		'name' => '',
+	],
+];
 
 function set_http_response_code ( $http ) {
 	http_response_code( $http );
@@ -113,6 +119,13 @@ try {
 			],
 		];
 	}
+
+	$result['authz'] = [
+		'sessions' => [
+			'id' => session_id(),
+			'name' => session_name(),
+		],
+	];
 	
 	set_http_response_code(200);
 	$result['issue_at'] = microtime(TRUE);

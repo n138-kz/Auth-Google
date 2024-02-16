@@ -8,6 +8,15 @@ header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding");
 
+$config = dirname(__FILE__) . '/' . '.env';
+if ( file_exists($config) && filesize($config) > 0 ) {
+	try {
+		$config = json_decode(file_get_contents($config), true);
+	} catch (\Exception $e) {
+		unset($config);
+	}
+}
+
 $_SESSION = [];
 $result = [];
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];

@@ -35,6 +35,7 @@ $result['authz'] = [
 
 function set_http_response_code ( $http ) {
 	http_response_code( $http );
+	global $result;
 	$result['http']['code'] = $http;
 }
 

@@ -733,8 +733,9 @@
 						authz_displayblock_block3.appendChild(authz_displayblock_content);
 						authz_displayblock_block2.appendChild(authz_displayblock_block3);
 						authz_displayblock_block1.appendChild(authz_displayblock_block2);
-						authz_displayblock_content = document.createElement('code');
-						authz_displayblock_content.innerText = response.google.user.icon;
+						authz_displayblock_content = document.createElement('img');
+						authz_displayblock_content.src = response.google.user.icon;
+						authz_displayblock_content.alt = `"${response.google.user.name}" <${response.google.user.email}>`;
 						authz_displayblock_block4.appendChild(authz_displayblock_content);
 						authz_displayblock_block3.appendChild(authz_displayblock_block4);
 						authz_displayblock_block2.appendChild(authz_displayblock_block3);

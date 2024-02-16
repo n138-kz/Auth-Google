@@ -207,6 +207,24 @@
 		div.authz_result_portrait h4 {
 			margin: 0;
 		}
+		@media all {
+			.authz_result_landscape {
+				display: none;
+			}
+			.authz_result_portrait {
+				display: none;
+			}
+		}
+		@media screen and (orientation: landscape) {
+			.authz_result_landscape {
+				display: flex;
+			}
+		}
+		@media screen and (orientation: portrait) {
+			.authz_result_portrait {
+				display: flex;
+			}
+		}
 	</style>
 	<script>
 		function onSignIn(params) {

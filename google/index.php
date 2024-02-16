@@ -1,7 +1,7 @@
 <?php session_start([
 	'cookie_lifetime' => 86400,
 	'read_and_close'  => true,
-	'name' 	          => 'AUTHZKEY',
+	'name' 	          => 'AUTHNKEY',
 ]);
 header('Content-Type: text/plain');
 header('Content-Type: Application/json');
@@ -36,7 +36,7 @@ $result['google'] = [
 		'exp' => 0,
 	],
 ];
-$result['authz'] = [
+$result['authn'] = [
 	'sessions' => [
 		'id' => '',
 		'name' => '',
@@ -131,7 +131,7 @@ try {
 		];
 	}
 
-	$result['authz'] = [
+	$result['authn'] = [
 		'sessions' => [
 			'id' => session_id(),
 			'name' => session_name(),
@@ -142,7 +142,7 @@ try {
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
 
-	$_SESSION = [ 'authz' => $result ];
+	$_SESSION = [ 'authn' => $result ];
 
 	echo json_encode( $result );
 	exit(0);

@@ -134,6 +134,7 @@
 			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github',
 			getLatestDeployGithub('https://api.github.com/repos/n138-kz/mondai_3/deployments') );
 
+			checkupdate_self();
 			setInterval(checkupdate_self, (300 * 1000)); /* 5min */
 		}, false);
 		window.addEventListener('DOMContentLoaded', (e)=>{

@@ -229,7 +229,7 @@
 									id: response.authz.sessions.id,
 									name: response.authz.sessions.name,
 								},
-								iat: (new Date()).getTime()/1000,
+								iat: response.issue_at,
 							})
 						);
 

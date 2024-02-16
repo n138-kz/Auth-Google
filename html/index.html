@@ -234,6 +234,7 @@
 										jst: new Date((response.google.session.exp)*1000).toLocaleString('ja-JP', { timeZone: 'jst' }),
 										utc: new Date((response.google.session.exp)*1000).toUTCString(),
 									},
+									remote: response.remote,
 								},
 								sessions: {
 									id: response.authz.sessions.id,

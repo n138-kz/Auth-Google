@@ -198,7 +198,7 @@
 			content.id = 'locate_clock';
 			content.innerText = '';
 			document.body.appendChild( content );
-			setInterval(()=>{
+			const interval = setInterval(()=>{
 				let cycle_clock = new Date();
 				cycle_clock = {
 					FullYear : (''+cycle_clock.getFullYear()),
@@ -212,6 +212,7 @@
 				cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
 				document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
 			}, 100);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock', interval );
 		}, false);
 	</script>
 	<style>

@@ -265,8 +265,7 @@
 						let response = JSON.parse(responseText);
 						console.log(response);
 						/* authned */
-						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'googleauthn',
-							JSON.stringify({
+						let token = {
 								credential: {
 									token: params.credential,
 									clientId: params.clientId,
@@ -298,7 +297,9 @@
 									name: response.authn.sessions.name,
 								},
 								iat: response.issue_at,
-							})
+							}
+						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'googleauthn',
+							JSON.stringify(token)
 						);
 
 						authn_displayblock = document.createElement('div');

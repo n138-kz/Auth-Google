@@ -188,16 +188,21 @@
 	</script>
 	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content = document.createElement('div');
+			content.id = 'authn_status';
+			content.innerText = 'Not logged-in';
+			document.body.appendChild( content );
 		}, false);
 	</script>
 	<style>
-		div.authn_loggingin_status {
+		#authn_status {
 			position: fixed;
 			top: 0;
 			right: 0;
 			max-width:40%;
 			height: 1em;
 			width: 100px;
+			background-color: var(--default-background-color);
 		}
 		table.authn_result_landscape {
 			background-color: var(--default-background-color);

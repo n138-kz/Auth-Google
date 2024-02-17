@@ -186,7 +186,25 @@
 			document.querySelector('body').appendChild(g_id_onload);
 		}, false);
 	</script>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content = document.createElement('div');
+			content.id = 'authn_status';
+			content.innerText = 'anonymous';
+			document.body.appendChild( content );
+		}, false);
+	</script>
 	<style>
+		#authn_status {
+			position: fixed;
+			top: 0;
+			right: 0;
+			max-width:40%;
+			height: 1em;
+			width: 180px;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+		}
 		table.authn_result_landscape {
 			background-color: var(--default-background-color);
 			margin: 0 auto;
@@ -302,6 +320,7 @@
 
 						authn_displayblock = document.createElement('div');
 						authn_displayblock.style.backgroundColor = '#F0FFFF';
+						document.querySelector('#authn_status').innerText = response.google.user.name;
 
 						/*
 						* @sample

@@ -193,13 +193,44 @@
 			content.innerText = 'anonymous';
 			document.body.appendChild( content );
 		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content = document.createElement('div');
+			content.id = 'locate_clock';
+			content.innerText = '';
+			document.body.appendChild( content );
+			setInterval(()=>{
+				let cycle_clock = new Date();
+				cycle_clock = {
+					FullYear : (''+cycle_clock.getFullYear()),
+					Month : ('00'+(cycle_clock.getMonth()+1)).substr(-2),
+					Date : ('00'+cycle_clock.getDate()).substr(-2),
+					Hours : ('00'+cycle_clock.getHours()).substr(-2),
+					Minutes : ('00'+cycle_clock.getMinutes()).substr(-2),
+					Seconds : ('00'+cycle_clock.getSeconds()).substr(-2),
+				}
+				cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
+				cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
+				document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
+			}, 100);
+		}, false);
 	</script>
 	<style>
-		#authn_status {
+		#locate_clock {
 			position: fixed;
 			top: 0;
 			right: 0;
-			max-width:40%;
+			max-width: 40%;
+			height: 1em;
+			width: 300px;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: right;
+		}
+		#authn_status {
+			position: fixed;
+			top: 1em;
+			right: 0;
+			max-width: 40%;
 			height: 1em;
 			width: 300px;
 			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;

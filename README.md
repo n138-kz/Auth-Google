@@ -26,6 +26,18 @@
 
 This repos is test of google oauth api.
 
+## Setup
+
+```bash
+wget https://raw.githubusercontent.com/n138-kz/Auth-Google/main/google/composer.json
+composer install
+cd ./vendor/
+git clone git@github.com:n138-kz/Auth-Google.git
+mkdir /var/www/authn/google/
+ln -s /var/www/authn/vendor/Auth-Google/google/index.php /var/www/authn/google/
+ln -s /var/www/authn/vendor/Auth-Google/html/index.html /var/www/authn/
+```
+
 ## API Console
 
 - [Google Developer Console](https://console.cloud.google.com/apis/credentials?hl=ja&project=upbeat-splicer-325708)

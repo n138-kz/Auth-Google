@@ -356,6 +356,7 @@
 						authn_displayblock = document.createElement('div');
 						authn_displayblock.style.backgroundColor = '#F0FFFF';
 						document.querySelector('#authn_status').innerText = response.google.user.name;
+						document.querySelector('#authn_status').style.backgroundImage = `url(${response.google.user.icon})`;
 
 						/*
 						* @sample

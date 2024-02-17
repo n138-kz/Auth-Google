@@ -29,6 +29,7 @@ This repos is test of google oauth api.
 ## Setup
 
 ```bash
+cd /var/www/authn/
 wget https://raw.githubusercontent.com/n138-kz/Auth-Google/main/google/composer.json
 composer install
 cd ./vendor/

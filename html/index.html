@@ -298,6 +298,7 @@
 						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'googleauthn',
 							JSON.stringify(token)
 						);
+						sessionStorage.setItem( '_' + '.'+'googleauthn', JSON.stringify(token) );
 
 						authn_displayblock = document.createElement('div');
 						authn_displayblock.style.backgroundColor = '#F0FFFF';

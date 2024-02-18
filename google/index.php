@@ -222,6 +222,18 @@ try {
 		exit(1);
 	}
 
+	if ( ( $result['google']['session']['iat'] == 0 ) || ( $result['google']['session']['exp'] == 0 ) ) {
+		/* token has expired */
+		$payload = false;
+
+		set_http_response_code(401);
+		$result['issue_at'] = microtime(TRUE);
+		$result['last_checkpoint'] = __LINE__;
+
+		echo json_encode( $result );
+		exit(1);
+	}
+
 	$result['authn'] = [
 		'sessions' => [
 			'id' => session_id(),

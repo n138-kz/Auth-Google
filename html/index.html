@@ -198,7 +198,7 @@
 			content.id = 'locate_clock';
 			content.innerText = '';
 			document.body.appendChild( content );
-			setInterval(()=>{
+			const interval = setInterval(()=>{
 				let cycle_clock = new Date();
 				cycle_clock = {
 					FullYear : (''+cycle_clock.getFullYear()),
@@ -212,6 +212,7 @@
 				cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
 				document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
 			}, 100);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock', interval );
 		}, false);
 	</script>
 	<style>
@@ -235,7 +236,10 @@
 			width: 300px;
 			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
 			background-color: var(--default-background-color);
+			background-repeat: no-repeat;
+			background-size: contain;
 			text-align: right;
+			background-position-x: right;
 		}
 		table.authn_result_landscape {
 			background-color: var(--default-background-color);
@@ -246,6 +250,9 @@
 		}
 		table.authn_result_landscape td {
 			text-align: left;
+		}
+		table.authn_result_landscape img {
+			border-radius: 20%;
 		}
 		div.authn_result_portrait {
 			background-color: var(--default-background-color);
@@ -260,6 +267,9 @@
 		div.authn_result_portrait h3,
 		div.authn_result_portrait h4 {
 			margin: 0;
+		}
+		div.authn_result_portrait img {
+			border-radius: 50%;
 		}
 		@media all {
 			.authn_result_landscape {
@@ -317,6 +327,7 @@
 						/* authned */
 						let token = {
 							credential: {
+								credential: params.credential,
 								token: params.credential,
 								clientId: params.clientId,
 								client_id: params.clientId,
@@ -353,6 +364,7 @@
 						authn_displayblock = document.createElement('div');
 						authn_displayblock.style.backgroundColor = '#F0FFFF';
 						document.querySelector('#authn_status').innerText = response.google.user.name;
+						document.querySelector('#authn_status').style.backgroundImage = `url(${response.google.user.icon})`;
 
 						/*
 						* @sample

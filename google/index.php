@@ -172,5 +172,5 @@ try {
 	error_log($th->getTraceAsString());
 
 	echo json_encode( $result );
-	exit(1);
+	exit(0);
 }

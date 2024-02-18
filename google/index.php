@@ -169,6 +169,22 @@ try {
 		'line' => $th->getLine(),
 		'trace' => $th->getTrace(),
 	];
+
+	$encrypt = [
+		'method' => 'AES-256-CBC',
+		'iv_length' => 0,
+		'iv' => null,
+		'option' => 0,
+		'encrypted' => null,
+		'decrypted' => null,
+	];
+	$encrypt['iv_length'] = openssl_cipher_iv_length($encrypt['method']);
+	$encrypt['iv'] = openssl_random_pseudo_bytes($encrypt['iv_length']);
+	$encrypt['option'] = 0;
+	$encrypt['encrypted'] = openssl_encrypt( json_encode($th_json), $encrypt['method'], 'passw0rd', $encrypt['option'], $encrypt['iv'] );
+	$result['exception_text'] = json_encode($encrypt);
+	$encrypt['decrypted'] = openssl_decrypt( $encrypt['encrypted'], $encrypt['method'], 'passw0rd', $encrypt['option'], $encrypt['iv'] );
+
 	error_log($th->getTraceAsString());
 
 	echo json_encode( $result );

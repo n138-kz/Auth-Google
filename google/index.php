@@ -21,6 +21,13 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 $_SESSION = [];
 $result = [];
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
+$result['client'] = [
+	'addr' => $_SERVER['REMOTE_ADDR'],
+	'port' => $_SERVER['REMOTE_PORT'],
+	'user' => $_SERVER['REMOTE_USER'],
+	'user_authed' => $_SERVER['PHP_AUTH_USER'],
+	'user_redirected' => $_SERVER['REDIRECT_REMOTE_USER'],
+];
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;
 $result['http']['code'] = http_response_code();

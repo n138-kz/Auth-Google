@@ -221,6 +221,15 @@
 				}, 100)
 			);
 		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content1 = document.createElement('div');
+			content1.id = 'link_policy';
+			let content2 = document.createElement('a');
+			content2.href = 'https://n138-kz.github.io/policy/';
+			content2.innerText = 'Policy Notes';
+			content1.appendChild( content2 );
+			document.body.appendChild( content1 );
+		}, false);
 	</script>
 	<style>
 		#locate_clock {
@@ -247,6 +256,18 @@
 			background-size: contain;
 			text-align: right;
 			background-position-x: right;
+		}
+		#link_policy {
+			position: fixed;
+			bottom: 0.5em;
+			left: 0;
+			max-width: 40%;
+			height: 1em;
+			width: 20ex;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: left;
+			margin-left: 5px;
 		}
 		table.authn_result_landscape {
 			background-color: var(--default-background-color);

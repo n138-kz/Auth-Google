@@ -298,6 +298,9 @@
 			if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
 				return null;
 			}
+
+			return params;
+		}
 		}
 		function onSignIn(params) {
 			let fullscreen_wp;

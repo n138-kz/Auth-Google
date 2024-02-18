@@ -125,7 +125,7 @@ function set_http_response_code ( $http ) {
 	http_response_code( $http );
 	global $result;
 	$result['http']['code'] = $http;
-	$result['http']['text'] = get_message_with_http_response_code($http);
+	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
 }
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) != 'post' ) {

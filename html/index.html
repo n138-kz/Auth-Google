@@ -301,6 +301,43 @@
 
 			return params;
 		}
+		function reAuthn(params) {
+			if (!params) { return false; }
+			console.log(
+				[
+					new Date().getTime()/1000,
+					params.credential.iat,
+					params.credential.exp,
+					(new Date().getTime()/1000 > params.credential.iat),
+					(new Date().getTime()/1000 < params.credential.exp),
+				]
+			)
+			/* time of expiry */
+			if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+				return false;
+			}
+
+			fetch(params.requestUri, {
+				method: 'POST',
+				body: JSON.stringify({
+					ts: (Math.floor((new Date()).getTime()/1000)),
+					credential: params.credential.credential,
+					clientId: params.credential.clientId,
+				}),
+			})
+			.then(response => {
+				console.debug(response);
+				if (false) {
+				} else if ( response.status === 200 ) {
+					return response.json()
+				} else if ( response.status >= 400 ) {
+					throw new Error(`[${response.status}]Error has occured. server-message:${response.message} ${response.documentation_url}`);
+				}
+			})
+			.catch(exception => {
+				console.error(exception);
+			});
+		}
 		function onSignIn(params) {
 			let fullscreen_wp;
 			fullscreen_wp = document.querySelectorAll('.fullscreen_wp');

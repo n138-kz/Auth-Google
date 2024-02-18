@@ -74,6 +74,7 @@
 			let header1 = document.createElement('h1');
 			let header1_link = document.createElement('a');
 			header1_link.href = './';
+			header1_link.setAttribute('onclick', 'sessionStorage.clear();localStorage.clear();')
 			header1_link.title = document.title;
 			let header1_text = document.createTextNode(document.title);
 			header1_link.appendChild(header1_text);

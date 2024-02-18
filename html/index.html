@@ -139,7 +139,7 @@
 				});
 			})
 			.then(response => {
-				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github', response );
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github', JSON.stringify(response) );
 				return response;
 			})
 			.catch(exception => {

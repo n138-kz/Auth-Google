@@ -292,8 +292,13 @@
 	</style>
 	<script>
 		function pickout_token() {
-			return JSON.parse(
-				sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn')
+			let params = JSON.parse( sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn') );
+
+			/* time of expiry */
+			if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+				return false;
+			}
+		}
 			)
 		}
 		function onSignIn(params) {

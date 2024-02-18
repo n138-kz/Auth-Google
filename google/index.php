@@ -199,10 +199,10 @@ try {
 		if ($payload) {
 			$result['google'] = [
 				'user' => [
-					'userid' => $payload['sub'],
-					'name' => $payload['name'],
-					'icon' => $payload['picture'],
-					'email' => $payload['email'],
+					'userid' => isset($payload['sub']) ? $payload['sub'] : null,
+					'name' => isset($payload['name']) ? $payload['name'] : null,
+					'icon' => isset($payload['picture']) ? $payload['picture'] : null,
+					'email' => isset($payload['email']) ? $payload['email'] : null,
 				],
 				'session' => [
 					'iat' => $payload['iat'],

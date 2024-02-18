@@ -201,7 +201,7 @@
 				.then(r=>{
 					document.querySelectorAll('#github_deploy a').item(0).href = r.html_url;
 				})
-			})
+			});
 		}
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			let content1 = document.createElement('div');

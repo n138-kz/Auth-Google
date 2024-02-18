@@ -115,20 +115,31 @@ try {
 	require_once '../vendor/autoload.php';
 	
 	$client = new Google_Client(['client_id' => CLIENT_ID]);
-	$payload = $client->verifyIdToken(CLIENT_TOKEN);
-	if ($payload) {
-		$result['google'] = [
-			'user' => [
-				'userid' => $payload['sub'],
-				'name' => $payload['name'],
-				'icon' => $payload['picture'],
-				'email' => $payload['email'],
-			],
-			'session' => [
-				'iat' => $payload['iat'],
-				'exp' => $payload['exp'],
-			],
-		];
+	try {
+		$payload = $client->verifyIdToken(CLIENT_TOKEN);
+		if ($payload) {
+			$result['google'] = [
+				'user' => [
+					'userid' => $payload['sub'],
+					'name' => $payload['name'],
+					'icon' => $payload['picture'],
+					'email' => $payload['email'],
+				],
+				'session' => [
+					'iat' => $payload['iat'],
+					'exp' => $payload['exp'],
+				],
+			];
+		}
+	} catch (\Exception $th) {
+		$payload = false;
+
+		set_http_response_code(401);
+		$result['issue_at'] = microtime(TRUE);
+		$result['last_checkpoint'] = __LINE__;
+
+		echo json_encode( $result );
+		exit(1);
 	}
 
 	$result['authn'] = [

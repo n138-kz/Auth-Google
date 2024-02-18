@@ -211,6 +211,7 @@ try {
 			];
 		}
 	} catch (\Exception $th) {
+		/* invalid token */
 		$payload = false;
 
 		set_http_response_code(401);

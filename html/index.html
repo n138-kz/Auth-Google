@@ -291,6 +291,11 @@
 		}
 	</style>
 	<script>
+		function pickout_token() {
+			return JSON.parse(
+				sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn')
+			)
+		}
 		function onSignIn(params) {
 			let fullscreen_wp;
 			fullscreen_wp = document.querySelectorAll('.fullscreen_wp');

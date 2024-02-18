@@ -24,9 +24,9 @@ $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
 $result['client'] = [
 	'addr' => $_SERVER['REMOTE_ADDR'],
 	'port' => $_SERVER['REMOTE_PORT'],
-	'user' => $_SERVER['REMOTE_USER'],
-	'user_authed' => $_SERVER['PHP_AUTH_USER'],
-	'user_redirected' => $_SERVER['REDIRECT_REMOTE_USER'],
+	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
+	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
+	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
 ];
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;

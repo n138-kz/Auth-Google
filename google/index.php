@@ -205,8 +205,8 @@ try {
 					'email' => isset($payload['email']) ? $payload['email'] : null,
 				],
 				'session' => [
-					'iat' => $payload['iat'],
-					'exp' => $payload['exp'],
+					'iat' => isset($payload['iat']) ? $payload['iat'] : null,
+					'exp' => isset($payload['exp']) ? $payload['exp'] : null,
 				],
 			];
 		}

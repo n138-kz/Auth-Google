@@ -162,6 +162,15 @@ try {
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
 
+	$th_json = [
+		'code' => $th->getCode(),
+		'message' => $th->getMessage(),
+		'file' => $th->getFile(),
+		'line' => $th->getLine(),
+		'trace' => $th->getTrace(),
+	];
+	error_log($th->getTraceAsString());
+
 	echo json_encode( $result );
 	exit(1);
 }

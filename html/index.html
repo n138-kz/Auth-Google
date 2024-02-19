@@ -429,8 +429,9 @@
 				console.debug(response);
 				if (false) {
 				} else if ( response.status === 200 ) {
-					return response.json()
+					return response.json();
 				} else if ( response.status >= 400 ) {
+					let http = response.json();
 					throw new Error(`[${response.status}]Error has occured. server-message:${response.message} ${response.documentation_url}`);
 				}
 			})

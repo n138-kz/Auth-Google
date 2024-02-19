@@ -124,9 +124,10 @@
 				console.debug(response);
 				if (false) {
 				} else if ( response.status === 200 ) {
-					return response.json()
+					return response.json();
 				} else if ( response.status >= 400 ) {
-					throw new Error(`[${response.status}]Error has occured. server-message:${response.message} ${response.documentation_url}`);
+					r=response.json();
+					throw new Error(`[${response.status}]Error has occured. server-message:${r.message} ${r.documentation_url}`);
 				}
 			})
 			.then(response => response[0].statuses_url)

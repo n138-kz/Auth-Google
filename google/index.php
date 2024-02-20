@@ -154,7 +154,8 @@ if( !is_array( $_POST ) ) {
 	echo json_encode( $result );
 	exit(1);
 }
-if( !isset( $_POST['ts'] ) ) {
+$request = $_POST;
+if( !isset( $request['ts'] ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -162,7 +163,7 @@ if( !isset( $_POST['ts'] ) ) {
 	echo json_encode( $result );
 	exit(1);
 }
-if( !isset( $_POST['credential'] ) ) {
+if( !isset( $request['credential'] ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -170,7 +171,7 @@ if( !isset( $_POST['credential'] ) ) {
 	echo json_encode( $result );
 	exit(1);
 }
-if( !isset( $_POST['clientId'] ) ) {
+if( !isset( $request['clientId'] ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -179,7 +180,7 @@ if( !isset( $_POST['clientId'] ) ) {
 	exit(1);
 }
 /*# Is correct? #*/
-if( ( time() - (int)$_POST['ts'] > 300 ) ) {
+if( ( time() - (int)$request['ts'] > 300 ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -188,8 +189,8 @@ if( ( time() - (int)$_POST['ts'] > 300 ) ) {
 	exit(1);
 }
 
-define('CLIENT_ID', $_POST['clientId']);
-define('CLIENT_TOKEN', $_POST['credential']);
+define('CLIENT_ID', $request['clientId']);
+define('CLIENT_TOKEN', $_PrequestOST['credential']);
 
 try {
 	require_once '../vendor/autoload.php';

@@ -155,6 +155,15 @@ if( !is_array( $_POST ) ) {
 	exit(1);
 }
 $request = $_POST;
+if( isset($_GET['json']) ) {
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+	$result['debug'] = php://input;
+
+	echo json_encode( $result );
+	exit(1);
+}
 if( !isset( $request['ts'] ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);

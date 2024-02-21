@@ -155,14 +155,15 @@ if( !is_array( $_POST ) ) {
 	exit(1);
 }
 $request = $_POST;
-if( isset($_GET['json']) ) {
-	set_http_response_code(400);
-	$result['issue_at'] = microtime(TRUE);
-	$result['last_checkpoint'] = __LINE__;
-	$result['debug'] = php://input;
-
-	echo json_encode( $result );
-	exit(1);
+if( isset($_GET['json']) && (explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] == 'application/json') ) {
+	/*
+	 * @refs
+	 * - [PHPにPOSTされたJSONをデータとして使用する方法](https://forsmile.jp/development/php/1709/)
+	 * - [【PHP】JSONデータのPOST受け取りで application/x-www-form-urlencoded とapplication/json の両方に対応](https://qiita.com/Kunikata/items/2b410f3cc535e4104906)
+	 * 
+	 */
+	$request = file_get_contents('php://input');
+	$request = json_decode($request, true);
 }
 if( !isset( $request['ts'] ) ) {
 	set_http_response_code(400);

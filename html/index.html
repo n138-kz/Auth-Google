@@ -298,7 +298,26 @@
 			let content1 = document.createElement('div');
 			content1.id = 'connection_rtt';
 			document.body.appendChild( content1 );
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',
+				setInterval(()=>{
+					let process_1 = new Date().getTime();
+					let process_2 = new Date().getTime();
+					fetch(location.href, { method: 'GET', })
+					.then(r=>r.text())
+					.then(r=>{
+						process_2 = new Date().getTime();
+						document.querySelectorAll('#connection_rtt').forEach((e)=>{
+							e.innerText = ((process_2-process_1))+'ms';
+						});
+					})
+					.catch(e=>{
+						console.error(e);
+						document.querySelectorAll('#connection_rtt').forEach((e)=>{
+							e.innerText = 'infinity';
+						});
 					});
+				}, 1000)
+			);
 		}, false);
 	</script>
 	<style>

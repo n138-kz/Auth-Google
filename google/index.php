@@ -161,6 +161,7 @@ if( explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] == 'application/
 	 * @refs
 	 * - [PHPにPOSTされたJSONをデータとして使用する方法](https://forsmile.jp/development/php/1709/)
 	 * - [【PHP】JSONデータのPOST受け取りで application/x-www-form-urlencoded とapplication/json の両方に対応](https://qiita.com/Kunikata/items/2b410f3cc535e4104906)
+	 * - [[php js]POST時、php ://inputの値が空文字になる](https://muchilog.com/php-input-json-empty/)
 	 * 
 	 */
 	$request = file_get_contents('php://input');

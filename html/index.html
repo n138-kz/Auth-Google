@@ -298,18 +298,7 @@
 			let content1 = document.createElement('div');
 			content1.id = 'connection_rtt';
 			document.body.appendChild( content1 );
-			(function(){
-				let process_1 = new Date().getTime();
-				let process_2 = new Date().getTime();
-				fetch(location.href, { method: 'GET', })
-				.then(r=>r.text())
-				.then(r=>{
-					process_2 = new Date().getTime();
-					document.querySelectorAll('#connection_rtt').forEach((e)=>{
-						e.innerText(((process_2-process_1)/1000)+'ms')
 					});
-				})
-			})();
 		}, false);
 	</script>
 	<style>

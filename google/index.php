@@ -23,13 +23,13 @@ $request = [];
 $result = [];
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
 $result['client'] = [
-	'addr' => $_SERVER['REMOTE_ADDR'],
+	'address' => $_SERVER['REMOTE_ADDR'],
 	'port' => $_SERVER['REMOTE_PORT'],
 	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
 	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
 	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
-	'ua' => $_SERVER['HTTP_USER_AGENT'],
 	'content_type' => explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0],
+	'user_agent' => $_SERVER['HTTP_USER_AGENT'],
 ];
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;

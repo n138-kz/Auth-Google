@@ -156,7 +156,7 @@ if( !is_array( $_POST ) ) {
 	exit(1);
 }
 $request = $_POST;
-if( isset($_GET['json']) && (explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] == 'application/json') ) {
+if( explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] == 'application/json' ) {
 	/*
 	 * @refs
 	 * - [PHPにPOSTされたJSONをデータとして使用する方法](https://forsmile.jp/development/php/1709/)

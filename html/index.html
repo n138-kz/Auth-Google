@@ -167,7 +167,7 @@
 				/* 5min */
 				setInterval(checkupdate_self, (300 * 1000))
 			);
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_checkupdate_self',
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
 				setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
 			);
 		}, false);

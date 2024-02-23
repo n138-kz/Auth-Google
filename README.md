@@ -39,6 +39,27 @@ ln -s /var/www/authn/vendor/Auth-Google/google/index.php /var/www/authn/google/
 ln -s /var/www/authn/vendor/Auth-Google/html/index.html /var/www/authn/
 ```
 
+## Token check (use curl)
+
+### env
+
+```bash
+CLIENT_ID='784669840257-i0a06p3o6g8k0k1tk26jj09li1q2acud.apps.googleusercontent.com'
+CLIENT_TOKEN='abcdef...'
+```
+
+### application/x-www-form-urlencoded
+
+```bash
+clear; curl -X POST -d "ts=$(date +%s)" -d "clientId=${CLIENT_ID}" -d "credential=${CLIENT_TOKEN}" https://authn.n138.jp/google/ | jq
+```
+
+### application/json
+
+```bash
+clear; curl -X POST -H 'Content-Type: application/json' -d '{"ts": '$(date +%s)',"clientId": "'${CLIENT_ID}'", "credential": "'${CLIENT_TOKEN}'"}' https://authn.n138.jp/google/ | jq
+```
+
 ## API Console
 
 - [Google Developer Console](https://console.cloud.google.com/apis/credentials?hl=ja&project=upbeat-splicer-325708)

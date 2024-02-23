@@ -14,6 +14,9 @@
 			--default-margin-padding-size: 0;
 			--default-background-color: #F0FFFFFF;
 			--default-text-color: #000000FF;
+			--color-preset-red: #FF0000FF;
+			--color-preset-yellow: #FFa000FF;
+			--color-preset-green: #008000FF;
 		}
 		:root[theme=dark] {
 			--default-background-color: #000000FF;
@@ -127,6 +130,7 @@
 					return response.json();
 				} else if ( response.status >= 400 ) {
 					r=response.json();
+					console.trace(response, r);
 					throw new Error(`[${response.status}]Error has occured. server-message:${r.message} ${r.documentation_url}`);
 				}
 			})
@@ -163,22 +167,19 @@
 				/* 5min */
 				setInterval(checkupdate_self, (300 * 1000))
 			);
-
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_checkupdate_self',
-				setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
-			);
 		}, false);
 		function getGithubDeployStatus() {
 			fetch('https://api.github.com/repos/n138-kz/Auth-Google/deployments', {
 				method: 'GET',
 			})
-			.then(r=>{
+			.then(response=>{
 				if (false) {
-				} else if ( r.status === 200 ) {
-					return r.json()
-				} else if ( r.status >= 400 ) {
-					h=r.json();
-					throw new Error(`[${h.status}]Error has occured. server-message:${r.message}, (${r.documentation_url})`);
+				} else if ( response.status === 200 ) {
+					return response.json()
+				} else if ( response.status >= 400 ) {
+					r=response.json();
+					console.trace(response, r);
+					throw new Error(`[${response.status}]Error has occured. server-message:${r.message}, (${r.documentation_url})`);
 				}
 			})
 			.then(r=>r[0])
@@ -304,19 +305,43 @@
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			let content1 = document.createElement('div');
 			content1.id = 'connection_rtt';
+			let content2;
+			content2 = document.createElement('span');
+			content1.appendChild( content2 );
+			content2 = document.createElement('img');
+			content2.src = '11503.svg';
+			content2.alt = '[icoon-mono:11503]';
+			content1.appendChild( content2 );
 			document.body.appendChild( content1 );
-			(function(){
-				let process_1 = new Date().getTime();
-				let process_2 = new Date().getTime();
-				fetch(location.href, { method: 'GET', })
-				.then(r=>r.text())
-				.then(r=>{
-					process_2 = new Date().getTime();
-					document.querySelectorAll('#connection_rtt').forEach((e)=>{
-						e.innerText((process_2-process_1)/1000+'ms')
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',
+				setInterval(()=>{
+					let process_1 = new Date().getTime();
+					let process_2 = new Date().getTime();
+					fetch(location.href, { method: 'GET', })
+					.then(r=>r.text())
+					.then(r=>{
+						process_2 = new Date().getTime();
+						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+							let rtt = process_2-process_1;
+							e.innerText = rtt+'ms';
+							if ( false ) {
+							} else if ( rtt < 250 ) {
+								e.style.color = 'var(--color-preset-green)';
+							} else if ( rtt < 500 ) {
+								e.style.color = 'var(--color-preset-yellow)';
+							} else {
+								e.style.color = 'var(--color-preset-red)';
+							}
+						});
+					})
+					.catch(e=>{
+						console.error(e);
+						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+							e.innerText = 'infinity';
+						});
 					});
-				})
-			})();
+				}, 1000)
+			);
 		}, false);
 	</script>
 	<style>
@@ -328,11 +353,10 @@
 			height: 1em;
 			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
 			background-color: var(--default-background-color);
-			background-repeat: no-repeat;
-			background-size: contain;
-			background-position-x: right;
-			background-image: url('16012.svg');
 			text-align: right;
+		}
+		#connection_rtt img {
+			height: 1em;
 		}
 		#locate_clock {
 			position: fixed;

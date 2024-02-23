@@ -306,7 +306,7 @@
 				.then(r=>{
 					process_2 = new Date().getTime();
 					document.querySelectorAll('#connection_rtt').forEach((e)=>{
-						e.innerText((process_2-process_1)/1000+'ms')
+						e.innerText(((process_2-process_1)/1000)+'ms')
 					});
 				})
 			})();

@@ -127,6 +127,7 @@
 					return response.json();
 				} else if ( response.status >= 400 ) {
 					r=response.json();
+					console.trace(response, r);
 					throw new Error(`[${response.status}]Error has occured. server-message:${r.message} ${r.documentation_url}`);
 				}
 			})
@@ -168,13 +169,14 @@
 			fetch('https://api.github.com/repos/n138-kz/Auth-Google/deployments', {
 				method: 'GET',
 			})
-			.then(r=>{
+			.then(response=>{
 				if (false) {
-				} else if ( r.status === 200 ) {
-					return r.json()
-				} else if ( r.status >= 400 ) {
-					h=r.json();
-					throw new Error(`[${h.status}]Error has occured. server-message:${r.message}, (${r.documentation_url})`);
+				} else if ( response.status === 200 ) {
+					return response.json()
+				} else if ( response.status >= 400 ) {
+					r=response.json();
+					console.trace(response, r);
+					throw new Error(`[${response.status}]Error has occured. server-message:${r.message}, (${r.documentation_url})`);
 				}
 			})
 			.then(r=>r[0])

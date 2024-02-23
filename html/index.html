@@ -322,7 +322,16 @@
 					.then(r=>{
 						process_2 = new Date().getTime();
 						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-							e.innerText = ((process_2-process_1))+'ms';
+							let rtt = process_2-process_1;
+							e.innerText = rtt+'ms';
+							if ( false ) {
+							} else if ( rtt < 250 ) {
+								e.style.color = 'var(--color-preset-green)';
+							} else if ( rtt < 500 ) {
+								e.style.color = 'var(--color-preset-yellow)';
+							} else {
+								e.style.color = 'var(--color-preset-red)';
+							}
 						});
 					})
 					.catch(e=>{

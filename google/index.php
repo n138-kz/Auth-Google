@@ -166,6 +166,14 @@ if( explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] == 'application/
 	 */
 	$request = file_get_contents('php://input');
 	$request = json_decode($request, true);
+	if( !is_array( $request ) ) {
+		set_http_response_code(400);
+		$result['issue_at'] = microtime(TRUE);
+		$result['last_checkpoint'] = __LINE__;
+
+		echo json_encode( $result );
+		exit(1);
+	}
 }
 if( !isset( $request['ts'] ) ) {
 	set_http_response_code(400);

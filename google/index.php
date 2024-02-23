@@ -19,15 +19,17 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 }
 
 $_SESSION = [];
+$request = [];
 $result = [];
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
 $result['client'] = [
-	'addr' => $_SERVER['REMOTE_ADDR'],
+	'address' => $_SERVER['REMOTE_ADDR'],
 	'port' => $_SERVER['REMOTE_PORT'],
 	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
 	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
 	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
-	'ua' => $_SERVER['HTTP_USER_AGENT'],
+	'content_type' => explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0],
+	'user_agent' => $_SERVER['HTTP_USER_AGENT'],
 ];
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;
@@ -153,7 +155,27 @@ if( !is_array( $_POST ) ) {
 	echo json_encode( $result );
 	exit(1);
 }
-if( !isset( $_POST['ts'] ) ) {
+$request = $_POST;
+if( explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] == 'application/json' ) {
+	/*
+	 * @refs
+	 * - [PHPにPOSTされたJSONをデータとして使用する方法](https://forsmile.jp/development/php/1709/)
+	 * - [【PHP】JSONデータのPOST受け取りで application/x-www-form-urlencoded とapplication/json の両方に対応](https://qiita.com/Kunikata/items/2b410f3cc535e4104906)
+	 * - [[php js]POST時、php ://inputの値が空文字になる](https://muchilog.com/php-input-json-empty/)
+	 * 
+	 */
+	$request = file_get_contents('php://input');
+	$request = json_decode($request, true);
+	if( !is_array( $request ) ) {
+		set_http_response_code(400);
+		$result['issue_at'] = microtime(TRUE);
+		$result['last_checkpoint'] = __LINE__;
+
+		echo json_encode( $result );
+		exit(1);
+	}
+}
+if( !isset( $request['ts'] ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -161,7 +183,7 @@ if( !isset( $_POST['ts'] ) ) {
 	echo json_encode( $result );
 	exit(1);
 }
-if( !isset( $_POST['credential'] ) ) {
+if( !isset( $request['credential'] ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -169,7 +191,7 @@ if( !isset( $_POST['credential'] ) ) {
 	echo json_encode( $result );
 	exit(1);
 }
-if( !isset( $_POST['clientId'] ) ) {
+if( !isset( $request['clientId'] ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -178,7 +200,7 @@ if( !isset( $_POST['clientId'] ) ) {
 	exit(1);
 }
 /*# Is correct? #*/
-if( ( time() - (int)$_POST['ts'] > 300 ) ) {
+if( ( time() - (int)$request['ts'] > 300 ) ) {
 	set_http_response_code(400);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
@@ -187,8 +209,8 @@ if( ( time() - (int)$_POST['ts'] > 300 ) ) {
 	exit(1);
 }
 
-define('CLIENT_ID', $_POST['clientId']);
-define('CLIENT_TOKEN', $_POST['credential']);
+define('CLIENT_ID', $request['clientId']);
+define('CLIENT_TOKEN', $request['credential']);
 
 try {
 	require_once '../vendor/autoload.php';

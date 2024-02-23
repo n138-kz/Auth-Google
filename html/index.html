@@ -115,58 +115,7 @@
 		}
 	</script>
 	<script>
-		function getLatestDeployGithub(requestUri) {
-			var dom_messages;
-			var dom_messages_outputs;
-			var dom_messages_code;
-			/* fetch */
-			fetch(requestUri, {
-				method: 'GET',
-			})
-			.then(response => {
-				console.debug(response);
-				if (false) {
-				} else if ( response.status === 200 ) {
-					return response.json();
-				} else if ( response.status >= 400 ) {
-					r=response.json();
-					console.trace(response, r);
-					throw new Error(`[${response.status}]Error has occured. server-message:${r.message} ${r.documentation_url}`);
-				}
-			})
-			.then(response => response[0].statuses_url)
-			.then(deployLatest_url => {
-				console.log(deployLatest_url);
-				return fetch(deployLatest_url, {
-					method: 'GET',
-				}).then(response => response.json())
-				.then(response => {
-					return response[0];
-				});
-			})
-			.then(response => {
-				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github', JSON.stringify(response) );
-				return response;
-			})
-			.catch(exception => {
-				console.error(exception);
-			});
-		}
-		function checkupdate_self() {
-			let latestDeployGithub = getLatestDeployGithub('https://api.github.com/repos/n138-kz/Auth-Google/deployments');
-			/*
-			idが違って、stateがsuccessの時ページ再読み込み
-			*/
-		}
 		window.addEventListener('DOMContentLoaded', (e)=>{
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github',
-			getLatestDeployGithub('https://api.github.com/repos/n138-kz/mondai_3/deployments') );
-
-			checkupdate_self();
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_checkupdate_self',
-				/* 5min */
-				setInterval(checkupdate_self, (300 * 1000))
-			);
 			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
 				setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
 			);

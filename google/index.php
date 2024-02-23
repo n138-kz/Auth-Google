@@ -210,7 +210,7 @@ if( ( time() - (int)$request['ts'] > 300 ) ) {
 }
 
 define('CLIENT_ID', $request['clientId']);
-define('CLIENT_TOKEN', $_PrequestOST['credential']);
+define('CLIENT_TOKEN', $request['credential']);
 
 try {
 	require_once '../vendor/autoload.php';

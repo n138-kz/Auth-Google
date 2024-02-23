@@ -306,11 +306,11 @@
 			let content1 = document.createElement('div');
 			content1.id = 'connection_rtt';
 			let content2;
+			content2 = document.createElement('span');
+			content1.appendChild( content2 );
 			content2 = document.createElement('img');
 			content2.src = '11503.svg';
 			content2.alt = '[icoon-mono:11503]';
-			content1.appendChild( content2 );
-			content2 = document.createElement('span');
 			content1.appendChild( content2 );
 			document.body.appendChild( content1 );
 			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',

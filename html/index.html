@@ -67,7 +67,6 @@
 			let favicon;
 			['icon', 'apple-touch-icon', 'favicon'].forEach((e)=>{
 				favicon = document.createElement('link');
-				favicon.rel = '<link rel="icon" href="/favicon.ico">';
 				favicon.rel = 'icon';
 				favicon.href = 'https://www.google.com/s2/favicons?size=64&domain=https://google.com/';
 				document.querySelectorAll('head').forEach((e)=>e.prepend(favicon));
@@ -115,61 +114,14 @@
 		}
 	</script>
 	<script>
-		function getLatestDeployGithub(requestUri) {
-			var dom_messages;
-			var dom_messages_outputs;
-			var dom_messages_code;
-			/* fetch */
-			fetch(requestUri, {
-				method: 'GET',
-			})
-			.then(response => {
-				console.debug(response);
-				if (false) {
-				} else if ( response.status === 200 ) {
-					return response.json();
-				} else if ( response.status >= 400 ) {
-					r=response.json();
-					console.trace(response, r);
-					throw new Error(`[${response.status}]Error has occured. server-message:${r.message} ${r.documentation_url}`);
-				}
-			})
-			.then(response => response[0].statuses_url)
-			.then(deployLatest_url => {
-				console.log(deployLatest_url);
-				return fetch(deployLatest_url, {
-					method: 'GET',
-				}).then(response => response.json())
-				.then(response => {
-					return response[0];
-				});
-			})
-			.then(response => {
-				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github', JSON.stringify(response) );
-				return response;
-			})
-			.catch(exception => {
-				console.error(exception);
-			});
-		}
-		function checkupdate_self() {
-			let latestDeployGithub = getLatestDeployGithub('https://api.github.com/repos/n138-kz/Auth-Google/deployments');
-			/*
-			idが違って、stateがsuccessの時ページ再読み込み
-			*/
-		}
 		window.addEventListener('DOMContentLoaded', (e)=>{
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'github',
-			getLatestDeployGithub('https://api.github.com/repos/n138-kz/mondai_3/deployments') );
-
-			checkupdate_self();
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_checkupdate_self',
-				/* 5min */
-				setInterval(checkupdate_self, (300 * 1000))
-			);
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_checkupdate_self',
-				setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
-			);
+			let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
+			if (!ctrlpanels) {
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
+					setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+				);
+			}
 		}, false);
 		function getGithubDeployStatus() {
 			fetch('https://api.github.com/repos/n138-kz/Auth-Google/deployments', {
@@ -367,7 +319,6 @@
 			right: 0;
 			max-width: 40%;
 			height: 1em;
-			width: 300px;
 			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
 			background-color: var(--default-background-color);
 			text-align: right;
@@ -378,7 +329,6 @@
 			right: 0;
 			max-width: 40%;
 			height: 1em;
-			width: 300px;
 			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
 			background-color: var(--default-background-color);
 			background-repeat: no-repeat;
@@ -392,7 +342,6 @@
 			left: 0;
 			max-width: 40%;
 			height: 1em;
-			width: 20ex;
 			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
 			background-color: var(--default-background-color);
 			text-align: left;

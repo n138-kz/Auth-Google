@@ -272,30 +272,35 @@
 				setInterval(()=>{
 					let process_1 = new Date().getTime();
 					let process_2 = new Date().getTime();
-					fetch(location.href, { method: 'GET', })
-					.then(r=>r.text())
-					.then(r=>{
-						process_2 = new Date().getTime();
-						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-							let rtt = process_2-process_1;
-							e.innerText = rtt+'ms';
-							if ( false ) {
-							} else if ( rtt < 250 ) {
-								e.style.color = 'var(--color-preset-green)';
-							} else if ( rtt < 500 ) {
-								e.style.color = 'var(--color-preset-yellow)';
-							} else {
-								e.style.color = 'var(--color-preset-red)';
-							}
 
+					if (false) {
+					} else if (true) {
+						/* 認証トークンを持っていない時 */
+						fetch(location.href, { method: 'GET', })
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+							});
 						});
-					})
-					.catch(e=>{
-						console.error(e);
-						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-							e.innerText = 'infinity';
-						});
-					});
+					} else {
+					}
 				}, 1000)
 			);
 		}, false);

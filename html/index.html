@@ -300,6 +300,40 @@
 							});
 						});
 					} else {
+						/* 認証トークンを持っている時 */
+						fetch(connection_rtt_endpoint, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								ts: (Math.floor((new Date()).getTime()/1000)),
+								credential: params.credential,
+								clientId: params.clientId,
+							})
+						})
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+							});
+						});
 					}
 				}, 1000)
 			);

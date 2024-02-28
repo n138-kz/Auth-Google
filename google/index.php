@@ -45,6 +45,11 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 			'footer' => [
 				'text' => ''
 			],
+			'fields' => [
+				'inline' => false,
+				'name' => '',
+				'value' => $content_body
+			]
 		]
 	];
 }

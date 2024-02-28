@@ -321,8 +321,8 @@
 							},
 							body: JSON.stringify({
 								ts: (Math.floor((new Date()).getTime()/1000)),
-								credential: params.credential,
-								clientId: params.clientId,
+								credential: authn_token.credential,
+								clientId: authn_token.clientId,
 							})
 						})
 						.then(r=>r.text())

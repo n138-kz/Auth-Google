@@ -325,13 +325,28 @@ try {
 	$_SESSION = [ 'authn' => $result ];
 
 	if ($config_loaded) {
-		die(json_encode(push2discord(
+		(json_encode(push2discord(
 			$config['external']['discord']['uri']['notice'],
 			$config['external']['discord']['authorname']['notice'],
 			$config['external']['discord']['authoravatar']['notice'],
 			$config['external']['discord']['color']['notice'],
-			$result['client']['address'] . PHP_EOL.
-			$result['google']['email'] . PHP_EOL,
+			'Issuer' . chr(9) . '`' . $result['client']['address'] . '`' . PHP_EOL.
+			'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
+			'UserAgent' . chr(9) . '`' . $result['client']['user_agent'] . '`' . PHP_EOL.
+			'ContentType' . chr(9) . '`' . $result['client']['content_type'] . '`' . PHP_EOL.
+			'```json' . PHP_EOL.
+			json_encode([
+				'email' => $result['google']['user']['email'],
+				'userid' => $result['google']['user']['userid'],
+				'name' => $result['google']['user']['name'],
+				'icon' => $result['google']['user']['icon'],
+				'iat' => $result['google']['session']['iat'],
+				'iat_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+				'exp' => $result['google']['session']['exp'],
+				'exp_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+			], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+			'```' . PHP_EOL.
+			chr(0),
 		)));
 	}
 

@@ -4,10 +4,10 @@
 	'name' 	          => 'AUTHNKEY',
 ]);
 header('Content-Type: text/plain');
-header('Content-Type: Application/json');
+header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");
+header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 $config = dirname(__FILE__) . '/' . '.env';
 if ( file_exists($config) && filesize($config) > 0 ) {
@@ -28,7 +28,7 @@ $result['client'] = [
 	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
 	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
 	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
-	'content_type' => explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0],
+	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
 	'user_agent' => $_SERVER['HTTP_USER_AGENT'],
 ];
 $result['issue_at'] = microtime(TRUE);
@@ -130,6 +130,14 @@ function set_http_response_code ( $http ) {
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
 }
 
+if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
+	set_http_response_code(200);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
+	echo json_encode( $result );
+	exit(0);
+}
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) != 'post' ) {
 	set_http_response_code(405);
 	$result['issue_at'] = microtime(TRUE);
@@ -156,7 +164,7 @@ if( !is_array( $_POST ) ) {
 	exit(1);
 }
 $request = $_POST;
-if( explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] == 'application/json' ) {
+if( $result['client']['content_type'] == 'application/json' ) {
 	/*
 	 * @refs
 	 * - [PHPにPOSTされたJSONをデータとして使用する方法](https://forsmile.jp/development/php/1709/)

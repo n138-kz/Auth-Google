@@ -312,9 +312,12 @@
 							sessionStorage.clear();
 							location.replace(location.href);
 						}
+						console.debug( 'switched uri:', authn_token.requestUri );
+						connection_rtt_endpoint = authn_token.requestUri;
 
 						fetch(connection_rtt_endpoint, {
 							method: 'POST',
+							mode: 'cors',
 							headers: {
 								'Content-Type': 'application/json',
 							},
@@ -344,6 +347,7 @@
 							console.error(e);
 							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
 								e.innerText = 'infinity';
+								e.style.color = 'var(--color-preset-red)';
 							});
 						});
 					}

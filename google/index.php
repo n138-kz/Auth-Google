@@ -64,12 +64,14 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	$curl_res=json_decode($curl_res, TRUE);
 	return $curl_res;
 }
-push2discord(
-	$config['external']['discord']['uri'],
-	$config['external']['discord']['color'],
-	$config['external']['discord']['author'],
-	'init',
-);
+if ($config_loaded) {
+	push2discord(
+		$config['external']['discord']['uri'],
+		$config['external']['discord']['color'],
+		$config['external']['discord']['author'],
+		'init',
+	);
+}
 
 $_SESSION = [];
 $request = [];

@@ -68,8 +68,8 @@ if ($config_loaded) {
 	push2discord(
 		$config['external']['discord']['uri']['notice'],
 		$config['external']['discord']['color']['notice'],
-		$config['external']['discord']['author']['notice'],
 		$config['external']['discord']['authorname']['notice'],
+		$config['external']['discord']['authoravatar']['notice'],
 		'init',
 	);
 }

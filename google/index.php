@@ -38,6 +38,10 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 			'embeds' => [],
 		]
 	];
+	$payload['payload_json']['embeds'] += [
+		[
+		]
+	];
 }
 push2discord(
 	$config['external']['discord']['uri'],

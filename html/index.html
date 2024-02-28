@@ -306,6 +306,13 @@
 					} else {
 						/* 認証トークンを持っている時 */
 						console.debug( 'Have a token' );
+						authn_token = authn_token.credential;
+						console.debug( 'authn_token.iat <:', parseInt(new Date().getTime()/1000) > authn_token.iat );
+						console.debug( 'authn_token.exp >:', parseInt(new Date().getTime()/1000) < authn_token.exp );
+						if( !(parseInt(new Date().getTime()/1000) > authn_token.iat) || !(parseInt(new Date().getTime()/1000) < authn_token.exp) ){
+							console.log( 'token expired' );
+						}
+
 						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{e.innerText='';});
 						fetch(connection_rtt_endpoint, {
 							method: 'POST',

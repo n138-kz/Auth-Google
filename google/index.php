@@ -52,6 +52,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 			]
 		]
 	];
+	$payload_encoded = json_encode($payload);
 }
 push2discord(
 	$config['external']['discord']['uri'],

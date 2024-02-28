@@ -309,7 +309,7 @@
 						authn_token = authn_token.credential;
 						console.debug( 'authn_token.iat <:', parseInt(new Date().getTime()/1000) > authn_token.iat );
 						console.debug( 'authn_token.exp >:', parseInt(new Date().getTime()/1000) < authn_token.exp );
-						if( !(parseInt(new Date().getTime()/1000) > authn_token.iat) || !(parseInt(new Date().getTime()/1000) < authn_token.exp) ){
+						if( !(parseInt(new Date().getTime()/1000) >= authn_token.iat) || !(parseInt(new Date().getTime()/1000) < authn_token.exp) ){
 							sessionStorage.clear();
 							location.replace(location.href);
 						}

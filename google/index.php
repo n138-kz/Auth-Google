@@ -24,6 +24,9 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 function is_empty($arg) {
 	return ( !isset($arg) || empty($arg) );
 }
+function push2discord($endpoint, $content_author='Webhooks', $content_author_avatar='https://www.google.com/s2/favicons?size=256&domain=https://discord.com/', $content_color=0, $content_body=''){
+);
+
 $_SESSION = [];
 $request = [];
 $result = [];

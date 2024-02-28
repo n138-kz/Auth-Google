@@ -31,25 +31,21 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 
 	$payload = [];
 	$payload += [
-		'payload_json' => [
-			'username' => $content_author,
-			'content' => null,
-			'avatar_url' => $content_author_avatar,
-			'embeds' => [],
-		]
+		'username' => $content_author,
+		'content' => null,
+		'avatar_url' => $content_author_avatar,
+		'embeds' => [],
 	];
-	$payload['payload_json']['embeds'] += [
-		[
-			'color' => $content_color,
-			'timestamp' => date('c'),
-			'footer' => [
-				'text' => ''
-			],
-			'fields' => [
-				'inline' => false,
-				'name' => '',
-				'value' => $content_body
-			]
+	$payload['embeds'] += [
+		'color' => $content_color,
+		'timestamp' => date('c'),
+		'footer' => [
+			'text' => ''
+		],
+		'fields' => [
+			'inline' => false,
+			'name' => '',
+			'value' => $content_body
 		]
 	];
 	$payload_encoded = json_encode($payload);

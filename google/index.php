@@ -40,7 +40,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 		'color' => $content_color,
 		'timestamp' => date('c'),
 		'footer' => [
-			'text' => ''
+			'text' => 'Auth-Google'
 		],
 		'fields' => [
 			'inline' => false,

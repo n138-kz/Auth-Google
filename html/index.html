@@ -533,7 +533,7 @@
 			fullscreen_wp.appendChild(loading_img);
 			document.querySelector('body').appendChild(fullscreen_wp);
 			params.requestUri = 'https://authn.n138.jp/google/';
-			console.log([params, JSON.stringify(params)]);
+			console.debug([params, JSON.stringify(params)]);
 
 			try {
 				let xhr = new XMLHttpRequest();

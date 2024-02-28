@@ -273,13 +273,14 @@
 					let process_1 = new Date().getTime();
 					let process_2 = new Date().getTime();
 
+					let connection_rtt_endpoint = location.href;
 					let authn_token = pickout_token();
 					if (false) {
 					} else if (!authn_token) {
 						/* 認証トークンを持っていない時 */
 						console.debug( 'No have token' );
 						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{e.innerText='';});
-						fetch(location.href, { method: 'GET', })
+						fetch(connection_rtt_endpoint, { method: 'GET', })
 						.then(r=>r.text())
 						.then(r=>{
 							process_2 = new Date().getTime();

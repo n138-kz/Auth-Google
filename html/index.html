@@ -164,6 +164,8 @@
 			})
 			.catch(e=>{
 				console.debug(e);
+				document.querySelectorAll('#github_deploy a').item(0).innerText = 'Github';
+				document.querySelectorAll('#github_deploy a').item(0).href = 'https://github.com/n138-kz/Auth-Google';
 			});
 		}
 		window.addEventListener('DOMContentLoaded', (e)=>{

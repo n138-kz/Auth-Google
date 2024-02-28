@@ -43,9 +43,11 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 			'text' => 'Auth-Google'
 		],
 		'fields' => [
-			'inline' => false,
-			'name' => '',
-			'value' => $content_body
+			[
+				'inline' => false,
+				'name' => '',
+				'value' => $content_body
+			]
 		]
 	]);
 	$payload_encoded = json_encode($payload);

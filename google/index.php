@@ -40,6 +40,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	];
 	$payload['payload_json']['embeds'] += [
 		[
+			'color' => $content_color,
 		]
 	];
 }

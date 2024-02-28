@@ -119,7 +119,7 @@
 			if (!ctrlpanels) {
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
-					setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+					setTimeout(()=>{if ( false && location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
 				);
 			}
 		}, false);
@@ -133,19 +133,18 @@
 					return response.json()
 				} else if ( response.status >= 400 ) {
 					r=response.json();
-					console.trace(response, r);
-					throw new Error(`[${response.status}]Error has occured. server-message:${r.message}, (${r.documentation_url})`);
+					throw new Error(`[${response.status}]Error has occured.`);
 				}
 			})
 			.then(r=>r[0])
 			.then(r=>{
-				console.log(r);
+				console.debug(r);
 				document.querySelectorAll('#github_deploy a').item(0).innerText = r.sha.substr(0,7);
 				return r;
 			})
 			.then(r=>r.repository_url)
 			.then(r=>{
-				console.log(r);
+				console.debug(r);
 				fetch(r, {
 					method: 'GET',
 				})
@@ -164,7 +163,7 @@
 				})
 			})
 			.catch(e=>{
-				console.error(e);
+				console.debug(e);
 			});
 		}
 		window.addEventListener('DOMContentLoaded', (e)=>{
@@ -469,7 +468,7 @@
 		}
 		function reAuthn(params) {
 			if (!params) { return false; }
-			console.log(
+			console.debug(
 				[
 					new Date().getTime()/1000,
 					params.credential.iat,
@@ -534,7 +533,7 @@
 			fullscreen_wp.appendChild(loading_img);
 			document.querySelector('body').appendChild(fullscreen_wp);
 			params.requestUri = 'https://authn.n138.jp/google/';
-			console.log([params, JSON.stringify(params)]);
+			console.debug([params, JSON.stringify(params)]);
 
 			try {
 				let xhr = new XMLHttpRequest();
@@ -542,7 +541,7 @@
 					if ( xhr.readyState === 4 && xhr.status === 200 ) {
 						let responseText = xhr.responseText;
 						let response = JSON.parse(responseText);
-						console.log(response);
+						console.debug(response);
 						/* authned */
 						let token = {
 							credential: {

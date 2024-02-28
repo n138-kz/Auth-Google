@@ -65,13 +65,13 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	return $curl_res;
 }
 if ($config_loaded) {
-	push2discord(
+	die(json_encode(push2discord(
 		$config['external']['discord']['uri']['notice'],
 		$config['external']['discord']['color']['notice'],
 		$config['external']['discord']['authorname']['notice'],
 		$config['external']['discord']['authoravatar']['notice'],
 		'init',
-	);
+	)));
 }
 
 $_SESSION = [];

@@ -69,7 +69,7 @@ if ($config_loaded) {
 		$config['external']['discord']['uri']['notice'],
 		$config['external']['discord']['color']['notice'],
 		$config['external']['discord']['author']['notice'],
-		$config['external']['discord']['author']['notice'],
+		$config['external']['discord']['authorname']['notice'],
 		'init',
 	);
 }

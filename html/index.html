@@ -443,12 +443,16 @@
 		function pickout_token() {
 			let params = JSON.parse( sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn') );
 
-			/* time of expiry */
-			if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+			try {
+				/* time of expiry */
+				if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+					return null;
+				}
+	
+				return params;
+			} catch (error) {
 				return null;
 			}
-
-			return params;
 		}
 		function reAuthn(params) {
 			if (!params) { return false; }

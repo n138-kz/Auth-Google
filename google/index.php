@@ -10,11 +10,14 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 $config = dirname(__FILE__) . '/' . '.env';
+$config_loaded = false;
 if ( file_exists($config) && filesize($config) > 0 ) {
 	try {
 		$config = json_decode(file_get_contents($config), true);
+		$config_loaded = true;
 	} catch (\Exception $e) {
 		unset($config);
+		$config_loaded = false;
 	}
 }
 

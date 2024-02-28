@@ -38,6 +38,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 			'embeds' => [],
 		]
 	];
+}
 );
 
 $_SESSION = [];

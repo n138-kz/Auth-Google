@@ -36,7 +36,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 		'avatar_url' => $content_author_avatar,
 		'embeds' => [],
 	];
-	$payload['embeds'] += [
+	array_push($payload['embeds'], [
 		'color' => $content_color,
 		'timestamp' => date('c'),
 		'footer' => [
@@ -47,7 +47,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 			'name' => '',
 			'value' => $content_body
 		]
-	];
+	]);
 	$payload_encoded = json_encode($payload);
 	$curl_req = curl_init($endpoint);
 	curl_setopt($curl_req,CURLOPT_POST, TRUE);

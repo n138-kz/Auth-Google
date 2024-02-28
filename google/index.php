@@ -329,7 +329,8 @@ try {
 			$config['external']['discord']['authorname']['notice'],
 			$config['external']['discord']['authoravatar']['notice'],
 			$config['external']['discord']['color']['notice'],
-			$result['client']['address'],
+			$result['client']['address'] . PHP_EOL.
+			$result['google']['email'] . PHP_EOL,
 		)));
 	}
 

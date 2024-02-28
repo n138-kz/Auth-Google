@@ -133,7 +133,7 @@
 					return response.json()
 				} else if ( response.status >= 400 ) {
 					r=response.json();
-					throw new Error(`[${response.status}]Error has occured. server-message:${r.message}, (${r.documentation_url})`);
+					throw new Error(`[${response.status}]Error has occured.`);
 				}
 			})
 			.then(r=>r[0])

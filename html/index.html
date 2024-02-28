@@ -314,6 +314,7 @@
 						}
 						console.debug( 'switched uri:', authn_token.requestUri );
 						connection_rtt_endpoint = authn_token.requestUri;
+						connection_rtt_endpoint = connection_rtt_endpoint.replace('authn','authz');
 
 						fetch(connection_rtt_endpoint, {
 							method: 'POST',

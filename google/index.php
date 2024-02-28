@@ -7,7 +7,7 @@ header('Content-Type: text/plain');
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");
-header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, Access-Control-Allow-Headers, X-Requested-With");
 
 $config = dirname(__FILE__) . '/' . '.env';
 if ( file_exists($config) && filesize($config) > 0 ) {

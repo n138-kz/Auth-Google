@@ -119,7 +119,7 @@
 			if (!ctrlpanels) {
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
-					setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+					setTimeout(()=>{if ( false && location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
 				);
 			}
 		}, false);

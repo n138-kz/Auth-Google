@@ -130,7 +130,7 @@ function set_http_response_code ( $http ) {
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
 }
 
-if( strtolower( $_SERVER['REQUEST_METHOD'] ) != 'post' ) {
+if( !( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' || strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) ) {
 	set_http_response_code(405);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;

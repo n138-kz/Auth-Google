@@ -3,6 +3,7 @@
 	'read_and_close'  => true,
 	'name' 	          => 'AUTHNKEY',
 ]);
+date_default_timezone_set('Asia/Tokyo');
 header('Content-Type: text/plain');
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
@@ -10,12 +11,58 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 $config = dirname(__FILE__) . '/' . '.env';
+$config_loaded = false;
 if ( file_exists($config) && filesize($config) > 0 ) {
 	try {
 		$config = json_decode(file_get_contents($config), true);
+		$config_loaded = true;
 	} catch (\Exception $e) {
 		unset($config);
+		$config_loaded = false;
 	}
+}
+
+function is_empty($arg) {
+	return ( !isset($arg) || empty($arg) );
+}
+function push2discord($endpoint, $content_author='Webhooks', $content_author_avatar='https://www.google.com/s2/favicons?size=256&domain=https://discord.com/', $content_color=0, $content_body=''){
+	if ( is_empty( $endpoint ) ) { return false; }
+	$content_color = is_numeric($content_color) ? $content_color : 0;
+	$content_color = $content_color > 0 ? $content_color : 0;
+
+	$payload = [];
+	$payload += [
+		'username' => $content_author,
+		'content' => chr(0),
+		'avatar_url' => $content_author_avatar,
+		'embeds' => [],
+	];
+	array_push($payload['embeds'], [
+		'color' => $content_color,
+		'timestamp' => date('c'),
+		'footer' => [
+			'text' => 'Auth-Google'
+		],
+		'fields' => [
+			[
+				'inline' => false,
+				'name' => '',
+				'value' => $content_body
+			]
+		]
+	]);
+	$payload_encoded = json_encode($payload);
+	$curl_req = curl_init($endpoint);
+	curl_setopt($curl_req,CURLOPT_POST, TRUE);
+	curl_setopt($curl_req,CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+	curl_setopt($curl_req,CURLOPT_POSTFIELDS, $payload_encoded);
+	curl_setopt($curl_req,CURLOPT_SSL_VERIFYPEER, TRUE);
+	curl_setopt($curl_req,CURLOPT_SSL_VERIFYHOST, TRUE);
+	curl_setopt($curl_req,CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($curl_req,CURLOPT_FOLLOWLOCATION, TRUE);
+	$curl_res=curl_exec($curl_req);
+	$curl_res=json_decode($curl_res, TRUE);
+	return $curl_res;
 }
 
 $_SESSION = [];
@@ -276,6 +323,32 @@ try {
 	$result['last_checkpoint'] = __LINE__;
 
 	$_SESSION = [ 'authn' => $result ];
+
+	if ($config_loaded) {
+		(json_encode(push2discord(
+			$config['external']['discord']['uri']['notice'],
+			$config['external']['discord']['authorname']['notice'],
+			$config['external']['discord']['authoravatar']['notice'],
+			$config['external']['discord']['color']['notice'],
+			'Issuer' . chr(9) . '`' . $result['client']['address'] . '`' . PHP_EOL.
+			'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
+			'UserAgent' . chr(9) . '`' . $result['client']['user_agent'] . '`' . PHP_EOL.
+			'ContentType' . chr(9) . '`' . $result['client']['content_type'] . '`' . PHP_EOL.
+			'```json' . PHP_EOL.
+			json_encode([
+				'email' => $result['google']['user']['email'],
+				'userid' => $result['google']['user']['userid'],
+				'name' => $result['google']['user']['name'],
+				'icon' => $result['google']['user']['icon'],
+				'iat' => $result['google']['session']['iat'],
+				'iat_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+				'exp' => $result['google']['session']['exp'],
+				'exp_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+			], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+			'```' . PHP_EOL.
+			chr(0),
+		)));
+	}
 
 	echo json_encode( $result );
 	exit(0);

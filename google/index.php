@@ -25,6 +25,7 @@ function is_empty($arg) {
 	return ( !isset($arg) || empty($arg) );
 }
 function push2discord($endpoint, $content_author='Webhooks', $content_author_avatar='https://www.google.com/s2/favicons?size=256&domain=https://discord.com/', $content_color=0, $content_body=''){
+	if ( is_empty( $endpoint ) ) { return false; }
 );
 
 $_SESSION = [];

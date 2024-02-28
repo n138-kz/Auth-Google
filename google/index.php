@@ -21,6 +21,9 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 	}
 }
 
+function is_empty($arg) {
+	return ( !isset($arg) || empty($arg) );
+}
 $_SESSION = [];
 $request = [];
 $result = [];

@@ -32,7 +32,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	$payload = [];
 	$payload += [
 		'username' => $content_author,
-		'content' => null,
+		'content' => chr(0),
 		'avatar_url' => $content_author_avatar,
 		'embeds' => [],
 	];

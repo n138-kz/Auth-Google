@@ -277,6 +277,7 @@
 					if (false) {
 					} else if (!authn_token) {
 						/* 認証トークンを持っていない時 */
+						console.debug( 'No have token' );
 						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{e.innerText='';});
 						fetch(location.href, { method: 'GET', })
 						.then(r=>r.text())
@@ -303,6 +304,7 @@
 						});
 					} else {
 						/* 認証トークンを持っている時 */
+						console.debug( 'Have a token' );
 						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{e.innerText='';});
 						fetch(connection_rtt_endpoint, {
 							method: 'POST',

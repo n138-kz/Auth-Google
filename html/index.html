@@ -347,6 +347,7 @@
 							console.error(e);
 							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
 								e.innerText = 'infinity';
+								e.style.color = 'var(--color-preset-red)';
 							});
 						});
 					}

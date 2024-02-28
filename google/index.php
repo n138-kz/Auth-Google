@@ -67,8 +67,9 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 if ($config_loaded) {
 	push2discord(
 		$config['external']['discord']['uri']['notice'],
-		$config['external']['discord']['color'],
-		$config['external']['discord']['author'],
+		$config['external']['discord']['color']['notice'],
+		$config['external']['discord']['author']['notice'],
+		$config['external']['discord']['author']['notice'],
 		'init',
 	);
 }

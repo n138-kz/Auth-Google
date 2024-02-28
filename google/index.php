@@ -29,6 +29,15 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	$content_color = is_numeric($content_color) ? $content_color : 0;
 	$content_color = $content_color > 0 ? $content_color : 0;
 
+	$payload = [];
+	$payload += [
+		'payload_json' => [
+			'username' => $content_author,
+			'content' => null,
+			'avatar_url' => $content_author_avatar,
+			'embeds' => [],
+		]
+	];
 );
 
 $_SESSION = [];

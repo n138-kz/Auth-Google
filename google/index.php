@@ -28,7 +28,7 @@ $result['client'] = [
 	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
 	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
 	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
-	'content_type' => explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0],
+	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
 	'user_agent' => $_SERVER['HTTP_USER_AGENT'],
 ];
 $result['issue_at'] = microtime(TRUE);

@@ -144,7 +144,7 @@
 			})
 			.then(r=>r.repository_url)
 			.then(r=>{
-				console.log(r);
+				console.debug(r);
 				fetch(r, {
 					method: 'GET',
 				})

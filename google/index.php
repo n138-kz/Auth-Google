@@ -63,15 +63,6 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	$curl_res=json_decode($curl_res, TRUE);
 	return $curl_res;
 }
-if ($config_loaded) {
-	die(json_encode(push2discord(
-		$config['external']['discord']['uri']['notice'],
-		$config['external']['discord']['authorname']['notice'],
-		$config['external']['discord']['authoravatar']['notice'],
-		$config['external']['discord']['color']['notice'],
-		'init',
-	)));
-}
 
 $_SESSION = [];
 $request = [];
@@ -331,6 +322,16 @@ try {
 	$result['last_checkpoint'] = __LINE__;
 
 	$_SESSION = [ 'authn' => $result ];
+
+	if ($config_loaded) {
+		die(json_encode(push2discord(
+			$config['external']['discord']['uri']['notice'],
+			$config['external']['discord']['authorname']['notice'],
+			$config['external']['discord']['authoravatar']['notice'],
+			$config['external']['discord']['color']['notice'],
+			$result['client']['address'],
+		)));
+	}
 
 	echo json_encode( $result );
 	exit(0);

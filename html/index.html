@@ -119,7 +119,7 @@
 			if (!ctrlpanels) {
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
-					setTimeout(()=>{if (location.host != 'n138-kz.github.io') {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+					setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
 				);
 			}
 		}, false);
@@ -272,29 +272,81 @@
 				setInterval(()=>{
 					let process_1 = new Date().getTime();
 					let process_2 = new Date().getTime();
-					fetch(location.href, { method: 'GET', })
-					.then(r=>r.text())
-					.then(r=>{
-						process_2 = new Date().getTime();
-						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-							let rtt = process_2-process_1;
-							e.innerText = rtt+'ms';
-							if ( false ) {
-							} else if ( rtt < 250 ) {
-								e.style.color = 'var(--color-preset-green)';
-							} else if ( rtt < 500 ) {
-								e.style.color = 'var(--color-preset-yellow)';
-							} else {
-								e.style.color = 'var(--color-preset-red)';
-							}
+
+					let connection_rtt_endpoint = location.href;
+					let authn_token = pickout_token();
+					if (false) {
+					} else if (!authn_token) {
+						/* 認証トークンを持っていない時 */
+						console.debug( 'No have token' );
+						fetch(connection_rtt_endpoint, { method: 'GET', })
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+							});
 						});
-					})
-					.catch(e=>{
-						console.error(e);
-						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-							e.innerText = 'infinity';
+					} else {
+						/* 認証トークンを持っている時 */
+						console.debug( 'Have a token' );
+						authn_token = authn_token.credential;
+						console.debug( 'authn_token.iat <:', parseInt(new Date().getTime()/1000) > authn_token.iat );
+						console.debug( 'authn_token.exp >:', parseInt(new Date().getTime()/1000) < authn_token.exp );
+						if( !(parseInt(new Date().getTime()/1000) > authn_token.iat) || !(parseInt(new Date().getTime()/1000) < authn_token.exp) ){
+							sessionStorage.clear();
+							location.replace(location.href);
+						}
+
+						fetch(connection_rtt_endpoint, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								ts: (Math.floor((new Date()).getTime()/1000)),
+								credential: authn_token.credential,
+								clientId: authn_token.clientId,
+							})
+						})
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+							});
 						});
-					});
+					}
 				}, 1000)
 			);
 		}, false);
@@ -400,12 +452,16 @@
 		function pickout_token() {
 			let params = JSON.parse( sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn') );
 
-			/* time of expiry */
-			if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+			try {
+				/* time of expiry */
+				if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+					return null;
+				}
+	
+				return params;
+			} catch (error) {
 				return null;
 			}
-
-			return params;
 		}
 		function reAuthn(params) {
 			if (!params) { return false; }

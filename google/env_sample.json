@@ -1,42 +1,42 @@
 {
-    "external": {
-        "discord": {
-            "activate": {
-                "notice": false,
-                "alert": false
-            },
-            "uri": {
-                "notice": "https://discord.com/api/webhooks/{server-id}/{channel-id}",
-                "alert": "https://discord.com/api/webhooks/{server-id}/{channel-id}"
-            },
-            "color": {
-                "notice": 32768,
-                "alert": 14423100
-            },
-            "authorname": {
-                "notice": "notice.authn.bot.n138.nws",
-                "alert": "alert.authn.bot.n138.nws"
-            },
-            "authoravatar": {
-                "notice": "https://www.google.com/s2/favicons?size=256&domain=https://discord.com/",
-                "alert": "https://www.google.com/s2/favicons?size=256&domain=https://discord.com/"
-            }
-        }
-    },
-    "internal": {
-        "databases": {
-            "activate": true,
-            "primary": {
-                "host": "172.16.0.1",
-                "port": 5432
-            },
-            "secondary": [
+	"external": {
+		"discord": {
+			"activate": {
+				"notice": false,
+				"alert": false
+			},
+			"uri": {
+				"notice": "https://discord.com/api/webhooks/{server-id}/{channel-id}",
+				"alert": "https://discord.com/api/webhooks/{server-id}/{channel-id}"
+			},
+			"color": {
+				"notice": 32768,
+				"alert": 14423100
+			},
+			"authorname": {
+				"notice": "notice.authn.bot.n138.nws",
+				"alert": "alert.authn.bot.n138.nws"
+			},
+			"authoravatar": {
+				"notice": "https://www.google.com/s2/favicons?size=256&domain=https://discord.com/",
+				"alert": "https://www.google.com/s2/favicons?size=256&domain=https://discord.com/"
+			}
+		}
+	},
+	"internal": {
+		"databases": {
+			"activate": true,
+			"primary": {
+				"host": "172.16.0.1",
+				"port": 5432
+			},
+			"secondary": [
 				{ "host": "", "port": 5432 }
-            ],
-            "tables": {
-                "public": {
-                }
-            }
-        }
-    }
+			],
+			"tables": {
+				"public": {
+				}
+			}
+		}
+	}
 }

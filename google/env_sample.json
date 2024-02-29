@@ -23,4 +23,16 @@
             }
         }
     },
+    "internal": {
+        "databases": {
+            "activate": true,
+            "primary": {
+                "host": "172.16.0.1",
+                "port": 5432
+            },
+            "secondary": [
+				{ "host": "", "port": 5432 }
+            ]
+        }
+    }
 }

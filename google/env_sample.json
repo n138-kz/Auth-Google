@@ -71,7 +71,10 @@
 							"column": {
 								"userid": [ "integer", "not null" ],
 								"useragent": [ "text", "not null" ],
-								"address": [ "text", "not null" ]
+								"address": [ "text", "not null" ],
+								"iat": [ "integer", "not null" ],
+								"exp": [ "integer", "not null" ],
+								"token": [ "text", "not null" ]
 							},
 							"indexes": []
 						}

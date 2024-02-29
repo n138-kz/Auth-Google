@@ -69,6 +69,9 @@
 					"authgoogle_sessions": [
 						{
 							"column": {
+								"userid": [ "integer", "not null" ],
+								"useragent": [ "text", "not null" ],
+								"address": [ "text", "not null" ]
 							},
 							"indexes": []
 						}

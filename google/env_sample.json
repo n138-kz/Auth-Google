@@ -53,6 +53,13 @@
 							"indexes": []
 						}
 					],
+					"authgoogle_authnlog": [
+						{
+							"column": {
+							},
+							"indexes": []
+						}
+					],
 				}
 			}
 		}

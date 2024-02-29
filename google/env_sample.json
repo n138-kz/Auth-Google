@@ -32,7 +32,9 @@
             },
             "secondary": [
 				{ "host": "", "port": 5432 }
-            ]
+            ],
+            "tables": {
+            }
         }
     }
 }

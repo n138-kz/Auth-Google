@@ -44,10 +44,10 @@
 							"icon": [ "text", "not null" ],
 							"regat": [ "float", "not null" ],
 							"regip": [ "text", "not null" ],
-								"reguseragent": [ "text", "not null" ],
+                            "reguseragent": [ "text", "not null" ],
 							"lastat": [ "float", "not null" ],
 							"lastip": [ "text", "not null" ],
-								"lastuseragent": [ "text", "not null" ],
+                            "lastuseragent": [ "text", "not null" ],
 							"activate": [ "boolean", "not null", "default true" ]
 							},
 							"indexes": []

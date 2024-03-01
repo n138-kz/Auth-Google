@@ -353,7 +353,7 @@ try {
 								$config['external']['discord']['authorname']['notice'],
 								$config['external']['discord']['authoravatar']['notice'],
 								$config['external']['discord']['color']['notice'],
-								'Error:' . PHP_EOL.
+								'SQL:' . PHP_EOL.
 								'```sql' . PHP_EOL.
 								$sql . PHP_EOL.
 								'```' . PHP_EOL.

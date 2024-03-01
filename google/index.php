@@ -335,9 +335,13 @@ try {
 				'password' => $config['internal']['databases']['primary']['password'],
 			];
 			$pdo = new \PDO(
-				''.$dsn['scheme'].':'.'host='.$dsn['host'].';'.'port='.$dsn['port'].';'.'dbname='.$dsn['dbname'].';'.'',
-				''.$dsn['username'].'',
-				''.$dsn['password'].''
+				''.$dsn['scheme'].':'.
+				'host='.$dsn['host'].';'.
+				'port='.$dsn['port'].';'.
+				'dbname='.$dsn['dbname'].';'.
+				'user='.$dsn['username'].';'.
+				'password='.$dsn['password'].''.
+				''
 			);
 			foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
 				foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {

@@ -27,11 +27,12 @@
 		"databases": {
 			"activate": true,
 			"primary": {
+				"activate": true,
 				"host": "172.16.0.1",
 				"port": 5432
 			},
 			"secondary": [
-				{ "host": "", "port": 5432 }
+				{ "activate": false, "host": "", "port": 5432 }
 			],
 			"tables": {
 				"public": {

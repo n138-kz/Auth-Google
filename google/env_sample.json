@@ -72,8 +72,8 @@
 								"userid": [ "integer", "not null" ],
 								"useragent": [ "text", "not null" ],
 								"address": [ "text", "not null" ],
-								"exp": [ "integer", "not null" ],
 								"iat": [ "integer", "not null", "default 0" ],
+								"exp": [ "integer", "not null", "default 0" ],
 								"token": [ "text", "not null" ]
 							},
 							"indexes": []

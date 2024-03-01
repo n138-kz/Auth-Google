@@ -44,6 +44,8 @@ function set_http_response_code ( $http ) {
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
 }
 
+define('CLIENT_ID', $_SESSION['clientId']);
+define('CLIENT_TOKEN', $_SESSION['credential']);
 
 try {
 	require_once '../../vendor/autoload.php';

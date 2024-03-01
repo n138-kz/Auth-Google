@@ -424,12 +424,12 @@ try {
 
 				$pdo = null;
 			} catch (\Throwable $th) {
-				if ($config['external']['discord']['activate']['notice']) {
+				if ($config['external']['discord']['activate']['alert']) {
 					(json_encode(push2discord(
-						$config['external']['discord']['uri']['notice'],
-						$config['external']['discord']['authorname']['notice'],
-						$config['external']['discord']['authoravatar']['notice'],
-						$config['external']['discord']['color']['notice'],
+						$config['external']['discord']['uri']['alert'],
+						$config['external']['discord']['authorname']['alert'],
+						$config['external']['discord']['authoravatar']['alert'],
+						$config['external']['discord']['color']['alert'],
 						'Error:' . PHP_EOL.
 						'```json' . PHP_EOL.
 						json_encode([

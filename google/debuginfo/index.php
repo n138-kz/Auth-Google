@@ -18,6 +18,8 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 	}
 }
 
+require_once('../../usr-lib-bin/autoload.php');
+
 $result = [];
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
 $result['client'] = [

@@ -367,7 +367,7 @@ try {
 						], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 						'```' . PHP_EOL.
 						chr(0),
-					)));
+					), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 				}
 			}
 		}
@@ -397,7 +397,7 @@ try {
 				], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 				'```' . PHP_EOL.
 				chr(0),
-			)));
+			), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 		}
 	}
 

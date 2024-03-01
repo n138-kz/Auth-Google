@@ -72,6 +72,7 @@ try {
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
 
+	phpinfo();
 	exit(0);
 } catch (\Exception $th) {
 	set_http_response_code(500);

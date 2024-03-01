@@ -376,25 +376,21 @@ try {
 					'password='.$dsn['password'].''.
 					''
 				);
+			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['notice']) {
 					(json_encode(push2discord(
 						$config['external']['discord']['uri']['notice'],
 						$config['external']['discord']['authorname']['notice'],
 						$config['external']['discord']['authoravatar']['notice'],
 						$config['external']['discord']['color']['notice'],
-						'Discord messages' . PHP_EOL.
+						'Error:' . PHP_EOL.
 						'```json' . PHP_EOL.
-						(json_encode(push2discord(
-							$config['external']['discord']['uri']['notice'],
-							$config['external']['discord']['authorname']['notice'],
-							$config['external']['discord']['authoravatar']['notice'],
-							$config['external']['discord']['color']['notice'],
-							'Issuer' . chr(9) . '`' . $result['client']['address'] . '`' . PHP_EOL.
-							'```text' . PHP_EOL.
-							var_export($pdo, true) . PHP_EOL.
-							'```' . PHP_EOL.
-							chr(0),
-						))).
+						json_encode([
+							'exception' => [
+								'text' => $th->getMessage(),
+								'code' => $th->getCode(),
+							]
+						], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 						'```' . PHP_EOL.
 						chr(0),
 					)));
@@ -405,23 +401,6 @@ try {
 					}	
 				}
 				$pdo = null;
-			} catch (\Throwable $th) {
-				(json_encode(push2discord(
-					$config['external']['discord']['uri']['notice'],
-					$config['external']['discord']['authorname']['notice'],
-					$config['external']['discord']['authoravatar']['notice'],
-					$config['external']['discord']['color']['notice'],
-					'Error:' . PHP_EOL.
-					'```json' . PHP_EOL.
-					json_encode([
-						'exception' => [
-							'text' => $th->getMessage(),
-							'code' => $th->getCode(),
-						]
-					], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
-					'```' . PHP_EOL.
-					chr(0),
-				)));
 			}
 		}
 	}

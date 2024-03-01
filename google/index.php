@@ -399,6 +399,10 @@ try {
 								$config['external']['discord']['authoravatar']['notice'],
 								$config['external']['discord']['color']['notice'],
 								'New user:' . PHP_EOL.
+								'Issuer'      . chr(9) . '`' . $result['client']['address']       . '`' . PHP_EOL.
+								'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
+								'UserAgent'   . chr(9) . '`' . $result['client']['user_agent']    . '`' . PHP_EOL.
+								'ContentType' . chr(9) . '`' . $result['client']['content_type']  . '`' . PHP_EOL.
 								'```json' . PHP_EOL.
 								json_encode([
 									'client_address' => $result['client']['address'],

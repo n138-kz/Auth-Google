@@ -370,7 +370,7 @@ try {
 					$pdo->commit();
 				}
 
-				$sql = 'SELECT COUNT(id) FROM public.authgoogle_userinfo WHERE id=?';
+				$sql = 'SELECT COUNT(id) AS COUNT FROM public.authgoogle_userinfo WHERE id=?';
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_result = $pdo_prepare->execute([ $result['google']['user']['userid'] ]);
 				if ($pdo_result === 0) {

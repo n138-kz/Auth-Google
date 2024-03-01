@@ -18,8 +18,6 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 	}
 }
 
-define('CLIENT_ID', null);
-define('CLIENT_TOKEN', null);
 
 try {
 	require_once '../../vendor/autoload.php';

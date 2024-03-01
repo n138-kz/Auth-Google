@@ -29,10 +29,14 @@
 			"primary": {
 				"activate": true,
 				"host": "172.16.0.1",
-				"port": 5432
+				"port": 5432,
+				"scheme": "pgsql",
+				"dbname": "webapp",
+				"username": "postgres",
+				"password": "passw0rd"
 			},
 			"secondary": [
-				{ "activate": false, "host": "", "port": 5432 }
+				{ "activate": false, "host": "", "port": 5432, "scheme": "pgsql", "dbname": "webapp", "username": "postgres", "password": "passw0rd" }
 			],
 			"tables": {
 				"public": {

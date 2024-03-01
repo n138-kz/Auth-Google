@@ -463,14 +463,16 @@ try {
 				'ContentType' . chr(9) . '`' . $result['client']['content_type']  . '`' . PHP_EOL.
 				'```json' . PHP_EOL.
 				json_encode([
+					'client_address' => $result['client']['address'],
+					'authzed_user' => $result['google']['user']['email'],
+					'useragent' => $result['client']['user_agent'],
+					'content_type' => $result['client']['content_type'],
 					'email' => $result['google']['user']['email'],
 					'userid' => $result['google']['user']['userid'],
 					'name' => $result['google']['user']['name'],
 					'icon' => $result['google']['user']['icon'],
-					'iat' => $result['google']['session']['iat'],
-					'iat_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
-					'exp' => $result['google']['session']['exp'],
-					'exp_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+					'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+					'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
 				], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 				'```' . PHP_EOL.
 				chr(0),

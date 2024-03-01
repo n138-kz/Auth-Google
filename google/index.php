@@ -348,6 +348,7 @@ try {
 				$pdo->setAttribute(PDO::PDO::ATTR_TIMEOUT, 10);
 
 				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
+					$pdo->beginTransaction();
 					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
 						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '';
 						$sql .= '(';
@@ -364,6 +365,7 @@ try {
 						$sql = str_replace(',)', ')', $sql);
 						$pdo->query($sql);
 					}
+					$pdo->commit();
 				}
 				$pdo = null;
 			} catch (\Throwable $th) {

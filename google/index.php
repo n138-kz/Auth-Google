@@ -381,7 +381,7 @@ try {
 						$config['external']['discord']['color']['notice'],
 						'Issuer' . chr(9) . '`' . $result['client']['address'] . '`' . PHP_EOL.
 						'```text' . PHP_EOL.
-						var_export($pdo) . PHP_EOL.
+						var_export($pdo, true) . PHP_EOL.
 						'```' . PHP_EOL.
 						chr(0),
 					))).

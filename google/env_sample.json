@@ -33,7 +33,7 @@
 				"scheme": "pgsql",
 				"dbname": "webapp",
 				"username": "postgres",
-				"password": "passw0rd"
+				"password": "postgres"
 			},
 			"secondary": [
 				{

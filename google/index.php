@@ -345,7 +345,7 @@ try {
 					''
 				);
 				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$pdo->setAttribute(PDO::PDO::ATTR_TIMEOUT, 10);
+				$pdo->setAttribute(PDO::ATTR_TIMEOUT, 10);
 
 				/* ADD TABLE IF NOT EXISTS */
 				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {

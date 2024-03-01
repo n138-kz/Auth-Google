@@ -344,6 +344,9 @@ try {
 					'password='.$dsn['password'].''.
 					''
 				);
+				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$pdo->setAttribute(PDO::PDO::ATTR_TIMEOUT, 10);
+
 				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
 					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
 						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '';

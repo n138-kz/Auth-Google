@@ -325,6 +325,7 @@ try {
 	$_SESSION = [ 'authn' => $result ];
 
 	if ($config_loaded) {
+		if ($config['external']['discord']['activate']['notice']) {}
 		(json_encode(push2discord(
 			$config['external']['discord']['uri']['notice'],
 			$config['external']['discord']['authorname']['notice'],

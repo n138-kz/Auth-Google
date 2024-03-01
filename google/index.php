@@ -399,6 +399,8 @@ try {
 							'exception' => [
 								'text' => $th->getMessage(),
 								'code' => $th->getCode(),
+								'line' => $th->getLine(),
+								'trace' => $th->getTraceAsString(),
 							]
 						], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 						'```' . PHP_EOL.

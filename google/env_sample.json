@@ -50,7 +50,7 @@
 				"public": {
 					"authgoogle_userinfo": {
 						"column": {
-							"id": [ "integer", "not null", "primary key" ],
+							"id": [ "bigint", "not null", "primary key" ],
 							"name": [ "text", "not null" ],
 							"email": [ "text", "not null" ],
 							"icon": [ "text", "not null" ],
@@ -67,7 +67,7 @@
 					"authgoogle_authnlog": {
 						"column": {
 							"timestamp": [ "integer", "not null", "primary key" ],
-							"userid": [ "integer", "not null" ],
+							"userid": [ "bigint", "not null" ],
 							"address": [ "text", "not null" ],
 							"referer": [ "text", "not null" ],
 							"useragent": [ "text", "not null" ],
@@ -77,7 +77,7 @@
 					},
 					"authgoogle_sessions": {
 						"column": {
-							"userid": [ "integer", "not null" ],
+							"userid": [ "bigint", "not null" ],
 							"useragent": [ "text", "not null" ],
 							"address": [ "text", "not null" ],
 							"iat": [ "integer", "not null", "default 0" ],

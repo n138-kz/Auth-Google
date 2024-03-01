@@ -411,9 +411,14 @@ try {
 					$config['external']['discord']['authorname']['notice'],
 					$config['external']['discord']['authoravatar']['notice'],
 					$config['external']['discord']['color']['notice'],
-					'Discord messages' . PHP_EOL.
+					'Error:' . PHP_EOL.
 					'```json' . PHP_EOL.
-					$th.
+					json_encode([
+						'exception' => [
+							'text' => $th->getMessage(),
+							'code' => $th->getCode(),
+						]
+					], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 					'```' . PHP_EOL.
 					chr(0),
 				)));

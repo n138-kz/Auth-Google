@@ -368,6 +368,54 @@ try {
 					}
 					$pdo->commit();
 				}
+
+				$sql = 'SELECT COUNT(id) FROM public.authgoogle_userinfo WHERE id=?';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_result = $pdo_prepare->execute([ $result['google']['user']['userid'] ]);
+				if ($pdo_result === 0) {
+					$sql = 'INSERT INTO public.authgoogle_userinfo (';
+					$sql .= 'id, name, email, icon, regat, regip, reguseragent, lastat, lastip, lastuseragent'.
+					$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_result = $pdo_prepare->execute([
+						$result['google']['user']['userid'],
+						$result['google']['user']['name'],
+						$result['google']['user']['email'],
+						$result['google']['user']['icon'],
+						time(),
+						$result['client']['address'],
+						$result['client']['user_agent'],
+						time(),
+						$result['client']['address'],
+						$result['client']['user_agent'],
+					]);
+					if (!!$pdo_result) {
+						if ($config['external']['discord']['activate']['notice']) {
+							push2discord(
+								$config['external']['discord']['uri']['notice'],
+								$config['external']['discord']['authorname']['notice'],
+								$config['external']['discord']['authoravatar']['notice'],
+								$config['external']['discord']['color']['notice'],
+								'New user:' . PHP_EOL.
+								'```json' . PHP_EOL.
+								json_encode([
+									'client_address' => $result['client']['address'],
+									'authzed_user' => $result['google']['user']['email'],
+									'useragent' => $result['client']['user_agent'],
+									'content_type' => $result['client']['content_type'],
+									'email' => $result['google']['user']['email'],
+									'userid' => $result['google']['user']['userid'],
+									'name' => $result['google']['user']['name'],
+									'icon' => $result['google']['user']['icon'],
+									'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+									'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+								], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+								'```' . PHP_EOL
+							);
+						}
+					}
+				}
+
 				$pdo = null;
 			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['notice']) {

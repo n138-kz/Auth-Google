@@ -81,5 +81,5 @@ try {
 	error_log($th->getTraceAsString());
 
 	echo json_encode( $result );
-	exit(0);
+	exit(1);
 }

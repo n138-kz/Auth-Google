@@ -53,19 +53,8 @@ try {
 	$client = new Google_Client(['client_id' => CLIENT_ID]);
 	try {
 		$payload = $client->verifyIdToken(CLIENT_TOKEN);
-		if ($payload) {
-			$result['google'] = [
-				'user' => [
-					'userid' => isset($payload['sub']) ? $payload['sub'] : null,
-					'name' => isset($payload['name']) ? $payload['name'] : null,
-					'icon' => isset($payload['picture']) ? $payload['picture'] : null,
-					'email' => isset($payload['email']) ? $payload['email'] : null,
-				],
-				'session' => [
-					'iat' => isset($payload['iat']) ? $payload['iat'] : 0,
-					'exp' => isset($payload['exp']) ? $payload['exp'] : 0,
-				],
-			];
+		if (!$payload) {
+			throw new Exception();
 		}
 	} catch (\Exception $th) {
 		/* invalid token */

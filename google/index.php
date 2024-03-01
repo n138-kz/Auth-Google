@@ -348,20 +348,6 @@ try {
 					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
 						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '';
 						$sql .= '(';
-						$sql .= ')';
-						if ($config['external']['discord']['activate']['notice']) {
-							(json_encode(push2discord(
-								$config['external']['discord']['uri']['notice'],
-								$config['external']['discord']['authorname']['notice'],
-								$config['external']['discord']['authoravatar']['notice'],
-								$config['external']['discord']['color']['notice'],
-								'SQL:' . PHP_EOL.
-								'```sql' . PHP_EOL.
-								$sql . PHP_EOL.
-								'```' . PHP_EOL.
-								chr(0),
-							), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
-						}
 						foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'] as $columns_key => $columns_val) {
 							$sql_columns = $columns_key;
 							foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'][$columns_key] as $attr_key => $attr_val) {
@@ -369,20 +355,11 @@ try {
 								$sql_columns .= $attr_val;
 							}
 							$sql_columns .= ',';
-							if ($config['external']['discord']['activate']['notice']) {
-								(json_encode(push2discord(
-									$config['external']['discord']['uri']['notice'],
-									$config['external']['discord']['authorname']['notice'],
-									$config['external']['discord']['authoravatar']['notice'],
-									$config['external']['discord']['color']['notice'],
-									__LINE__.':' . PHP_EOL.
-									'```text' . PHP_EOL.
-									$sql_columns . PHP_EOL.
-									'```' . PHP_EOL.
-									chr(0),
-								), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
-							}
+							$sql .= $sql_columns;
 						}
+						$sql .= ')';
+						$sql = str_replace(',)', ')', $sql);
+						$pdo->query($sql);
 					}
 				}
 				$pdo = null;

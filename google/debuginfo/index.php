@@ -18,6 +18,30 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 	}
 }
 
+$result = [];
+$result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
+$result['client'] = [
+	'address' => $_SERVER['REMOTE_ADDR'],
+	'port' => $_SERVER['REMOTE_PORT'],
+	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
+	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
+	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
+	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
+	'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+];
+$result['issue_at'] = microtime(TRUE);
+$result['error']['code'] = 0;
+$result['http']['code'] = http_response_code();
+$result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
+$result['last_checkpoint'] = __LINE__;
+
+function set_http_response_code ( $http ) {
+	http_response_code( $http );
+	global $result;
+	$result['http']['code'] = $http;
+	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
+}
+
 
 try {
 	require_once '../../vendor/autoload.php';

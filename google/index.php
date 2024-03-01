@@ -360,7 +360,7 @@ try {
 								chr(0),
 							), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 						}
-							}	
+					}
 				}
 				$pdo = null;
 			} catch (\Throwable $th) {

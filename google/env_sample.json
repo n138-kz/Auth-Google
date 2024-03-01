@@ -36,7 +36,15 @@
 				"password": "passw0rd"
 			},
 			"secondary": [
-				{ "activate": false, "host": "", "port": 5432, "scheme": "pgsql", "dbname": "webapp", "username": "postgres", "password": "passw0rd" }
+				{
+					"activate": false,
+					"host": "localhost",
+					"port": 5432,
+					"scheme": "pgsql",
+					"dbname": "postgres",
+					"username": "postgres",
+					"password": "postgres"
+				}
 			],
 			"tables": {
 				"public": {

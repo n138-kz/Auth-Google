@@ -418,6 +418,7 @@ try {
 								], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 								'```' . PHP_EOL
 							);
+							$config['external']['discord']['activate']['notice'] = false;
 						}
 					}
 				}

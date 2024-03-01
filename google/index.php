@@ -347,7 +347,20 @@ try {
 				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
 					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
 						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '()';
-					}	
+						if ($config['external']['discord']['activate']['notice']) {
+							(json_encode(push2discord(
+								$config['external']['discord']['uri']['notice'],
+								$config['external']['discord']['authorname']['notice'],
+								$config['external']['discord']['authoravatar']['notice'],
+								$config['external']['discord']['color']['notice'],
+								'Error:' . PHP_EOL.
+								'```sql' . PHP_EOL.
+								$sql . PHP_EOL.
+								'```' . PHP_EOL.
+								chr(0),
+							), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+						}
+							}	
 				}
 				$pdo = null;
 			} catch (\Throwable $th) {

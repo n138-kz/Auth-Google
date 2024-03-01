@@ -328,9 +328,9 @@ try {
 		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
 			$dsn = [
 				'scheme' => $config['internal']['databases']['primary']['scheme'],
-				'host' => $config['internal']['databases']['primary']['scheme'],
-				'port' => $config['internal']['databases']['primary']['scheme'],
-				'dbname' => $config['internal']['databases']['primary']['scheme'],
+				'host' => $config['internal']['databases']['primary']['host'],
+				'port' => $config['internal']['databases']['primary']['port'],
+				'dbname' => $config['internal']['databases']['primary']['dbname'],
 				'username' => $config['internal']['databases']['primary']['username'],
 				'password' => $config['internal']['databases']['primary']['password'],
 			];

@@ -346,7 +346,9 @@ try {
 				);
 				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
 					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
-						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '()';
+						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '';
+						$sql .= '(';
+						$sql .= ')';
 						if ($config['external']['discord']['activate']['notice']) {
 							(json_encode(push2discord(
 								$config['external']['discord']['uri']['notice'],

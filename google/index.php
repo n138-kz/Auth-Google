@@ -325,6 +325,25 @@ try {
 	$_SESSION = [ 'authn' => $result ];
 
 	if ($config_loaded) {
+		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
+			$dsn = [
+				'scheme' => $config['internal']['databases']['primary']['scheme'],
+				'host' => $config['internal']['databases']['primary']['scheme'],
+				'port' => $config['internal']['databases']['primary']['scheme'],
+				'dbname' => $config['internal']['databases']['primary']['scheme'],
+				'username' => $config['internal']['databases']['primary']['username'],
+				'password' => $config['internal']['databases']['primary']['password'],
+			];
+			$pdo = new \PDO(
+				''.$dsn['scheme'].':'.'host='.$dsn['host'].';'.'port='.$dsn['port'].';'.'dbname='.$dsn['dbname'].';'.'',
+				''.$dsn['username'].'',
+				''.$dsn['password'].'',
+			);
+			$pdo = null;
+		}
+	}
+	
+	if ($config_loaded) {
 		(json_encode(push2discord(
 			$config['external']['discord']['uri']['notice'],
 			$config['external']['discord']['authorname']['notice'],

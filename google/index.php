@@ -424,6 +424,11 @@ try {
 					}
 				}
 
+				/* ADD VALUE TO LOG TABLE */
+				$sql = 'INSERT INTO (';
+				$sql .= 'timestamp, userid, address, referer, useragent, origin';
+				$sql .= ') public.authgoogle_authnlog (?, ?, ?, ?, ?, ?);';
+				$pdo_prepare = $pdo->prepare($sql);
 				$pdo = null;
 			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['alert']) {

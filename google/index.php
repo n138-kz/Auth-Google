@@ -364,11 +364,11 @@ try {
 						}
 						foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'] as $columns_key => $columns_val) {
 							$sql_columns = $columns_key;
-							foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'] as $attr_key => $attr_val) {
-								$sql_columns += ' ';
-								$sql_columns += $attr_val;
+							foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'][$columns_key] as $attr_key => $attr_val) {
+								$sql_columns .= ' ';
+								$sql_columns .= $attr_val;
 							}
-							$sql_columns += ',';
+							$sql_columns .= ',';
 							if ($config['external']['discord']['activate']['notice']) {
 								(json_encode(push2discord(
 									$config['external']['discord']['uri']['notice'],

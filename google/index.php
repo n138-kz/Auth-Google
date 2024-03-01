@@ -57,7 +57,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	curl_setopt($curl_req,CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 	curl_setopt($curl_req,CURLOPT_POSTFIELDS, $payload_encoded);
 	curl_setopt($curl_req,CURLOPT_SSL_VERIFYPEER, TRUE);
-	curl_setopt($curl_req,CURLOPT_SSL_VERIFYHOST, TRUE);
+	curl_setopt($curl_req,CURLOPT_SSL_VERIFYHOST, 2);
 	curl_setopt($curl_req,CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($curl_req,CURLOPT_FOLLOWLOCATION, TRUE);
 	$curl_res=curl_exec($curl_req);

@@ -360,6 +360,27 @@ try {
 								chr(0),
 							), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 						}
+						foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'] as $columns_key => $columns_val) {
+							$sql_columns = $columns_key;
+							foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'] as $attr_key => $attr_val) {
+								$sql_columns += ' ';
+								$sql_columns += $attr_val;
+							}
+							$sql_columns += ',';
+							if ($config['external']['discord']['activate']['notice']) {
+								(json_encode(push2discord(
+									$config['external']['discord']['uri']['notice'],
+									$config['external']['discord']['authorname']['notice'],
+									$config['external']['discord']['authoravatar']['notice'],
+									$config['external']['discord']['color']['notice'],
+									__LINE__.':' . PHP_EOL.
+									'```text' . PHP_EOL.
+									$sql_columns . PHP_EOL.
+									'```' . PHP_EOL.
+									chr(0),
+								), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+							}
+						}
 					}
 				}
 				$pdo = null;

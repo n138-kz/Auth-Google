@@ -334,38 +334,6 @@ try {
 				'username' => $config['internal']['databases']['primary']['username'],
 				'password' => $config['internal']['databases']['primary']['password'],
 			];
-			if ($config['external']['discord']['activate']['notice']) {
-				(json_encode(push2discord(
-					$config['external']['discord']['uri']['notice'],
-					$config['external']['discord']['authorname']['notice'],
-					$config['external']['discord']['authoravatar']['notice'],
-					$config['external']['discord']['color']['notice'],
-					'Discord messages' . PHP_EOL.
-					'```json' . PHP_EOL.
-					(json_encode(push2discord(
-						$config['external']['discord']['uri']['notice'],
-						$config['external']['discord']['authorname']['notice'],
-						$config['external']['discord']['authoravatar']['notice'],
-						$config['external']['discord']['color']['notice'],
-						'Issuer' . chr(9) . '`' . $result['client']['address'] . '`' . PHP_EOL.
-						'```text' . PHP_EOL.
-						''.$dsn['scheme'].':'.
-						'host='.$dsn['host'].';'.
-						'port='.$dsn['port'].';'.
-						'dbname='.$dsn['dbname'].';'.
-						'user='.$dsn['username'].';'.
-						'password='.$dsn['password'].''.
-						''.
-						'```' . PHP_EOL.
-						'```json' . PHP_EOL.
-						json_encode($dsn, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
-						'```' . PHP_EOL.
-						chr(0),
-					))).
-					'```' . PHP_EOL.
-					chr(0),
-				)));
-			}
 			try {
 				$pdo = new \PDO(
 					''.$dsn['scheme'].':'.
@@ -376,6 +344,12 @@ try {
 					'password='.$dsn['password'].''.
 					''
 				);
+				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
+					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
+						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '()';
+					}	
+				}
+				$pdo = null;
 			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['notice']) {
 					(json_encode(push2discord(
@@ -395,12 +369,6 @@ try {
 						chr(0),
 					)));
 				}
-				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
-					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
-						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '()';
-					}	
-				}
-				$pdo = null;
 			}
 		}
 	}

@@ -416,7 +416,7 @@ try {
 								$config['external']['discord']['authorname']['notice'],
 								$config['external']['discord']['authoravatar']['notice'],
 								$config['external']['discord']['color']['notice'],
-								'New user:' . PHP_EOL.
+								'authn(new):' . PHP_EOL.
 								'Issuer'      . chr(9) . '`' . $result['client']['address']       . '`' . PHP_EOL.
 								'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
 								'UserAgent'   . chr(9) . '`' . $result['client']['user_agent']    . '`' . PHP_EOL.
@@ -461,7 +461,7 @@ try {
 								$config['external']['discord']['authorname']['notice'],
 								$config['external']['discord']['authoravatar']['notice'],
 								$config['external']['discord']['color']['notice'],
-								'New user:' . PHP_EOL.
+								'authn:' . PHP_EOL.
 								'Issuer'      . chr(9) . '`' . $result['client']['address']       . '`' . PHP_EOL.
 								'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
 								'UserAgent'   . chr(9) . '`' . $result['client']['user_agent']    . '`' . PHP_EOL.

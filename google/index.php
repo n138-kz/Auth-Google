@@ -392,6 +392,7 @@ try {
 				$pdo_result = $pdo_prepare->execute([ $result['google']['user']['userid'] ]);
 				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
 				if ($pdo_result['count'] === 0) {
+					/* New user */
 					$sql = 'INSERT INTO public.authgoogle_userinfo (';
 					$sql .= 'id, name, email, icon, regat, regip, reguseragent, lastat, lastip, lastuseragent';
 					$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';

@@ -44,6 +44,10 @@ function set_http_response_code ( $http ) {
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
 }
 
+var_dump($_SESSION);exit(1);
+
+$_SESSION['clientId'] = isset($_SESSION['clientId']) ? $_SESSION['clientId'] : null;
+$_SESSION['credential'] = isset($_SESSION['credential']) ? $_SESSION['credential'] : null;
 define('CLIENT_ID', $_SESSION['clientId']);
 define('CLIENT_TOKEN', $_SESSION['credential']);
 

@@ -429,6 +429,15 @@ try {
 				$sql .= 'timestamp, userid, address, referer, useragent, origin';
 				$sql .= ') public.authgoogle_authnlog (?, ?, ?, ?, ?, ?);';
 				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_prepare -> execute([
+					time(),
+					$result['google']['user']['userid'],
+					$result['client']['address'],
+					$result['google']['user']['userid'],
+					$_SERVER['HTTP_REFERER'],
+					$result['client']['user_agent'],
+					$_SERVER['HTTP_ORIGIN'],
+				]);
 
 				$pdo = null;
 			} catch (\Throwable $th) {

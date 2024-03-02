@@ -439,6 +439,52 @@ try {
 							$config['external']['discord']['activate']['notice'] = false;
 						}
 					}
+				} else {
+					/* Already user */
+					$sql = 'UPDATE public.authgoogle_userinfo ';
+					$sql .= 'SET name = :name, email = :email, icon = :icon, lastat = :lastat, lastip = :lastip, lastuseragent = :lastuseragent ';
+					$sql .= 'WHERE id = :id;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_result = $pdo_prepare->execute([
+						'id' => $result['google']['user']['userid'],
+						'name' => $result['google']['user']['name'],
+						'email' => $result['google']['user']['email'],
+						'icon' => $result['google']['user']['icon'],
+						'lastat' => time(),
+						'lastip' => $result['client']['address'],
+						'lastuseragent' => $result['client']['user_agent'],
+					]);
+					if (!!$pdo_result) {
+						if ($config['external']['discord']['activate']['notice']) {
+							push2discord(
+								$config['external']['discord']['uri']['notice'],
+								$config['external']['discord']['authorname']['notice'],
+								$config['external']['discord']['authoravatar']['notice'],
+								$config['external']['discord']['color']['notice'],
+								'New user:' . PHP_EOL.
+								'Issuer'      . chr(9) . '`' . $result['client']['address']       . '`' . PHP_EOL.
+								'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
+								'UserAgent'   . chr(9) . '`' . $result['client']['user_agent']    . '`' . PHP_EOL.
+								'ContentType' . chr(9) . '`' . $result['client']['content_type']  . '`' . PHP_EOL.
+								'```json' . PHP_EOL.
+								json_encode([
+									'client_address' => $result['client']['address'],
+									'authzed_user' => $result['google']['user']['email'],
+									'useragent' => $result['client']['user_agent'],
+									'content_type' => $result['client']['content_type'],
+									'email' => $result['google']['user']['email'],
+									'userid' => $result['google']['user']['userid'],
+									'name' => $result['google']['user']['name'],
+									'icon' => $result['google']['user']['icon'],
+									'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+									'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+								], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+								'```' . PHP_EOL
+							);
+							$config['external']['discord']['activate']['notice'] = false;
+						}
+					}
+
 				}
 
 				/* ADD VALUE TO LOG TABLE */

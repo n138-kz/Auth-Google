@@ -48,7 +48,7 @@ define('CLIENT_ID', $_SESSION['clientId']);
 define('CLIENT_TOKEN', $_SESSION['credential']);
 
 try {
-	require_once '../../vendor/autoload.php';
+	require_once '../../../../vendor/autoload.php';
 	
 	$client = new Google_Client(['client_id' => CLIENT_ID]);
 	try {

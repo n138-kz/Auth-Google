@@ -334,6 +334,11 @@ try {
 			'token' => CLIENT_TOKEN,
 		],
 	];
+	$result['variable'] = [
+		'_session' => $_SESSION,
+		'_server'  => $_SERVER,
+		'_cookie'  => $_COOKIE,
+	];
 
 	if ($config_loaded) {
 		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {

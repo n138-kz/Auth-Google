@@ -609,6 +609,15 @@
 						document.querySelector('#authn_status').innerText = response.google.user.name;
 						document.querySelector('#authn_status').style.backgroundImage = `url(${response.google.user.icon})`;
 
+						let debug;
+						debug = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' );
+						debug = JSON.parse( debug );
+						debug = debug.dev;
+						try {
+							if (debug) { debug = true; }
+							else { debug = false; }
+						} catch (error) {}
+
 						/*
 						* @sample
 							response = {

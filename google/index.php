@@ -342,6 +342,8 @@ try {
 	$result['variable'] = [
 		'_session' => $_SESSION,
 		'_request' => $_REQUEST,
+		'_get'     => $_GET,
+		'_post'    => $_POST,
 		'_server'  => $_SERVER,
 		'_cookie'  => $_COOKIE,
 		'_headers' => [

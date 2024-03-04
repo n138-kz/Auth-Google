@@ -515,6 +515,15 @@ try {
 					$result['client']['origin'],
 				]);
 
+				/* ADD SESSION INFO TO TABLE */
+				$sql = 'SELECT exp FROM public.authgoogle_sessions WHERE userid=?, token=?;';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_prepare -> execute([
+					$result['google']['user']['userid'],
+					hash('sha512', CLIENT_TOKEN),
+				]);
+				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+
 				$pdo = null;
 			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['alert']) {

@@ -72,7 +72,7 @@
 							"referer": [ "text", "not null" ],
 							"useragent": [ "text", "not null" ],
 							"origin": [ "text", "not null" ],
-							"returnval": [ "text", "not null" ]
+							"returnval": [ "json", "not null", "default '[null]'" ]
 						},
 						"indexes": []
 					},

@@ -79,6 +79,7 @@ $result['client'] = [
 	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
 	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
 	'user_agent' => ( isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
+	'referer' => ( isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '' ),
 ];
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;
@@ -509,7 +510,7 @@ try {
 					$result['google']['user']['userid'],
 					$result['client']['address'],
 					$result['google']['user']['userid'],
-					$_SERVER['HTTP_REFERER'],
+					$result['client']['referer'],
 					$result['client']['user_agent'],
 					$_SERVER['HTTP_ORIGIN'],
 				]);

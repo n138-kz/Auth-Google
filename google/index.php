@@ -331,11 +331,7 @@ try {
 		'credential' => [
 			'authnaddr' => $result['client']['address'],
 			'clientId' => CLIENT_ID,
-			'client_id' => CLIENT_ID,
-			'client_token' => CLIENT_TOKEN,
 			'credential' => CLIENT_TOKEN,
-			'credential' => CLIENT_TOKEN,
-			'token' => CLIENT_TOKEN,
 		],
 	];
 	$headers_list = [];

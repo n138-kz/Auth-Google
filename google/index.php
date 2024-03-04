@@ -517,7 +517,7 @@ try {
 				]);
 
 				/* ADD SESSION INFO TO TABLE */
-				$sql = 'SELECT exp FROM public.authgoogle_sessions WHERE userid=?, token=?;';
+				$sql = 'SELECT exp FROM public.authgoogle_sessions WHERE userid=? AND token=?;';
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_prepare -> execute([
 					$result['google']['user']['userid'],

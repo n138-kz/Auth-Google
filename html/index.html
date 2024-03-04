@@ -116,7 +116,7 @@
 	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			let http_query = location.search.replace(/^\?/g, '');
-			if( http_query.indexOf('&') > 0 ) { http_query = http_query.split('&'); }
+			if( http_query.indexOf('&') > 0 ) { http_query = http_query.split('&'); } else { http_query = [http_query]; }
 			let http_query_array = {};
 			for( let i=0; i<http_query.length; i++ ) {
 				http_query_array[http_query[i].split('=')[0]] = http_query[i].split('=')[1];

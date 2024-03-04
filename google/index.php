@@ -524,6 +524,10 @@ try {
 				]);
 				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
 
+				$sql = 'INSERT INTO public.authgoogle_sessions (';
+				$sql .= 'userid, useragent, address, token, iat, exp';
+				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
+
 				$pdo = null;
 			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['alert']) {

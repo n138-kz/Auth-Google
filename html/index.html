@@ -121,9 +121,11 @@
 			for( let i=0; i<http_query.length; i++ ) {
 				http_query_array[http_query[i].split('=')[0]] = http_query[i].split('=')[1];
 			}
-			console.log(http_query_array);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
 			try {
 				http_query_array.dev;
+				http_query_array.dev = http_query_array.dev > 0;
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
 			} catch (error) {
 				let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
 				if (!ctrlpanels) {
@@ -546,6 +548,12 @@
 			fullscreen_wp.appendChild(loading_img);
 			document.querySelector('body').appendChild(fullscreen_wp);
 			params.requestUri = 'https://authn.n138.jp/google/';
+			const http_query_array = JSON.parse( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' ) );
+			try {
+				if (http_query_array.dev) {
+					params.requestUri = './google/';
+				}
+			} catch (error) {}
 			console.debug([params, JSON.stringify(params)]);
 
 			try {

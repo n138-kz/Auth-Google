@@ -338,7 +338,7 @@ try {
 	];
 	$headers_list = [];
 	foreach (headers_list() as $key => $val) {
-		$split = explode(':', $val, 2$split[0]);
+		$split = explode(':', $val, 2);
 		$headers_list[trim($split[0])] = trim($split[1]);
 	}
 	$result['variable'] = [

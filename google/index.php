@@ -338,7 +338,8 @@ try {
 	];
 	$headers_list = [];
 	foreach (headers_list() as $key => $val) {
-		$headers_list += explode(':', $val);
+		$split = explode(':', $val, 2$split[0]);
+		$headers_list[trim($split[0])] = trim($split[1]);
 	}
 	$result['variable'] = [
 		'_session' => $_SESSION,

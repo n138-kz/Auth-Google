@@ -121,7 +121,7 @@
 			for( let i=0; i<http_query.length; i++ ) {
 				http_query_array[http_query[i].split('=')[0]] = http_query[i].split('=')[1];
 			}
-			console.log(http_query_array);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
 			try {
 				http_query_array.dev;
 			} catch (error) {

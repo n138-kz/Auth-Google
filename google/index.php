@@ -503,8 +503,8 @@ try {
 
 				/* ADD VALUE TO LOG TABLE */
 				$sql = 'INSERT INTO public.authgoogle_authnlog (';
-				$sql .= 'timestamp, userid, address, referer, useragent, origin';
-				$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
+				$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
+				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_prepare -> execute([
 					time(),

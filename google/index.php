@@ -502,9 +502,9 @@ try {
 				}
 
 				/* ADD VALUE TO LOG TABLE */
-				$sql = 'INSERT INTO (';
+				$sql = 'INSERT INTO public.authgoogle_authnlog (';
 				$sql .= 'timestamp, userid, address, referer, useragent, origin';
-				$sql .= ') public.authgoogle_authnlog (?, ?, ?, ?, ?, ?);';
+				$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_prepare -> execute([
 					time(),

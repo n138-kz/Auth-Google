@@ -513,6 +513,7 @@ try {
 					$result['client']['referer'],
 					$result['client']['user_agent'],
 					$result['client']['origin'],
+					json_encode($result),
 				]);
 
 				/* ADD SESSION INFO TO TABLE */

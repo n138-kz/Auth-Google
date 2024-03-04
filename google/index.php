@@ -336,15 +336,20 @@ try {
 			'token' => CLIENT_TOKEN,
 		],
 	];
+	$headers_list = [];
+	foreach (headers_list() as $key => $val) {
+		$headers_list += explode(':', $val);
+	}
 	$result['variable'] = [
 		'_session' => $_SESSION,
 		'_server'  => $_SERVER,
 		'_cookie'  => $_COOKIE,
 		'_headers' => [
 			'request' => apache_request_headers(),
-			'response' => headers_list(),
+			'response' => $headers_list,
 		],
 	];
+	unset($headers_list);
 
 	if ($config_loaded) {
 		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {

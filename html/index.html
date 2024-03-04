@@ -609,6 +609,15 @@
 						document.querySelector('#authn_status').innerText = response.google.user.name;
 						document.querySelector('#authn_status').style.backgroundImage = `url(${response.google.user.icon})`;
 
+						let debug;
+						debug = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' );
+						debug = JSON.parse( debug );
+						debug = debug.dev;
+						try {
+							if (debug) { debug = true; }
+							else { debug = false; }
+						} catch (error) {}
+
 						/*
 						* @sample
 							response = {
@@ -683,7 +692,17 @@
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'credential';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = '****************';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						if (debug) {
+							var tmp = document.createElement('input');
+							tmp.value = params.credential;
+							tmp.readOnly = true;
+							tmp.setAttribute('onclick', 'this.select();')
+							authn_displayblock_table_td.appendChild(tmp);
+						} else {
+							authn_displayblock_table_td.innerText = '****************';
+						}
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'session';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);

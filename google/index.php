@@ -510,7 +510,6 @@ try {
 					time(),
 					$result['google']['user']['userid'],
 					$result['client']['address'],
-					$result['google']['user']['userid'],
 					$result['client']['referer'],
 					$result['client']['user_agent'],
 					$result['client']['origin'],

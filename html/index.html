@@ -115,12 +115,23 @@
 	</script>
 	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{
-			let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
-			if (!ctrlpanels) {
-				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
-				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
-					setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
-				);
+			let http_query = location.search.replace(/^\?/g, '');
+			if( http_query.indexOf('&') > 0 ) { http_query = http_query.split('&'); }
+			let http_query_array = {};
+			for( let i=0; i<http_query.length; i++ ) {
+				http_query_array[http_query[i].split('=')[0]] = http_query[i].split('=')[1];
+			}
+			console.log(http_query_array);
+			try {
+				http_query_array.dev;
+			} catch (error) {
+				let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
+				if (!ctrlpanels) {
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
+						setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+					);
+				}
 			}
 		}, false);
 		function getGithubDeployStatus() {

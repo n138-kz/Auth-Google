@@ -126,6 +126,7 @@
 				http_query_array.dev;
 				http_query_array.dev = http_query_array.dev > 0;
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
+				if (!http_query_array.dev) { throw new Exception(); }
 			} catch (error) {
 				let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
 				if (!ctrlpanels) {

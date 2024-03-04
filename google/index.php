@@ -524,10 +524,35 @@ try {
 					hash('sha512', CLIENT_TOKEN),
 				]);
 				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				if ( $pdo_result['count'] == 0 ) {
+					$sql = 'INSERT INTO public.authgoogle_sessions (';
+					$sql .= 'userid, useragent, address, token, iat, exp';
+					$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						$result['google']['user']['userid'],
+						$result['client']['user_agent'],
+						$result['client']['address'],
+						hash('sha512', CLIENT_TOKEN),
+						$result['google']['session']['iat'],
+						$result['google']['session']['exp'],
+					]);
 
-				$sql = 'INSERT INTO public.authgoogle_sessions (';
-				$sql .= 'userid, useragent, address, token, iat, exp';
-				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
+				} else {
+					$sql = 'UPDATE public.authgoogle_sessions ';
+					$sql .= 'SET useragent=?, address=?, iat=?, exp=?';
+					$sql .= 'WHERE userid=? AND token=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						$result['client']['user_agent'],
+						$result['client']['address'],
+						$result['google']['session']['iat'],
+						$result['google']['session']['exp'],
+						$result['google']['user']['userid'],
+						hash('sha512', CLIENT_TOKEN),
+					]);
+				}
+
 
 				$pdo = null;
 			} catch (\Throwable $th) {

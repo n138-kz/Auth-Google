@@ -548,6 +548,12 @@
 			fullscreen_wp.appendChild(loading_img);
 			document.querySelector('body').appendChild(fullscreen_wp);
 			params.requestUri = 'https://authn.n138.jp/google/';
+			const http_query_array = JSON.parse( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' ) );
+			try {
+				if (http_query_array.dev) {
+					params.requestUri = './google/';
+				}
+			} catch (error) {}
 			console.debug([params, JSON.stringify(params)]);
 
 			try {

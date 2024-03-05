@@ -2,8 +2,8 @@
 	"external": {
 		"discord": {
 			"activate": {
-				"notice": false,
-				"alert": false
+				"notice": true,
+				"alert": true
 			},
 			"uri": {
 				"notice": "https://discord.com/api/webhooks/{server-id}/{channel-id}",

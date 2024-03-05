@@ -351,9 +351,6 @@ try {
 			'response' => $headers_list,
 		],
 	];
-	if ( !isset( $_REQUEST['dev'] ) ) {
-		unset( $result['variable'] );
-	}
 	unset($headers_list);
 
 	if ($config_loaded) {
@@ -582,6 +579,10 @@ try {
 		}
 	}
 	
+	if ( !isset( $_REQUEST['dev'] ) ) {
+		unset( $result['variable'] );
+	}
+
 	if ($config_loaded) {
 		if ($config['external']['discord']['activate']['notice']) {
 			(json_encode(push2discord(

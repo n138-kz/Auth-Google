@@ -115,12 +115,26 @@
 	</script>
 	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{
-			let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
-			if (!ctrlpanels) {
-				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
-				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
-					setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
-				);
+			let http_query = location.search.replace(/^\?/g, '');
+			if( http_query.indexOf('&') > 0 ) { http_query = http_query.split('&'); } else { http_query = [http_query]; }
+			let http_query_array = {};
+			for( let i=0; i<http_query.length; i++ ) {
+				http_query_array[http_query[i].split('=')[0]] = http_query[i].split('=')[1];
+			}
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
+			try {
+				http_query_array.dev;
+				http_query_array.dev = http_query_array.dev > 0;
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
+				if (!http_query_array.dev) { throw new Exception(); }
+			} catch (error) {
+				let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
+				if (!ctrlpanels) {
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
+						setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+					);
+				}
 			}
 		}, false);
 		function getGithubDeployStatus() {
@@ -212,7 +226,7 @@
 			g_id_onload.id = 'g_id_onload';
 			g_id_onload.dataset.client_id = '784669840257-i0a06p3o6g8k0k1tk26jj09li1q2acud.apps.googleusercontent.com';
 			g_id_onload.dataset.context='signin';
-			g_id_onload.dataset.login_uri = 'https://n138-kz.github.io';
+			g_id_onload.dataset.login_uri = location.origin;
 			g_id_onload.dataset.callback = 'onSignIn';
 			g_id_onload.dataset.ux_mode='popup';
 			g_id_onload.dataset.auto_select='true';
@@ -535,6 +549,12 @@
 			fullscreen_wp.appendChild(loading_img);
 			document.querySelector('body').appendChild(fullscreen_wp);
 			params.requestUri = 'https://authn.n138.jp/google/';
+			const http_query_array = JSON.parse( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' ) );
+			try {
+				if (http_query_array.dev) {
+					params.requestUri = './google/';
+				}
+			} catch (error) {}
 			console.debug([params, JSON.stringify(params)]);
 
 			try {
@@ -588,6 +608,15 @@
 						authn_displayblock.style.backgroundColor = '#F0FFFF';
 						document.querySelector('#authn_status').innerText = response.google.user.name;
 						document.querySelector('#authn_status').style.backgroundImage = `url(${response.google.user.icon})`;
+
+						let debug;
+						debug = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' );
+						debug = JSON.parse( debug );
+						debug = debug.dev;
+						try {
+							if (debug) { debug = true; }
+							else { debug = false; }
+						} catch (error) {}
 
 						/*
 						* @sample
@@ -659,11 +688,31 @@
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'google';authn_displayblock_table_td.rowSpan = 8;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'clientId';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (params.clientId + '.' + location.host).split('.')[0];authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						if (debug) {
+							var tmp = document.createElement('input');
+							tmp.value = `CLIENT_ID='${params.clientId}'`;
+							tmp.readOnly = true;
+							tmp.setAttribute('onclick', 'this.select();')
+							authn_displayblock_table_td.appendChild(tmp);
+						} else {
+							authn_displayblock_table_td.innerText = (params.clientId + '.' + location.host).split('.')[0];
+						}
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'credential';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = '****************';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						if (debug) {
+							var tmp = document.createElement('input');
+							tmp.value = `CLIENT_TOKEN='${params.credential}'`;
+							tmp.readOnly = true;
+							tmp.setAttribute('onclick', 'this.select();')
+							authn_displayblock_table_td.appendChild(tmp);
+						} else {
+							authn_displayblock_table_td.innerText = '****************';
+						}
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'session';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);

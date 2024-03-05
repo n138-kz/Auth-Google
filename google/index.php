@@ -9,6 +9,8 @@ header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header('X-Powered-By: Hidden');
+header_register_callback(function(){ header_remove('X-Powered-By'); });
 
 $config = dirname(__FILE__) . '/' . '.env';
 $config_loaded = false;
@@ -76,7 +78,9 @@ $result['client'] = [
 	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
 	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
 	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
-	'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+	'user_agent' => ( isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
+	'referer' => ( isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '' ),
+	'origin' => ( isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '' ),
 ];
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;
@@ -322,7 +326,262 @@ try {
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
 
-	$_SESSION = [ 'authn' => $result ];
+	$_SESSION = [
+		'authn' => $result,
+		'credential' => [
+			'authnaddr' => $result['client']['address'],
+			'clientId' => CLIENT_ID,
+			'credential' => CLIENT_TOKEN,
+		],
+	];
+	$headers_list = [];
+	foreach (headers_list() as $key => $val) {
+		$split = explode(':', $val, 2);
+		$headers_list[trim($split[0])] = trim($split[1]);
+	}
+	$result['variable'] = [
+		'_session' => $_SESSION,
+		'_request' => $_REQUEST,
+		'_get'     => $_GET,
+		'_post'    => $_POST,
+		'_server'  => $_SERVER,
+		'_cookie'  => $_COOKIE,
+		'_headers' => [
+			'request' => apache_request_headers(),
+			'response' => $headers_list,
+		],
+	];
+	unset($headers_list);
+
+	if ($config_loaded) {
+		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
+			$dsn = [
+				'scheme' => $config['internal']['databases']['primary']['scheme'],
+				'host' => $config['internal']['databases']['primary']['host'],
+				'port' => $config['internal']['databases']['primary']['port'],
+				'dbname' => $config['internal']['databases']['primary']['dbname'],
+				'username' => $config['internal']['databases']['primary']['username'],
+				'password' => $config['internal']['databases']['primary']['password'],
+			];
+			try {
+				$pdo = new \PDO(
+					''.$dsn['scheme'].':'.
+					'host='.$dsn['host'].';'.
+					'port='.$dsn['port'].';'.
+					'dbname='.$dsn['dbname'].';'.
+					'user='.$dsn['username'].';'.
+					'password='.$dsn['password'].''.
+					''
+				);
+				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$pdo->setAttribute(PDO::ATTR_TIMEOUT, 10);
+				$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+				/* ADD TABLE IF NOT EXISTS */
+				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
+					$pdo->beginTransaction();
+					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
+						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '';
+						$sql .= '(';
+						foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'] as $columns_key => $columns_val) {
+							$sql_columns = $columns_key;
+							foreach ($config['internal']['databases']['tables'][$scheme_key][$tables_key]['column'][$columns_key] as $attr_key => $attr_val) {
+								$sql_columns .= ' ';
+								$sql_columns .= $attr_val;
+							}
+							$sql_columns .= ',';
+							$sql .= $sql_columns;
+						}
+						$sql .= ')';
+						$sql = str_replace(',)', ')', $sql);
+						$pdo->query($sql);
+					}
+					$pdo->commit();
+				}
+
+				/* ADD VALUE TO TABLE IF NOT EXISTS */
+				$sql = 'SELECT COUNT(id) AS COUNT FROM public.authgoogle_userinfo WHERE id=?';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_result = $pdo_prepare->execute([ $result['google']['user']['userid'] ]);
+				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				if ($pdo_result['count'] === 0) {
+					/* New user */
+					$sql = 'INSERT INTO public.authgoogle_userinfo (';
+					$sql .= 'id, name, email, icon, regat, regip, reguseragent, lastat, lastip, lastuseragent';
+					$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_result = $pdo_prepare->execute([
+						$result['google']['user']['userid'],
+						$result['google']['user']['name'],
+						$result['google']['user']['email'],
+						$result['google']['user']['icon'],
+						time(),
+						$result['client']['address'],
+						$result['client']['user_agent'],
+						time(),
+						$result['client']['address'],
+						$result['client']['user_agent'],
+					]);
+					if (!!$pdo_result) {
+						if ($config['external']['discord']['activate']['notice']) {
+							push2discord(
+								$config['external']['discord']['uri']['notice'],
+								$config['external']['discord']['authorname']['notice'],
+								$config['external']['discord']['authoravatar']['notice'],
+								$config['external']['discord']['color']['notice'],
+								'authn(new):' . PHP_EOL.
+								'Issuer'      . chr(9) . '`' . $result['client']['address']       . '`' . PHP_EOL.
+								'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
+								'UserAgent'   . chr(9) . '`' . $result['client']['user_agent']    . '`' . PHP_EOL.
+								'ContentType' . chr(9) . '`' . $result['client']['content_type']  . '`' . PHP_EOL.
+								'```json' . PHP_EOL.
+								json_encode([
+									'client_address' => $result['client']['address'],
+									'authzed_user' => $result['google']['user']['email'],
+									'useragent' => $result['client']['user_agent'],
+									'content_type' => $result['client']['content_type'],
+									'email' => $result['google']['user']['email'],
+									'userid' => $result['google']['user']['userid'],
+									'name' => $result['google']['user']['name'],
+									'icon' => $result['google']['user']['icon'],
+									'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+									'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+								], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+								'```' . PHP_EOL
+							);
+							$config['external']['discord']['activate']['notice'] = false;
+						}
+					}
+				} else {
+					/* Already user */
+					$sql = 'UPDATE public.authgoogle_userinfo ';
+					$sql .= 'SET name = :name, email = :email, icon = :icon, lastat = :lastat, lastip = :lastip, lastuseragent = :lastuseragent ';
+					$sql .= 'WHERE id = :id;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_result = $pdo_prepare->execute([
+						'id' => $result['google']['user']['userid'],
+						'name' => $result['google']['user']['name'],
+						'email' => $result['google']['user']['email'],
+						'icon' => $result['google']['user']['icon'],
+						'lastat' => time(),
+						'lastip' => $result['client']['address'],
+						'lastuseragent' => $result['client']['user_agent'],
+					]);
+					if (!!$pdo_result) {
+						if ($config['external']['discord']['activate']['notice']) {
+							push2discord(
+								$config['external']['discord']['uri']['notice'],
+								$config['external']['discord']['authorname']['notice'],
+								$config['external']['discord']['authoravatar']['notice'],
+								$config['external']['discord']['color']['notice'],
+								'authn:' . PHP_EOL.
+								'Issuer'      . chr(9) . '`' . $result['client']['address']       . '`' . PHP_EOL.
+								'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
+								'UserAgent'   . chr(9) . '`' . $result['client']['user_agent']    . '`' . PHP_EOL.
+								'ContentType' . chr(9) . '`' . $result['client']['content_type']  . '`' . PHP_EOL.
+								'```json' . PHP_EOL.
+								json_encode([
+									'client_address' => $result['client']['address'],
+									'authzed_user' => $result['google']['user']['email'],
+									'useragent' => $result['client']['user_agent'],
+									'content_type' => $result['client']['content_type'],
+									'email' => $result['google']['user']['email'],
+									'userid' => $result['google']['user']['userid'],
+									'name' => $result['google']['user']['name'],
+									'icon' => $result['google']['user']['icon'],
+									'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+									'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+								], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+								'```' . PHP_EOL
+							);
+							$config['external']['discord']['activate']['notice'] = false;
+						}
+					}
+
+				}
+
+				/* ADD VALUE TO LOG TABLE */
+				$sql = 'INSERT INTO public.authgoogle_authnlog (';
+				$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
+				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_prepare -> execute([
+					time(),
+					$result['google']['user']['userid'],
+					$result['client']['address'],
+					$result['client']['referer'],
+					$result['client']['user_agent'],
+					$result['client']['origin'],
+					json_encode($result),
+				]);
+
+				/* ADD SESSION INFO TO TABLE */
+				$sql = 'SELECT count(exp) FROM public.authgoogle_sessions WHERE userid=? AND token=?;';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_prepare -> execute([
+					$result['google']['user']['userid'],
+					hash('sha512', CLIENT_TOKEN),
+				]);
+				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				if ( $pdo_result['count'] == 0 ) {
+					$sql = 'INSERT INTO public.authgoogle_sessions (';
+					$sql .= 'userid, useragent, address, token, iat, exp';
+					$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						$result['google']['user']['userid'],
+						$result['client']['user_agent'],
+						$result['client']['address'],
+						hash('sha512', CLIENT_TOKEN),
+						$result['google']['session']['iat'],
+						$result['google']['session']['exp'],
+					]);
+
+				} else {
+					$sql = 'UPDATE public.authgoogle_sessions ';
+					$sql .= 'SET useragent=?, address=?, iat=?, exp=?';
+					$sql .= 'WHERE userid=? AND token=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						$result['client']['user_agent'],
+						$result['client']['address'],
+						$result['google']['session']['iat'],
+						$result['google']['session']['exp'],
+						$result['google']['user']['userid'],
+						hash('sha512', CLIENT_TOKEN),
+					]);
+				}
+
+
+				$pdo = null;
+			} catch (\Throwable $th) {
+				if ($config['external']['discord']['activate']['alert']) {
+					(json_encode(push2discord(
+						$config['external']['discord']['uri']['alert'],
+						$config['external']['discord']['authorname']['alert'],
+						$config['external']['discord']['authoravatar']['alert'],
+						$config['external']['discord']['color']['alert'],
+						'Error:' . PHP_EOL.
+						'```json' . PHP_EOL.
+						json_encode([
+							'exception' => [
+								'text' => $th->getMessage(),
+								'code' => $th->getCode(),
+								'line' => $th->getLine(),
+								'trace' => $th->getTraceAsString(),
+							]
+						], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+						'```' . PHP_EOL.
+						chr(0),
+					), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+				}
+			}
+		}
+	}
+	
+	if ( !isset( $_REQUEST['dev'] ) ) {
+		unset( $result['variable'] );
+	}
 
 	if ($config_loaded) {
 		if ($config['external']['discord']['activate']['notice']) {
@@ -331,24 +590,26 @@ try {
 				$config['external']['discord']['authorname']['notice'],
 				$config['external']['discord']['authoravatar']['notice'],
 				$config['external']['discord']['color']['notice'],
-				'Issuer' . chr(9) . '`' . $result['client']['address'] . '`' . PHP_EOL.
+				'Issuer'      . chr(9) . '`' . $result['client']['address']       . '`' . PHP_EOL.
 				'AuthzedUser' . chr(9) . '`' . $result['google']['user']['email'] . '`' . PHP_EOL.
-				'UserAgent' . chr(9) . '`' . $result['client']['user_agent'] . '`' . PHP_EOL.
-				'ContentType' . chr(9) . '`' . $result['client']['content_type'] . '`' . PHP_EOL.
+				'UserAgent'   . chr(9) . '`' . $result['client']['user_agent']    . '`' . PHP_EOL.
+				'ContentType' . chr(9) . '`' . $result['client']['content_type']  . '`' . PHP_EOL.
 				'```json' . PHP_EOL.
 				json_encode([
+					'client_address' => $result['client']['address'],
+					'authzed_user' => $result['google']['user']['email'],
+					'useragent' => $result['client']['user_agent'],
+					'content_type' => $result['client']['content_type'],
 					'email' => $result['google']['user']['email'],
 					'userid' => $result['google']['user']['userid'],
 					'name' => $result['google']['user']['name'],
 					'icon' => $result['google']['user']['icon'],
-					'iat' => $result['google']['session']['iat'],
-					'iat_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
-					'exp' => $result['google']['session']['exp'],
-					'exp_humanable' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
+					'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
+					'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
 				], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
 				'```' . PHP_EOL.
 				chr(0),
-			)));
+			), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 		}
 	}
 

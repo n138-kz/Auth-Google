@@ -2,8 +2,8 @@
 	"external": {
 		"discord": {
 			"activate": {
-				"notice": false,
-				"alert": false
+				"notice": true,
+				"alert": true
 			},
 			"uri": {
 				"notice": "https://discord.com/api/webhooks/{server-id}/{channel-id}",
@@ -27,58 +27,66 @@
 		"databases": {
 			"activate": true,
 			"primary": {
+				"activate": true,
 				"host": "172.16.0.1",
-				"port": 5432
+				"port": 5432,
+				"scheme": "pgsql",
+				"dbname": "webapp",
+				"username": "postgres",
+				"password": "postgres"
 			},
 			"secondary": [
-				{ "host": "", "port": 5432 }
+				{
+					"activate": false,
+					"host": "localhost",
+					"port": 5432,
+					"scheme": "pgsql",
+					"dbname": "postgres",
+					"username": "postgres",
+					"password": "postgres"
+				}
 			],
 			"tables": {
 				"public": {
-					"authgoogle_userinfo": [
-						{
-							"column": {
-								"id": [ "integer", "not null", "primary key" ],
-								"name": [ "text", "not null" ],
-								"email": [ "text", "not null" ],
-								"icon": [ "text", "not null" ],
-								"regat": [ "float", "not null" ],
-								"regip": [ "text", "not null" ],
-								"reguseragent": [ "text", "not null" ],
-								"lastat": [ "float", "not null" ],
-								"lastip": [ "text", "not null" ],
-								"lastuseragent": [ "text", "not null" ],
-								"activate": [ "boolean", "not null", "default true" ]
-							},
-							"indexes": []
-						}
-					],
-					"authgoogle_authnlog": [
-						{
-							"column": {
-								"timestamp": [ "integer", "not null", "primary key" ],
-								"userid": [ "integer", "not null" ],
-								"address": [ "text", "not null" ],
-								"referer": [ "text", "not null" ],
-								"useragent": [ "text", "not null" ],
-								"origin": [ "text", "not null" ]
-							},
-							"indexes": []
-						}
-					],
-					"authgoogle_sessions": [
-						{
-							"column": {
-								"userid": [ "integer", "not null" ],
-								"useragent": [ "text", "not null" ],
-								"address": [ "text", "not null" ],
-								"iat": [ "integer", "not null", "default 0" ],
-								"exp": [ "integer", "not null", "default 0" ],
-								"token": [ "text", "not null" ]
-							},
-							"indexes": []
-						}
-					]
+					"authgoogle_userinfo": {
+						"column": {
+							"id": [ "numeric", "not null", "primary key" ],
+							"name": [ "text", "not null" ],
+							"email": [ "text", "not null" ],
+							"icon": [ "text", "not null" ],
+							"regat": [ "integer", "not null" ],
+							"regip": [ "text", "not null" ],
+							"reguseragent": [ "text", "not null" ],
+							"lastat": [ "integer", "not null" ],
+							"lastip": [ "text", "not null" ],
+							"lastuseragent": [ "text", "not null" ],
+							"activate": [ "boolean", "not null", "default true" ]
+						},
+						"indexes": []
+					},
+					"authgoogle_authnlog": {
+						"column": {
+							"timestamp": [ "integer", "not null", "primary key" ],
+							"userid": [ "numeric", "not null" ],
+							"address": [ "text", "not null" ],
+							"referer": [ "text", "not null" ],
+							"useragent": [ "text", "not null" ],
+							"origin": [ "text", "not null" ],
+							"returnval": [ "json", "not null", "default '[null]'" ]
+						},
+						"indexes": []
+					},
+					"authgoogle_sessions": {
+						"column": {
+							"userid": [ "numeric", "not null" ],
+							"useragent": [ "text", "not null" ],
+							"address": [ "text", "not null" ],
+							"iat": [ "integer", "not null", "default 0" ],
+							"exp": [ "integer", "not null", "default 0" ],
+							"token": [ "text", "not null" ]
+						},
+						"indexes": []
+					}
 				}
 			}
 		}

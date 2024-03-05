@@ -351,6 +351,9 @@ try {
 			'response' => $headers_list,
 		],
 	];
+	if ( !isset( $_REQUEST['dev'] ) ) {
+		unset( $result['variable'] );
+	}
 	unset($headers_list);
 
 	if ($config_loaded) {

@@ -218,6 +218,7 @@ try {
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;
 
+	header('Content-Type: text/html; charset=UTF-8');
 	phpinfo();
 	exit(0);
 } catch (\Exception $th) {

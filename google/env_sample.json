@@ -29,6 +29,48 @@
 		}
 	},
 	"internal": {
+		"default": {
+			"result": {
+				"remote": "",
+				"client": {
+					"address": "",
+					"port": 0,
+					"user": "",
+					"user_authed": null,
+					"user_redirected": null,
+					"content_type": "text/plain",
+					"user_agent": "",
+					"referer": "",
+					"origin": ""
+				},
+				"issue_at": 0,
+				"last_checkpoint": 0,
+				"error": {
+					"code": 0
+				},
+				"http": {
+					"code": 0,
+					"text": ""
+				},
+				"authn": {
+					"sessions": {
+						"id": "",
+						"name": ""
+					}
+				},
+				"google": {
+					"user": {
+						"userid": "",
+						"name": "",
+						"icon": ""
+					},
+					"session": {
+						"iat": 0,
+						"exp": 0
+					}
+				}
+			}
+		},
 		"databases": {
 			"activate": true,
 			"primary": {

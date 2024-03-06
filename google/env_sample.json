@@ -21,6 +21,11 @@
 				"notice": "https://www.google.com/s2/favicons?size=256&domain=https://discord.com/",
 				"alert": "https://www.google.com/s2/favicons?size=256&domain=https://discord.com/"
 			}
+		},
+		"google": {
+			"authn": {
+				"clientId": ""
+			}
 		}
 	},
 	"internal": {

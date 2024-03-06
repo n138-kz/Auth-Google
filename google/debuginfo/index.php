@@ -1,6 +1,6 @@
 <?php session_start([
 	'cookie_lifetime' => 86400,
-	'read_and_close'  => false,
+	'read_and_close'  => true,
 	'name' 	          => 'AUTHNKEY',
 ]);
 date_default_timezone_set('Asia/Tokyo');

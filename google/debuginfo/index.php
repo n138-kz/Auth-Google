@@ -155,6 +155,15 @@ function set_http_response_code ( $http ) {
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
 }
 
+if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
+	set_http_response_code(200);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
+	echo json_encode( $result );
+	exit(0);
+}
+
 var_dump($_SESSION);exit(1);
 
 $_SESSION['clientId'] = isset($_SESSION['clientId']) ? $_SESSION['clientId'] : null;

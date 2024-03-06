@@ -249,12 +249,16 @@ if( !isset( $request['credential'] ) ) {
 	exit(1);
 }
 if( !isset( $request['clientId'] ) ) {
-	set_http_response_code(400);
-	$result['issue_at'] = microtime(TRUE);
-	$result['last_checkpoint'] = __LINE__;
-
-	echo json_encode( $result );
-	exit(1);
+	if ($config_loaded) {
+		$request['clientId'] = $config['external']['google']['authn']['clientId'];
+	} else {
+		set_http_response_code(400);
+		$result['issue_at'] = microtime(TRUE);
+		$result['last_checkpoint'] = __LINE__;
+	
+		echo json_encode( $result );
+		exit(1);
+	}
 }
 /*# Is correct? #*/
 if( ( time() - (int)$request['ts'] > 300 ) ) {

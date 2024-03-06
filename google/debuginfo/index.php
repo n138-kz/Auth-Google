@@ -18,7 +18,6 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 	}
 }
 
-require_once('../../usr-lib-bin/autoload.php');
 function is_empty($arg) {
 	return ( !isset($arg) || empty($arg) );
 }

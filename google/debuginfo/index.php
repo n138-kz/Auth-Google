@@ -76,8 +76,25 @@ $result['client'] = [
 $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;
 $result['http']['code'] = http_response_code();
-$result['http']['text'] = function_exists('get_message_with_http_response_code') ? get_message_with_http_response_code($result['http']['code']) : http_response_code();
+$result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
 $result['last_checkpoint'] = __LINE__;
+$result['google'] = [
+	'user' => [
+		'userid' => '',
+		'name' => '',
+		'icon' => '',
+	],
+	'session' => [
+		'iat' => 0,
+		'exp' => 0,
+	],
+];
+$result['authn'] = [
+	'sessions' => [
+		'id' => '',
+		'name' => '',
+	],
+];
 
 function get_message_with_http_response_code ($http) {
 	switch ($http) {

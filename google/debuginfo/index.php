@@ -181,12 +181,17 @@ if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
 	exit(0);
 }
 
-var_dump($_SESSION);exit(1);
+header('Content-Type: text/plain; charset=UTF-8');
+header('Content-Type: application/json; charset=UTF-8');
+$request['header'] = apache_request_headers();
+$request['header']['Authorization'] = isset($request['header']['Authorization']) ? explode(' ', $request['header']['Authorization']) : ['Bearer', null];
+$request['header']['Authorization'][$request['header']['Authorization'][0]] = $request['header']['Authorization'][1];
+$request['credential'] = $request['header']['Authorization'][1];
+$request['clientId'] = ( $config_loaded && isset($config['external']['google']['authn']['clientId']) ) ? $config['external']['google']['authn']['clientId'] : null;
+unset($request['header']);
 
-$_SESSION['clientId'] = isset($_SESSION['clientId']) ? $_SESSION['clientId'] : null;
-$_SESSION['credential'] = isset($_SESSION['credential']) ? $_SESSION['credential'] : null;
-define('CLIENT_ID', $_SESSION['clientId']);
-define('CLIENT_TOKEN', $_SESSION['credential']);
+define('CLIENT_ID', $request['clientId']);
+define('CLIENT_TOKEN', $request['credential']);
 
 try {
 	require_once '../../../../vendor/autoload.php';

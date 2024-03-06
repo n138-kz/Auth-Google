@@ -62,6 +62,7 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	return $curl_res;
 }
 
+$request = [];
 $result = [];
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
 $result['client'] = [

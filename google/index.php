@@ -66,45 +66,6 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	$curl_res=json_decode($curl_res, TRUE);
 	return $curl_res;
 }
-
-$_SESSION = [];
-$request = [];
-$result = [];
-$result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
-$result['client'] = [
-	'address' => $_SERVER['REMOTE_ADDR'],
-	'port' => $_SERVER['REMOTE_PORT'],
-	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
-	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
-	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
-	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
-	'user_agent' => ( isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
-	'referer' => ( isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '' ),
-	'origin' => ( isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '' ),
-];
-$result['issue_at'] = microtime(TRUE);
-$result['error']['code'] = 0;
-$result['http']['code'] = http_response_code();
-$result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
-$result['last_checkpoint'] = __LINE__;
-$result['google'] = [
-	'user' => [
-		'userid' => '',
-		'name' => '',
-		'icon' => '',
-	],
-	'session' => [
-		'iat' => 0,
-		'exp' => 0,
-	],
-];
-$result['authn'] = [
-	'sessions' => [
-		'id' => '',
-		'name' => '',
-	],
-];
-
 function get_message_with_http_response_code ($http) {
 	switch ($http) {
 		case 100: return '100 Continue';break;
@@ -173,13 +134,50 @@ function get_message_with_http_response_code ($http) {
 		default: break;
 	}
 }
-
 function set_http_response_code ( $http ) {
 	http_response_code( $http );
 	global $result;
 	$result['http']['code'] = $http;
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
 }
+
+$_SESSION = [];
+$request = [];
+$result = [];
+$result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
+$result['client'] = [
+	'address' => $_SERVER['REMOTE_ADDR'],
+	'port' => $_SERVER['REMOTE_PORT'],
+	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
+	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
+	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
+	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
+	'user_agent' => ( isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
+	'referer' => ( isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '' ),
+	'origin' => ( isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '' ),
+];
+$result['issue_at'] = microtime(TRUE);
+$result['error']['code'] = 0;
+$result['http']['code'] = http_response_code();
+$result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
+$result['last_checkpoint'] = __LINE__;
+$result['google'] = [
+	'user' => [
+		'userid' => '',
+		'name' => '',
+		'icon' => '',
+	],
+	'session' => [
+		'iat' => 0,
+		'exp' => 0,
+	],
+];
+$result['authn'] = [
+	'sessions' => [
+		'id' => '',
+		'name' => '',
+	],
+];
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
 	set_http_response_code(200);

@@ -51,13 +51,13 @@ CLIENT_TOKEN='abcdef...'
 ### application/x-www-form-urlencoded
 
 ```bash
-clear; curl -X POST -d "ts=$(date +%s)" -d "clientId=${CLIENT_ID}" -d "credential=${CLIENT_TOKEN}" https://authn.n138.jp/google/ | jq
+clear; curl -X POST -c /tmp/cookie.txt -b /tmp/cookie.txt -d "ts=$(date +%s)" -d "clientId=${CLIENT_ID}" -d "credential=${CLIENT_TOKEN}" https://authn.n138.jp/google/ | jq
 ```
 
 ### application/json
 
 ```bash
-clear; curl -X POST -H 'Content-Type: application/json' -d '{"ts": '$(date +%s)',"clientId": "'${CLIENT_ID}'", "credential": "'${CLIENT_TOKEN}'"}' https://authn.n138.jp/google/ | jq
+clear; curl -X POST -H 'Content-Type: application/json' -c /tmp/cookie.txt -b /tmp/cookie.txt -d '{"ts": '$(date +%s)',"clientId": "'${CLIENT_ID}'", "credential": "'${CLIENT_TOKEN}'"}' https://authn.n138.jp/google/ | jq
 ```
 
 ## API Console

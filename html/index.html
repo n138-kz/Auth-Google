@@ -1040,16 +1040,16 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block3 = document.createElement('div');
-						authn_displayblock_block3.classList.add('block3');
-						authn_displayblock_block4 = document.createElement('div');
-						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h4');
-						authn_displayblock_content.innerText = 'icon';
-						authn_displayblock_block3.appendChild(authn_displayblock_content);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
 						if ((flagbit&1)!==1) {
+							authn_displayblock_block3 = document.createElement('div');
+							authn_displayblock_block3.classList.add('block3');
+							authn_displayblock_block4 = document.createElement('div');
+							authn_displayblock_block4.classList.add('block4');
+							authn_displayblock_content = document.createElement('h4');
+							authn_displayblock_content.innerText = 'icon';
+							authn_displayblock_block3.appendChild(authn_displayblock_content);
+							authn_displayblock_block2.appendChild(authn_displayblock_block3);
+							authn_displayblock_block1.appendChild(authn_displayblock_block2);
 							authn_displayblock_content = document.createElement('img');
 							authn_displayblock_content.src = response.google.user.icon;
 							authn_displayblock_content.alt = `"${response.google.user.name}" <${response.google.user.email}>`;

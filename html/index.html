@@ -527,7 +527,17 @@
 				console.error(exception);
 			});
 		}
-		function onSignIn(params) {
+		function onSignIn(params, flagbit = 0) {
+			/* @author @n138-kz
+			 * @args:
+				params: <array> {
+					credential: <text> ""
+					clientId: <text> ""
+				}
+				flagbit: <int> <<< {
+					pruned image = {0, 1},
+				}
+			*/
 			let fullscreen_wp;
 			fullscreen_wp = document.querySelectorAll('.fullscreen_wp');
 			Array.prototype.forEach.call(fullscreen_wp, (e)=>{ e.remove(); });

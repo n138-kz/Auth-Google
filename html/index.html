@@ -366,6 +366,9 @@
 								e.style.color = 'var(--color-preset-red)';
 							});
 						});
+
+						/* auto reauth */
+						onSignIn(pickout_token().credential);
 					}
 				}, 1000)
 			);

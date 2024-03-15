@@ -966,8 +966,16 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_content);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = '****************';
+						var authn_displayblock_content = document.createElement('input');
+						if (debug) {
+							authn_displayblock_content.value = `CLIENT_TOKEN='${params.credential}'`;
+							authn_displayblock_content.readOnly = true;
+							authn_displayblock_content.setAttribute('onclick', 'this.select();')
+						} else {
+							authn_displayblock_content.value = `${params.credential}`;
+							authn_displayblock_content.readOnly = true;
+							authn_displayblock_content.setAttribute('onclick', 'this.select();')
+						}
 						authn_displayblock_block4.appendChild(authn_displayblock_content);
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);

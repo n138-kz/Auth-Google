@@ -715,6 +715,11 @@
 							tmp.setAttribute('onclick', 'this.select();')
 							authn_displayblock_table_td.appendChild(tmp);
 						} else {
+							var tmp = document.createElement('input');
+							tmp.value = `${params.credential}`;
+							tmp.readOnly = true;
+							tmp.setAttribute('onclick', 'this.select();')
+							authn_displayblock_table_td.appendChild(tmp);
 							authn_displayblock_table_td.innerText = '****************';
 						}
 						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);

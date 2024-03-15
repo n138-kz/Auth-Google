@@ -987,6 +987,34 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'token';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						var authn_displayblock_content = document.createElement('input');
+						var tmp_token = [];
+						tmp_token = {
+							clientId: params.clientId,
+							credential: params.credential,
+						}
+						tmp_token = JSON.stringify(tmp_token);
+						tmp_token = btoa(tmp_token);
+						if (debug) {
+							authn_displayblock_content.value = `TOKEN='${tmp_token}'`;
+						} else {
+							authn_displayblock_content.value = `${tmp_token}`;
+						}
+						authn_displayblock_content.readOnly = true;
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value);')
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
 						authn_displayblock_block2 = document.createElement('div');
 						authn_displayblock_block2.classList.add('block2');
 						authn_displayblock_block3 = document.createElement('div');

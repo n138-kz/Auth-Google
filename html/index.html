@@ -694,7 +694,7 @@
 							tmp.value = `${params.clientId}`;
 						}
 						tmp.readOnly = true;
-						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value);')
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_table_td.appendChild(tmp);
 						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
@@ -708,7 +708,7 @@
 							tmp.value = `${params.credential}`;
 						}
 						tmp.readOnly = true;
-						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value);')
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_table_td.appendChild(tmp);
 						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
@@ -729,7 +729,7 @@
 							tmp.value = `${tmp_token}`;
 						}
 						tmp.readOnly = true;
-						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value);')
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_table_td.appendChild(tmp);
 						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
@@ -961,7 +961,7 @@
 							authn_displayblock_content.value = `${params.clientId}`;
 						}
 						authn_displayblock_content.readOnly = true;
-						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value);')
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_block4.appendChild(authn_displayblock_content);
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
@@ -982,7 +982,7 @@
 							authn_displayblock_content.value = `${params.credential}`;
 						}
 						authn_displayblock_content.readOnly = true;
-						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value);')
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_block4.appendChild(authn_displayblock_content);
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
@@ -1010,7 +1010,7 @@
 							authn_displayblock_content.value = `${tmp_token}`;
 						}
 						authn_displayblock_content.readOnly = true;
-						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value);')
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_block4.appendChild(authn_displayblock_content);
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);

@@ -146,6 +146,9 @@ function set_http_response_code ( $http ) {
 $_SESSION = [];
 $request = [];
 $result = [];
+if ($config_loaded) {
+	$result = $config['internal']['default']['result'];
+}
 $result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
 $result['client'] = [
 	'address' => $_SERVER['REMOTE_ADDR'],

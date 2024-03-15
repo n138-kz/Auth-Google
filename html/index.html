@@ -621,32 +621,6 @@
 							else { debug = false; }
 						} catch (error) {}
 
-						/*
-						* @sample
-							response = {
-								http: {
-									code: 200
-								},
-								error: {
-									code: 0
-								},
-								issue_at: (new Date()).getTime()/1000,
-								last_checkpoint: 119,
-								remote: '127.0.0.1:65535',
-								google: {
-									session: {
-										iat: (new Date()).getTime()/1000,
-										exp: (new Date()).getTime()/1000,
-									},
-									user: {
-										userid: 'test-id-01',
-										email: 'test@example.net',
-										name: 'test, test',
-										icon: 'https://lh3.googleusercontent.com/a/ACg8ocKm8zMAS24gpR1uksfUAXPG5gDSevDZdYPgtfXetrK0nVRN=s96-c',
-									}
-								}
-							}
-						/* * */
 						/* sample landscape */
 						authn_displayblock_table = document.createElement('table');
 						authn_displayblock_table.classList.add('authn_result_landscape');

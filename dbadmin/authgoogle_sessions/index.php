@@ -260,11 +260,13 @@ try {
 			'response' => $headers_list,
 		],
 		'_roles'   => [],
+		'_sql'     => null,
 	];
 	unset($headers_list);
 
 	if ($config_loaded) {
 		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
+			$result['variable']['_sql'] = &$sql;
 			$result['datastore']['public']['authgoogle_sessions'] = [];
 			$dsn = [
 				'scheme' => $config['internal']['databases']['primary']['scheme'],

@@ -262,6 +262,57 @@ try {
 	];
 	unset($headers_list);
 
+	if ($config_loaded) {
+		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
+			$result['variable']['pdo_result'] = &$pdo_result;
+			$dsn = [
+				'scheme' => $config['internal']['databases']['primary']['scheme'],
+				'host' => $config['internal']['databases']['primary']['host'],
+				'port' => $config['internal']['databases']['primary']['port'],
+				'dbname' => $config['internal']['databases']['primary']['dbname'],
+				'username' => $config['internal']['databases']['primary']['username'],
+				'password' => $config['internal']['databases']['primary']['password'],
+			];
+			try {
+				$pdo = new \PDO(
+					''.$dsn['scheme'].':'.
+					'host='.$dsn['host'].';'.
+					'port='.$dsn['port'].';'.
+					'dbname='.$dsn['dbname'].';'.
+					'user='.$dsn['username'].';'.
+					'password='.$dsn['password'].''.
+					''
+				);
+				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$pdo->setAttribute(PDO::ATTR_TIMEOUT, 10);
+				$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+				$pdo = null;
+			} catch (\Throwable $th) {
+				if ($config['external']['discord']['activate']['alert']) {
+					(json_encode(push2discord(
+						$config['external']['discord']['uri']['alert'],
+						$config['external']['discord']['authorname']['alert'],
+						$config['external']['discord']['authoravatar']['alert'],
+						$config['external']['discord']['color']['alert'],
+						'Error:' . PHP_EOL.
+						'```json' . PHP_EOL.
+						json_encode([
+							'exception' => [
+								'text' => $th->getMessage(),
+								'code' => $th->getCode(),
+								'line' => $th->getLine(),
+								'trace' => $th->getTraceAsString(),
+							]
+						], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
+						'```' . PHP_EOL.
+						chr(0),
+					), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+				}
+			}
+		}
+	}
+
 	header('Content-Type: application/json; charset=UTF-8');
 	echo json_encode( $result );	
 

@@ -349,7 +349,7 @@ try {
 			'credential' => CLIENT_TOKEN,
 			'iat' => time(),
 		])),
-		time() + 3600
+		$result['google']['session']['exp']
 	);
 	$headers_list = [];
 	foreach (headers_list() as $key => $val) {

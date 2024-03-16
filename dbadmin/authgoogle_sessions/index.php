@@ -14,7 +14,7 @@ header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content
 header('X-Powered-By: Hidden');
 header_register_callback(function(){ header_remove('X-Powered-By'); });
 
-$config = dirname(__FILE__) . '../../google/' . '.env';
+$config = dirname(__FILE__) . '/../../google/' . '.env';
 $config_loaded = false;
 if ( file_exists($config) && filesize($config) > 0 ) {
 	try {

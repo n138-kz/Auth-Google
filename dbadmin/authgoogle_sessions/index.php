@@ -287,6 +287,13 @@ try {
 				$pdo->setAttribute(PDO::ATTR_TIMEOUT, 10);
 				$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
+				$sql  = 'SELECT * FROM public.authgoogle_role_internal_datastore';
+				$sql .= ' INNER JOIN public.authgoogle_userinfo ON public.authgoogle_userinfo.id = public.authgoogle_role_internal_datastore.userid';
+				$sql .= ' WHERE public.authgoogle_role_internal_datastore.userid = :userid';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_result = $pdo_prepare->execute([ 'userid' => $result['google']['sub'] ]);
+				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				
 				$pdo = null;
 			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['alert']) {

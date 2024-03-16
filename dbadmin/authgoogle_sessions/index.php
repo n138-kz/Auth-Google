@@ -170,6 +170,7 @@ $result['last_checkpoint'] = __LINE__;
 
 $request = array_merge($request, $_COOKIE);
 $request = array_merge($request, $_SESSION);
+$request = array_merge($request, $_REQUEST);
 try {
 	if ( isset($request[session_name().'_alt']) ) {
 		$request = array_merge(

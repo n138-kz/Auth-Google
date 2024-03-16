@@ -324,7 +324,7 @@ try {
 	}
 
 	header('Content-Type: application/json; charset=UTF-8');
-	echo json_encode( $result );	
+	echo json_encode( $result, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE);
 
 	exit(0);
 } catch (\Exception $th) {

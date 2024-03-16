@@ -368,7 +368,11 @@
 						});
 
 						/* auto reauth */
-						onSignIn(pickout_token().credential, 1);
+						try {
+							onSignIn(pickout_token().credential, 1);
+						} catch (error) {
+							location.replace(location.href);
+						}
 					}
 				}, 1000)
 			);

@@ -265,6 +265,7 @@ try {
 	if ($config_loaded) {
 		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
 			$result['variable']['pdo_result'] = &$pdo_result;
+			$result['datastore']['public']['authgoogle_role_internal_datastore'] = null;
 			$dsn = [
 				'scheme' => $config['internal']['databases']['primary']['scheme'],
 				'host' => $config['internal']['databases']['primary']['host'],
@@ -293,6 +294,8 @@ try {
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_result = $pdo_prepare->execute([ 'userid' => $result['google']['sub'] ]);
 				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+					/* No have permission */
+					$result['datastore']['public']['authgoogle_role_internal_datastore'] = [];
 				
 				$pdo = null;
 			} catch (\Throwable $th) {

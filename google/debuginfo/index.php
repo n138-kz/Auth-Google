@@ -185,6 +185,12 @@ $result['authn'] = [
 	],
 ];
 
+$request = array_merge($request, $_COOKIE);
+$request = array_merge($request, $_SESSION);
+try {
+	$request = array_merge($request, json_decode(base64_decode($request[session_name().'_alt']), TRUE));
+} catch (\Exception $e) {}
+
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
 	set_http_response_code(200);
 	$result['issue_at'] = microtime(TRUE);
@@ -199,9 +205,6 @@ header('Content-Type: application/json; charset=UTF-8');
 $request['header'] = apache_request_headers();
 $request['header']['Authorization'] = isset($request['header']['Authorization']) ? explode(' ', $request['header']['Authorization']) : ['Bearer', null];
 $request['header']['Authorization'][$request['header']['Authorization'][0]] = $request['header']['Authorization'][1];
-$request['credential'] = $request['header']['Authorization'][1];
-$request['clientId'] = ( $config_loaded && isset($config['external']['google']['authn']['clientId']) ) ? $config['external']['google']['authn']['clientId'] : null;
-unset($request['header']);
 
 define('CLIENT_ID', $request['clientId']);
 define('CLIENT_TOKEN', $request['credential']);

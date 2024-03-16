@@ -516,6 +516,20 @@ try {
 
 				}
 
+				/* ADD VALUE TO TABLE IF NOT EXISTS */
+				$sql = 'SELECT COUNT(userid) AS COUNT FROM public.authgoogle_role_internal_datastore WHERE userid=?';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_result = $pdo_prepare->execute([ $result['google']['user']['userid'] ]);
+				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				if ($pdo_result['count'] === 0) {
+					/* New user */
+					$sql = 'INSERT INTO public.authgoogle_role_internal_datastore (userid) VALUES (:userid);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_result = $pdo_prepare->execute([
+						'userid' => $result['google']['user']['userid'],
+					]);
+				}
+
 				/* ADD VALUE TO LOG TABLE */
 				$sql = 'INSERT INTO public.authgoogle_authnlog (';
 				$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';

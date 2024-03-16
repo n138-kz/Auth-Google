@@ -188,7 +188,12 @@ $result['authn'] = [
 $request = array_merge($request, $_COOKIE);
 $request = array_merge($request, $_SESSION);
 try {
-	$request = array_merge($request, json_decode(base64_decode($request[session_name().'_alt']), TRUE));
+	if ( isset($request[session_name().'_alt']) ) {
+		$request = array_merge(
+			$request,
+			json_decode( base64_decode( $request[session_name().'_alt'] ), TRUE)
+		);
+	}
 } catch (\Exception $e) {}
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {

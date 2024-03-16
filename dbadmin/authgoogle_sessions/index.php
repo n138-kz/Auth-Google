@@ -259,6 +259,7 @@ try {
 			'request' => apache_request_headers(),
 			'response' => $headers_list,
 		],
+		'_roles'   => [],
 	];
 	unset($headers_list);
 
@@ -293,6 +294,7 @@ try {
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_result = $pdo_prepare->execute([ 'userid' => $result['google']['sub'] ]);
 				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				$result['variable']['_roles'] = $pdo_result;
 				if ( $pdo_result['superuser'] || ( ( ( $pdo_result['authgoogle_userinfo'] & 4 ) === 4 ) && ( ( $pdo_result['authgoogle_sessions'] & 4 ) === 4 ) ) ) {
 					$sql  = 'SELECT public.authgoogle_userinfo.email, public.authgoogle_userinfo.name, public.authgoogle_sessions.iat, public.authgoogle_sessions.exp, public.authgoogle_sessions.token FROM public.authgoogle_sessions';
 					$sql .= ' INNER JOIN public.authgoogle_userinfo ON public.authgoogle_userinfo.id = public.authgoogle_sessions.userid';
@@ -303,7 +305,7 @@ try {
 					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
 					$result['datastore']['public']['authgoogle_sessions'] = $pdo_result;
 				}
-				if ( !$pdo_result['superuser'] ) {
+				if ( !$result['variable']['_roles']['superuser'] ) {
 					unset($result['google']);
 					unset($result['variable']);
 				}

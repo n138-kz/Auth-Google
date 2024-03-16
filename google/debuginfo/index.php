@@ -194,7 +194,14 @@ try {
 			json_decode( base64_decode( $request[session_name().'_alt'] ), TRUE)
 		);
 	}
-} catch (\Exception $e) {}
+} catch (\Exception $e) {
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
+	echo json_encode( $result );
+	exit(1);
+}
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
 	set_http_response_code(200);

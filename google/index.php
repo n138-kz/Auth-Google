@@ -341,6 +341,16 @@ try {
 			'credential' => CLIENT_TOKEN,
 		],
 	];
+	setcookie(
+		session_name() . '_alt',
+		base64_encode(json_encode([
+			'authnaddr' => $result['client']['address'],
+			'clientId' => CLIENT_ID,
+			'credential' => CLIENT_TOKEN,
+			'iat' => time(),
+		])),
+		time() + 3600
+	);
 	$headers_list = [];
 	foreach (headers_list() as $key => $val) {
 		$split = explode(':', $val, 2);

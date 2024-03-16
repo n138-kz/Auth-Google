@@ -162,7 +162,7 @@ $result['client'] = [
 	'referer' => ( isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '' ),
 	'origin' => ( isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '' ),
 ];
-$result['issue_at'] = microtime(TRUE);
+$result['issue_at'] = time();
 $result['error']['code'] = 0;
 $result['http']['code'] = http_response_code();
 $result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
@@ -180,7 +180,7 @@ try {
 	}
 } catch (\Exception $e) {
 	set_http_response_code(400);
-	$result['issue_at'] = microtime(TRUE);
+	$result['issue_at'] = time();
 	$result['last_checkpoint'] = __LINE__;
 
 	echo json_encode( $result );
@@ -189,7 +189,7 @@ try {
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
 	set_http_response_code(200);
-	$result['issue_at'] = microtime(TRUE);
+	$result['issue_at'] = time();
 	$result['last_checkpoint'] = __LINE__;
 
 	echo json_encode( $result );
@@ -211,7 +211,7 @@ try {
 	
 	if ( $_SERVER['REMOTE_ADDR'] !== CLIENT_ADDR ) {
 		set_http_response_code(401);
-		$result['issue_at'] = microtime(TRUE);
+		$result['issue_at'] = time();
 		$result['last_checkpoint'] = __LINE__;
 
 		echo json_encode( $result );
@@ -229,7 +229,7 @@ try {
 		$payload = false;
 
 		set_http_response_code(401);
-		$result['issue_at'] = microtime(TRUE);
+		$result['issue_at'] = time();
 		$result['last_checkpoint'] = __LINE__;
 
 		echo json_encode( $result );
@@ -237,7 +237,7 @@ try {
 	}
 
 	set_http_response_code(200);
-	$result['issue_at'] = microtime(TRUE);
+	$result['issue_at'] = time();
 	$result['last_checkpoint'] = __LINE__;
 
 	header('Content-Type: text/html; charset=UTF-8');
@@ -245,7 +245,7 @@ try {
 	exit(0);
 } catch (\Exception $th) {
 	set_http_response_code(500);
-	$result['issue_at'] = microtime(TRUE);
+	$result['issue_at'] = time();
 	$result['last_checkpoint'] = __LINE__;
 
 	error_log($th->getTraceAsString());

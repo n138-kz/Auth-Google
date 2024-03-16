@@ -223,6 +223,8 @@ try {
 		$payload = $client->verifyIdToken(CLIENT_TOKEN);
 		if (!$payload) {
 			throw new Exception();
+		} else {
+			$result['google'] = $payload;
 		}
 	} catch (\Exception $th) {
 		/* invalid token */

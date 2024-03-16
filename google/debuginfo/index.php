@@ -6,7 +6,7 @@ session_start([
 	'name' 	          => 'AUTHNKEY',
 ]);
 date_default_timezone_set('Asia/Tokyo');
-header('Content-Type: text/plain');
+header('Content-Type: text/plain; charset=UTF-8');
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");

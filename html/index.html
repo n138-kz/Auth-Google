@@ -247,7 +247,32 @@
 			content.id = 'locate_clock';
 			content.innerText = '';
 			document.body.appendChild( content );
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock',
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', 0);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1',
+				setInterval(()=>{
+					let execcount_locate_clock = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock' );
+					if ( execcount_locate_clock > 40 ) {
+						clearInterval( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1' ) );
+					} else {
+						execcount_locate_clock++;
+						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', execcount_locate_clock);
+					}
+					let cycle_clock = new Date();
+					cycle_clock = {
+						FullYear : (''+cycle_clock.getFullYear()),
+						Month : ('00'+(cycle_clock.getMonth()+1)).substr(-2),
+						Date : ('00'+cycle_clock.getDate()).substr(-2),
+						Hours : ('00'+cycle_clock.getHours()).substr(-2),
+						Minutes : ('00'+cycle_clock.getMinutes()).substr(-2),
+						Seconds : ('00'+cycle_clock.getSeconds()).substr(-2),
+					}
+					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
+					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
+					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 25)
+			);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock2',
 				setInterval(()=>{
 					let cycle_clock = new Date();
 					cycle_clock = {
@@ -261,7 +286,8 @@
 					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
 					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
 					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
-				}, 100)
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 1000)
 			);
 		}, false);
 		window.addEventListener('DOMContentLoaded', (e)=>{

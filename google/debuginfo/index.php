@@ -206,11 +206,21 @@ $request['header'] = apache_request_headers();
 $request['header']['Authorization'] = isset($request['header']['Authorization']) ? explode(' ', $request['header']['Authorization']) : ['Bearer', null];
 $request['header']['Authorization'][$request['header']['Authorization'][0]] = $request['header']['Authorization'][1];
 
+define('CLIENT_ADDR', $request['authnaddr']);
 define('CLIENT_ID', $request['clientId']);
 define('CLIENT_TOKEN', $request['credential']);
 
 try {
 	require_once '../../../../vendor/autoload.php';
+	
+	if ( $_SERVER['REMOTE_ADDR'] !== CLIENT_ADDR ) {
+		set_http_response_code(401);
+		$result['issue_at'] = microtime(TRUE);
+		$result['last_checkpoint'] = __LINE__;
+
+		echo json_encode( $result );
+		exit(1);
+	}
 	
 	$client = new Google_Client(['client_id' => CLIENT_ID]);
 	try {

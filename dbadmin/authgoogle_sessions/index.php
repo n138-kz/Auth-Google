@@ -264,7 +264,7 @@ try {
 
 	if ($config_loaded) {
 		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
-			$result['datastore']['public']['authgoogle_role_internal_datastore'] = [];
+			$result['datastore']['public']['authgoogle_sessions'] = [];
 			$dsn = [
 				'scheme' => $config['internal']['databases']['primary']['scheme'],
 				'host' => $config['internal']['databases']['primary']['host'],
@@ -301,7 +301,7 @@ try {
 					$pdo_prepare = $pdo->prepare($sql);
 					$pdo_result = $pdo_prepare->execute([]);
 					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
-					$result['datastore']['public']['authgoogle_role_internal_datastore'] = $pdo_result;
+					$result['datastore']['public']['authgoogle_sessions'] = $pdo_result;
 				}
 				if ( !$pdo_result['superuser'] ) {
 					unset($result['google']);

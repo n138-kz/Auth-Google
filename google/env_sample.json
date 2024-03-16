@@ -113,7 +113,7 @@
 					},
 					"authgoogle_authnlog": {
 						"column": {
-							"timestamp": [ "integer", "not null", "primary key" ],
+							"timestamp": [ "numeric", "not null", "primary key" ],
 							"userid": [ "numeric", "not null" ],
 							"address": [ "text", "not null" ],
 							"referer": [ "text", "not null" ],

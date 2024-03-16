@@ -300,8 +300,9 @@ try {
 				if ( $pdo_result['superuser'] || ( ( ( $pdo_result['authgoogle_userinfo'] & 4 ) === 4 ) && ( ( $pdo_result['authgoogle_authnlog'] & 4 ) === 4 ) ) ) {
 					$sql  = 'SELECT public.authgoogle_userinfo.email, public.authgoogle_userinfo.name, public.authgoogle_authnlog.* FROM public.authgoogle_authnlog';
 					$sql .= ' INNER JOIN public.authgoogle_userinfo ON public.authgoogle_userinfo.id = public.authgoogle_authnlog.userid';
-					$sql .= ' WHERE public.authgoogle_authnlog.timestamp > EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) - EXTRACT(EPOCH FROM INTERVAL \'3 MONTH\')';
+					$sql .= ' WHERE public.authgoogle_authnlog.timestamp > EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) - EXTRACT(EPOCH FROM INTERVAL \'1 MONTH\')';
 					$sql .= ' ORDER BY timestamp DESC';
+					$sql .= ' LIMIT 500';
 					$pdo_prepare = $pdo->prepare($sql);
 					$pdo_result = $pdo_prepare->execute([]);
 					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);

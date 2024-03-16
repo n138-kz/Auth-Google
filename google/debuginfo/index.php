@@ -6,7 +6,13 @@ session_start([
 	'name' 	          => 'AUTHNKEY',
 ]);
 date_default_timezone_set('Asia/Tokyo');
-header('Content-Type: text/html; charset=UTF-8');
+header('Content-Type: text/plain');
+header('Content-Type: application/json; charset=UTF-8');
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");
+header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header('X-Powered-By: Hidden');
+header_register_callback(function(){ header_remove('X-Powered-By'); });
 
 $config = dirname(__FILE__) . '/../' . '.env';
 $config_loaded = false;

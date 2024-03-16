@@ -167,23 +167,6 @@ $result['error']['code'] = 0;
 $result['http']['code'] = http_response_code();
 $result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
 $result['last_checkpoint'] = __LINE__;
-$result['google'] = [
-	'user' => [
-		'userid' => '',
-		'name' => '',
-		'icon' => '',
-	],
-	'session' => [
-		'iat' => 0,
-		'exp' => 0,
-	],
-];
-$result['authn'] = [
-	'sessions' => [
-		'id' => '',
-		'name' => '',
-	],
-];
 
 $request = array_merge($request, $_COOKIE);
 $request = array_merge($request, $_SESSION);

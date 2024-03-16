@@ -265,7 +265,7 @@ try {
 	if ($config_loaded) {
 		if ($config['internal']['databases']['activate'] && $config['internal']['databases']['primary']['activate']) {
 			$result['variable']['pdo_result'] = &$pdo_result;
-			$result['datastore']['public']['authgoogle_role_internal_datastore'] = null;
+			$result['datastore']['public']['authgoogle_role_internal_datastore'] = [];
 			$dsn = [
 				'scheme' => $config['internal']['databases']['primary']['scheme'],
 				'host' => $config['internal']['databases']['primary']['host'],

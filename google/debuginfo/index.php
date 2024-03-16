@@ -6,7 +6,13 @@ session_start([
 	'name' 	          => 'AUTHNKEY',
 ]);
 date_default_timezone_set('Asia/Tokyo');
-header('Content-Type: text/html; charset=UTF-8');
+header('Content-Type: text/plain');
+header('Content-Type: application/json; charset=UTF-8');
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH, PUT, DELETE");
+header("Access-Control-Allow-Headers: Content-Disposition, Content-Type, Content-Length, Accept-Encoding, Origin, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header('X-Powered-By: Hidden');
+header_register_callback(function(){ header_remove('X-Powered-By'); });
 
 $config = dirname(__FILE__) . '/../' . '.env';
 $config_loaded = false;
@@ -62,42 +68,6 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 	$curl_res=json_decode($curl_res, TRUE);
 	return $curl_res;
 }
-
-$request = [];
-$result = [];
-$result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
-$result['client'] = [
-	'address' => $_SERVER['REMOTE_ADDR'],
-	'port' => $_SERVER['REMOTE_PORT'],
-	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
-	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
-	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
-	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
-	'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-];
-$result['issue_at'] = microtime(TRUE);
-$result['error']['code'] = 0;
-$result['http']['code'] = http_response_code();
-$result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
-$result['last_checkpoint'] = __LINE__;
-$result['google'] = [
-	'user' => [
-		'userid' => '',
-		'name' => '',
-		'icon' => '',
-	],
-	'session' => [
-		'iat' => 0,
-		'exp' => 0,
-	],
-];
-$result['authn'] = [
-	'sessions' => [
-		'id' => '',
-		'name' => '',
-	],
-];
-
 function get_message_with_http_response_code ($http) {
 	switch ($http) {
 		case 100: return '100 Continue';break;
@@ -166,12 +136,71 @@ function get_message_with_http_response_code ($http) {
 		default: break;
 	}
 }
-
 function set_http_response_code ( $http ) {
 	http_response_code( $http );
 	global $result;
 	$result['http']['code'] = $http;
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
+}
+
+
+
+$request = [];
+$result = [];
+if ($config_loaded) {
+	$result = $config['internal']['default']['result'];
+}
+$result['remote'] = $_SERVER['REMOTE_ADDR'] . ':' . $_SERVER['REMOTE_PORT'];
+$result['client'] = [
+	'address' => $_SERVER['REMOTE_ADDR'],
+	'port' => $_SERVER['REMOTE_PORT'],
+	'user' => ( isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : null ),
+	'user_authed' => ( isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null ),
+	'user_redirected' => ( isset($_SERVER['REDIRECT_REMOTE_USER']) ? $_SERVER['REDIRECT_REMOTE_USER'] : null ),
+	'content_type' => ( isset($_SERVER['CONTENT_TYPE']) ? explode(';', trim(strtolower($_SERVER['CONTENT_TYPE'])))[0] : null ),
+	'user_agent' => ( isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
+	'referer' => ( isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '' ),
+	'origin' => ( isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '' ),
+];
+$result['issue_at'] = microtime(TRUE);
+$result['error']['code'] = 0;
+$result['http']['code'] = http_response_code();
+$result['http']['text'] = get_message_with_http_response_code($result['http']['code']);
+$result['last_checkpoint'] = __LINE__;
+$result['google'] = [
+	'user' => [
+		'userid' => '',
+		'name' => '',
+		'icon' => '',
+	],
+	'session' => [
+		'iat' => 0,
+		'exp' => 0,
+	],
+];
+$result['authn'] = [
+	'sessions' => [
+		'id' => '',
+		'name' => '',
+	],
+];
+
+$request = array_merge($request, $_COOKIE);
+$request = array_merge($request, $_SESSION);
+try {
+	if ( isset($request[session_name().'_alt']) ) {
+		$request = array_merge(
+			$request,
+			json_decode( base64_decode( $request[session_name().'_alt'] ), TRUE)
+		);
+	}
+} catch (\Exception $e) {
+	set_http_response_code(400);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
+	echo json_encode( $result );
+	exit(1);
 }
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
@@ -188,15 +217,22 @@ header('Content-Type: application/json; charset=UTF-8');
 $request['header'] = apache_request_headers();
 $request['header']['Authorization'] = isset($request['header']['Authorization']) ? explode(' ', $request['header']['Authorization']) : ['Bearer', null];
 $request['header']['Authorization'][$request['header']['Authorization'][0]] = $request['header']['Authorization'][1];
-$request['credential'] = $request['header']['Authorization'][1];
-$request['clientId'] = ( $config_loaded && isset($config['external']['google']['authn']['clientId']) ) ? $config['external']['google']['authn']['clientId'] : null;
-unset($request['header']);
 
+define('CLIENT_ADDR', $request['authnaddr']);
 define('CLIENT_ID', $request['clientId']);
 define('CLIENT_TOKEN', $request['credential']);
 
 try {
 	require_once '../../../../vendor/autoload.php';
+	
+	if ( $_SERVER['REMOTE_ADDR'] !== CLIENT_ADDR ) {
+		set_http_response_code(401);
+		$result['issue_at'] = microtime(TRUE);
+		$result['last_checkpoint'] = __LINE__;
+
+		echo json_encode( $result );
+		exit(1);
+	}
 	
 	$client = new Google_Client(['client_id' => CLIENT_ID]);
 	try {

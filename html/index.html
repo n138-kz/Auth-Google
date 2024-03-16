@@ -68,7 +68,7 @@
 			let favicon;
 			['icon', 'apple-touch-icon', 'favicon'].forEach((e)=>{
 				favicon = document.createElement('link');
-				favicon.rel = 'icon';
+				favicon.rel = `${e}`;
 				favicon.href = 'https://www.google.com/s2/favicons?size=64&domain=https://google.com/';
 				document.querySelectorAll('head').forEach((e)=>e.prepend(favicon));
 			});
@@ -247,7 +247,32 @@
 			content.id = 'locate_clock';
 			content.innerText = '';
 			document.body.appendChild( content );
-			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock',
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', 0);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1',
+				setInterval(()=>{
+					let execcount_locate_clock = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock' );
+					if ( execcount_locate_clock > 40 ) {
+						clearInterval( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1' ) );
+					} else {
+						execcount_locate_clock++;
+						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', execcount_locate_clock);
+					}
+					let cycle_clock = new Date();
+					cycle_clock = {
+						FullYear : (''+cycle_clock.getFullYear()),
+						Month : ('00'+(cycle_clock.getMonth()+1)).substr(-2),
+						Date : ('00'+cycle_clock.getDate()).substr(-2),
+						Hours : ('00'+cycle_clock.getHours()).substr(-2),
+						Minutes : ('00'+cycle_clock.getMinutes()).substr(-2),
+						Seconds : ('00'+cycle_clock.getSeconds()).substr(-2),
+					}
+					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
+					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
+					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 25)
+			);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock2',
 				setInterval(()=>{
 					let cycle_clock = new Date();
 					cycle_clock = {
@@ -261,7 +286,8 @@
 					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
 					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
 					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
-				}, 100)
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 1000)
 			);
 		}, false);
 		window.addEventListener('DOMContentLoaded', (e)=>{
@@ -368,7 +394,11 @@
 						});
 
 						/* auto reauth */
-						onSignIn(pickout_token().credential, 1);
+						try {
+							onSignIn(pickout_token().credential, 1);
+						} catch (error) {
+							location.replace(location.href);
+						}
 					}
 				}, 1000)
 			);
@@ -648,27 +678,15 @@
 						authn_displayblock_table.border = 1;
 						authn_displayblock_table_section = document.createElement('tbody');
 						authn_displayblock_table_tr = document.createElement('tr');
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'http';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'code';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.http.code;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'header';authn_displayblock_table_td.rowSpan = 3;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'http status';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.http.text;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'error';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'code';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.error.code;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-						authn_displayblock_table_tr = document.createElement('tr');
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'issue_at';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'issue_at';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'issue at';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (new Date(response.issue_at*1000)).toLocaleString();authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'last_checkpoint';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'code';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.last_checkpoint;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-						authn_displayblock_table_tr = document.createElement('tr');
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'remote';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'address';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('td');
 						var tmp = document.createElement('a');
@@ -678,16 +696,7 @@
 						authn_displayblock_table_td.appendChild(tmp);
 						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-						authn_displayblock_table_tr = document.createElement('tr');
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'authn';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'session';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'id';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.authn.sessions.id;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-						authn_displayblock_table_tr = document.createElement('tr');
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'name';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.authn.sessions.name;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'google';authn_displayblock_table_td.rowSpan = 8;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_td.rowSpan = 3;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
@@ -791,56 +800,34 @@
 						authn_displayblock_block4 = document.createElement('div');
 						authn_displayblock_block4.classList.add('block4');
 						authn_displayblock_content = document.createElement('h2');
-						authn_displayblock_content.innerText = 'http';
+						authn_displayblock_content.innerText = 'header';
 						authn_displayblock_block1.appendChild(authn_displayblock_content);
-						authn_displayblock_content = document.createElement('h3');
-						authn_displayblock_content.innerText = 'code';
-						authn_displayblock_block2.appendChild(authn_displayblock_content);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = response.http.code;
-						authn_displayblock_block4.appendChild(authn_displayblock_content);
-						authn_displayblock_block3.appendChild(authn_displayblock_block4);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block0.appendChild(authn_displayblock_block1);
-						
-						authn_displayblock_block1 = document.createElement('div');
-						authn_displayblock_block1.classList.add('block1');
+
 						authn_displayblock_block2 = document.createElement('div');
 						authn_displayblock_block2.classList.add('block2');
 						authn_displayblock_block3 = document.createElement('div');
 						authn_displayblock_block3.classList.add('block3');
 						authn_displayblock_block4 = document.createElement('div');
 						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h2');
-						authn_displayblock_content.innerText = 'error';
-						authn_displayblock_block1.appendChild(authn_displayblock_content);
 						authn_displayblock_content = document.createElement('h3');
-						authn_displayblock_content.innerText = 'code';
+						authn_displayblock_content.innerText = 'http status';
 						authn_displayblock_block2.appendChild(authn_displayblock_content);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
 						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = response.error.code;
+						authn_displayblock_content.innerText = response.http.text;
 						authn_displayblock_block4.appendChild(authn_displayblock_content);
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block0.appendChild(authn_displayblock_block1);
-						
-						authn_displayblock_block1 = document.createElement('div');
-						authn_displayblock_block1.classList.add('block1');
+
 						authn_displayblock_block2 = document.createElement('div');
 						authn_displayblock_block2.classList.add('block2');
 						authn_displayblock_block3 = document.createElement('div');
 						authn_displayblock_block3.classList.add('block3');
 						authn_displayblock_block4 = document.createElement('div');
 						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h2');
-						authn_displayblock_content.innerText = 'issue_at';
-						authn_displayblock_block1.appendChild(authn_displayblock_content);
 						authn_displayblock_content = document.createElement('h3');
-						authn_displayblock_content.innerText = 'issue_at';
+						authn_displayblock_content.innerText = 'issue at';
 						authn_displayblock_block2.appendChild(authn_displayblock_content);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
 						authn_displayblock_content = document.createElement('code');
@@ -849,42 +836,13 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block0.appendChild(authn_displayblock_block1);
-						
-						authn_displayblock_block1 = document.createElement('div');
-						authn_displayblock_block1.classList.add('block1');
+
 						authn_displayblock_block2 = document.createElement('div');
 						authn_displayblock_block2.classList.add('block2');
 						authn_displayblock_block3 = document.createElement('div');
 						authn_displayblock_block3.classList.add('block3');
 						authn_displayblock_block4 = document.createElement('div');
 						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h2');
-						authn_displayblock_content.innerText = 'last_checkpoint';
-						authn_displayblock_block1.appendChild(authn_displayblock_content);
-						authn_displayblock_content = document.createElement('h3');
-						authn_displayblock_content.innerText = 'code';
-						authn_displayblock_block2.appendChild(authn_displayblock_content);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = response.last_checkpoint;
-						authn_displayblock_block4.appendChild(authn_displayblock_content);
-						authn_displayblock_block3.appendChild(authn_displayblock_block4);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block0.appendChild(authn_displayblock_block1);
-						
-						authn_displayblock_block1 = document.createElement('div');
-						authn_displayblock_block1.classList.add('block1');
-						authn_displayblock_block2 = document.createElement('div');
-						authn_displayblock_block2.classList.add('block2');
-						authn_displayblock_block3 = document.createElement('div');
-						authn_displayblock_block3.classList.add('block3');
-						authn_displayblock_block4 = document.createElement('div');
-						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h2');
-						authn_displayblock_content.innerText = 'remote';
-						authn_displayblock_block1.appendChild(authn_displayblock_content);
 						authn_displayblock_content = document.createElement('h3');
 						authn_displayblock_content.innerText = 'address';
 						authn_displayblock_block2.appendChild(authn_displayblock_content);
@@ -897,49 +855,7 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block0.appendChild(authn_displayblock_block1);
-						
-						authn_displayblock_block1 = document.createElement('div');
-						authn_displayblock_block1.classList.add('block1');
-						authn_displayblock_block2 = document.createElement('div');
-						authn_displayblock_block2.classList.add('block2');
-						authn_displayblock_block3 = document.createElement('div');
-						authn_displayblock_block3.classList.add('block3');
-						authn_displayblock_block4 = document.createElement('div');
-						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h2');
-						authn_displayblock_content.innerText = 'authn';
-						authn_displayblock_block1.appendChild(authn_displayblock_content);
-						authn_displayblock_content = document.createElement('h3');
-						authn_displayblock_content.innerText = 'session';
-						authn_displayblock_block2.appendChild(authn_displayblock_content);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('h4');
-						authn_displayblock_content.innerText = 'id';
-						authn_displayblock_block3.appendChild(authn_displayblock_content);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = response.authn.sessions.id;
-						authn_displayblock_block4.appendChild(authn_displayblock_content);
-						authn_displayblock_block3.appendChild(authn_displayblock_block4);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block3 = document.createElement('div');
-						authn_displayblock_block3.classList.add('block3');
-						authn_displayblock_block4 = document.createElement('div');
-						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h4');
-						authn_displayblock_content.innerText = 'name';
-						authn_displayblock_block3.appendChild(authn_displayblock_content);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = response.authn.sessions.name;
-						authn_displayblock_block4.appendChild(authn_displayblock_content);
-						authn_displayblock_block3.appendChild(authn_displayblock_block4);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+
 						authn_displayblock_block0.appendChild(authn_displayblock_block1);
 						
 						authn_displayblock_block1 = document.createElement('div');

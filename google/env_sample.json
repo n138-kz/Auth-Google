@@ -133,9 +133,21 @@
 							"token": [ "text", "not null" ]
 						},
 						"indexes": []
+					},
+					"authgoogle_role_internal_datastore": {
+						"column": {
+							"userid": [ "numeric", "not null", "primary key" ],
+							"privlevel": [ "numeric", "not null", "default 0" ],
+							"superuser": [ "boolean", "not null", "default false" ],
+							"authgoogle_userinfo": [ "integer", "not null", "default 0" ],
+							"authgoogle_authnlog": [ "integer", "not null", "default 0" ],
+							"authgoogle_sessions": [ "integer", "not null", "default 0" ]
+						},
+						"indexes": []
 					}
 				}
 			}
 		}
 	}
 }
+

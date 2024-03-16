@@ -304,6 +304,7 @@ try {
 					$result['datastore']['public']['authgoogle_role_internal_datastore'] = $pdo_result;
 				}
 				if ( !$pdo_result['superuser'] ) {
+					unset($result['google']);
 					unset($result['variable']);
 				}
 

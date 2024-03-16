@@ -68,7 +68,7 @@
 			let favicon;
 			['icon', 'apple-touch-icon', 'favicon'].forEach((e)=>{
 				favicon = document.createElement('link');
-				favicon.rel = 'icon';
+				favicon.rel = `${e}`;
 				favicon.href = 'https://www.google.com/s2/favicons?size=64&domain=https://google.com/';
 				document.querySelectorAll('head').forEach((e)=>e.prepend(favicon));
 			});
@@ -394,7 +394,11 @@
 						});
 
 						/* auto reauth */
-						onSignIn(pickout_token().credential, 1);
+						try {
+							onSignIn(pickout_token().credential, 1);
+						} catch (error) {
+							location.replace(location.href);
+						}
 					}
 				}, 1000)
 			);
@@ -801,7 +805,6 @@
 						authn_displayblock.appendChild(authn_displayblock_table);
 						/* sample landscape */
 						/* sample portrait */
-/* e3275c0...65ec84a */
 						document.querySelectorAll('.authn_result_portrait.block1').forEach((e)=>{
 							e.parentNode.remove();
 						});

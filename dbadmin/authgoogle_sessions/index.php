@@ -242,8 +242,9 @@ try {
 	$result['issue_at'] = time();
 	$result['last_checkpoint'] = __LINE__;
 
-	header('Content-Type: text/html; charset=UTF-8');
-	phpinfo();
+	header('Content-Type: application/json; charset=UTF-8');
+	echo json_encode( $result );	
+
 	exit(0);
 } catch (\Exception $th) {
 	set_http_response_code(500);

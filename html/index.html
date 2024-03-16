@@ -33,6 +33,7 @@
 			margin: 0 auto;
 			width: 90%;
 			text-align: center;
+			padding-bottom: 100px;
 		}
 		@keyframes rotate1 {
 			0% { transform: rotate(0deg); }
@@ -128,6 +129,7 @@
 				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
 				if (!http_query_array.dev) { throw new Exception(); }
 			} catch (error) {
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify({ dev: false }) );
 				let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
 				if (!ctrlpanels) {
 					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
@@ -193,7 +195,6 @@
 			content1.style.left = '0';
 			content1.style.maxWidth = '40%';
 			content1.style.height = '1em';
-			content1.style.width = '20ex';
 			content1.style.fontFamily = '"Myrica M", "Myrica N", "Myrica P", monospace';
 			content1.style.backgroundColor = 'var(--default-background-color)';
 			content1.style.textAlign = 'left';
@@ -365,6 +366,9 @@
 								e.style.color = 'var(--color-preset-red)';
 							});
 						});
+
+						/* auto reauth */
+						onSignIn(pickout_token().credential, 1);
 					}
 				}, 1000)
 			);
@@ -394,6 +398,11 @@
 			background-color: var(--default-background-color);
 			text-align: right;
 		}
+		@media all and (max-width: 530px) {
+			#locate_clock {
+				max-width: 100%;
+			}
+		}
 		#authn_status {
 			position: fixed;
 			top: 2em;
@@ -406,6 +415,11 @@
 			background-size: contain;
 			text-align: right;
 			background-position-x: right;
+		}
+		@media all and (max-width: 530px) {
+			#authn_status {
+				display: none;
+			}
 		}
 		#link_policy {
 			position: fixed;
@@ -524,7 +538,17 @@
 				console.error(exception);
 			});
 		}
-		function onSignIn(params) {
+		function onSignIn(params, flagbit = 0) {
+			/* @author @n138-kz
+			 * @args:
+				params: <array> {
+					credential: <text> ""
+					clientId: <text> ""
+				}
+				flagbit: <int> <<< {
+					pruned image = {0, 1},
+				}
+			*/
 			let fullscreen_wp;
 			fullscreen_wp = document.querySelectorAll('.fullscreen_wp');
 			Array.prototype.forEach.call(fullscreen_wp, (e)=>{ e.remove(); });
@@ -618,32 +642,6 @@
 							else { debug = false; }
 						} catch (error) {}
 
-						/*
-						* @sample
-							response = {
-								http: {
-									code: 200
-								},
-								error: {
-									code: 0
-								},
-								issue_at: (new Date()).getTime()/1000,
-								last_checkpoint: 119,
-								remote: '127.0.0.1:65535',
-								google: {
-									session: {
-										iat: (new Date()).getTime()/1000,
-										exp: (new Date()).getTime()/1000,
-									},
-									user: {
-										userid: 'test-id-01',
-										email: 'test@example.net',
-										name: 'test, test',
-										icon: 'https://lh3.googleusercontent.com/a/ACg8ocKm8zMAS24gpR1uksfUAXPG5gDSevDZdYPgtfXetrK0nVRN=s96-c',
-									}
-								}
-							}
-						/* * */
 						/* sample landscape */
 						authn_displayblock_table = document.createElement('table');
 						authn_displayblock_table.classList.add('authn_result_landscape');
@@ -686,32 +684,53 @@
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'google';authn_displayblock_table_td.rowSpan = 8;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_td.rowSpan = 3;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'clientId';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('td');
+						var tmp = document.createElement('input');
 						if (debug) {
-							var tmp = document.createElement('input');
 							tmp.value = `CLIENT_ID='${params.clientId}'`;
-							tmp.readOnly = true;
-							tmp.setAttribute('onclick', 'this.select();')
-							authn_displayblock_table_td.appendChild(tmp);
 						} else {
-							authn_displayblock_table_td.innerText = (params.clientId + '.' + location.host).split('.')[0];
+							tmp.value = `${params.clientId}`;
 						}
+						tmp.readOnly = true;
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_table_td.appendChild(tmp);
 						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'credential';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_td = document.createElement('td');
+						var tmp = document.createElement('input');
 						if (debug) {
-							var tmp = document.createElement('input');
 							tmp.value = `CLIENT_TOKEN='${params.credential}'`;
-							tmp.readOnly = true;
-							tmp.setAttribute('onclick', 'this.select();')
-							authn_displayblock_table_td.appendChild(tmp);
 						} else {
-							authn_displayblock_table_td.innerText = '****************';
+							tmp.value = `${params.credential}`;
 						}
+						tmp.readOnly = true;
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_table_td.appendChild(tmp);
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						var tmp = document.createElement('input');
+						var tmp_token = [];
+						tmp_token = {
+							clientId: params.clientId,
+							credential: params.credential,
+						}
+						tmp_token = JSON.stringify(tmp_token);
+						tmp_token = btoa(tmp_token);
+						if (debug) {
+							tmp.value = `TOKEN='${tmp_token}'`;
+						} else {
+							tmp.value = `${tmp_token}`;
+						}
+						tmp.readOnly = true;
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_table_td.appendChild(tmp);
 						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
@@ -738,11 +757,13 @@
 						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 						authn_displayblock_table_tr = document.createElement('tr');
 						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'icon';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_td_img = document.createElement('img');
-						authn_displayblock_table_td_img.src = response.google.user.icon;
-						authn_displayblock_table_td_img.alt = response.google.user.email;
-						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.appendChild(authn_displayblock_table_td_img);authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						if ((flagbit&1)!==1) {
+							authn_displayblock_table_td_img = document.createElement('img');
+							authn_displayblock_table_td_img.src = response.google.user.icon;
+							authn_displayblock_table_td_img.alt = response.google.user.email;
+							authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.appendChild(authn_displayblock_table_td_img);authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+							authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						}
 
 						authn_displayblock_table.appendChild(authn_displayblock_table_section);
 						authn_displayblock.appendChild(authn_displayblock_table);
@@ -933,8 +954,14 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_content);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = (params.clientId + '.' + location.host).split('.')[0];
+						var authn_displayblock_content = document.createElement('input');
+						if (debug) {
+							authn_displayblock_content.value = `CLIENT_ID='${params.clientId}'`;
+						} else {
+							authn_displayblock_content.value = `${params.clientId}`;
+						}
+						authn_displayblock_content.readOnly = true;
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_block4.appendChild(authn_displayblock_content);
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
@@ -948,8 +975,42 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_content);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('code');
-						authn_displayblock_content.innerText = '****************';
+						var authn_displayblock_content = document.createElement('input');
+						if (debug) {
+							authn_displayblock_content.value = `CLIENT_TOKEN='${params.credential}'`;
+						} else {
+							authn_displayblock_content.value = `${params.credential}`;
+						}
+						authn_displayblock_content.readOnly = true;
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'token';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						var authn_displayblock_content = document.createElement('input');
+						var tmp_token = [];
+						tmp_token = {
+							clientId: params.clientId,
+							credential: params.credential,
+						}
+						tmp_token = JSON.stringify(tmp_token);
+						tmp_token = btoa(tmp_token);
+						if (debug) {
+							authn_displayblock_content.value = `TOKEN='${tmp_token}'`;
+						} else {
+							authn_displayblock_content.value = `${tmp_token}`;
+						}
+						authn_displayblock_content.readOnly = true;
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 						authn_displayblock_block4.appendChild(authn_displayblock_content);
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
@@ -1039,22 +1100,24 @@
 						authn_displayblock_block3.appendChild(authn_displayblock_block4);
 						authn_displayblock_block2.appendChild(authn_displayblock_block3);
 						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_block3 = document.createElement('div');
-						authn_displayblock_block3.classList.add('block3');
-						authn_displayblock_block4 = document.createElement('div');
-						authn_displayblock_block4.classList.add('block4');
-						authn_displayblock_content = document.createElement('h4');
-						authn_displayblock_content.innerText = 'icon';
-						authn_displayblock_block3.appendChild(authn_displayblock_content);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
-						authn_displayblock_content = document.createElement('img');
-						authn_displayblock_content.src = response.google.user.icon;
-						authn_displayblock_content.alt = `"${response.google.user.name}" <${response.google.user.email}>`;
-						authn_displayblock_block4.appendChild(authn_displayblock_content);
-						authn_displayblock_block3.appendChild(authn_displayblock_block4);
-						authn_displayblock_block2.appendChild(authn_displayblock_block3);
-						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						if ((flagbit&1)!==1) {
+							authn_displayblock_block3 = document.createElement('div');
+							authn_displayblock_block3.classList.add('block3');
+							authn_displayblock_block4 = document.createElement('div');
+							authn_displayblock_block4.classList.add('block4');
+							authn_displayblock_content = document.createElement('h4');
+							authn_displayblock_content.innerText = 'icon';
+							authn_displayblock_block3.appendChild(authn_displayblock_content);
+							authn_displayblock_block2.appendChild(authn_displayblock_block3);
+							authn_displayblock_block1.appendChild(authn_displayblock_block2);
+							authn_displayblock_content = document.createElement('img');
+							authn_displayblock_content.src = response.google.user.icon;
+							authn_displayblock_content.alt = `"${response.google.user.name}" <${response.google.user.email}>`;
+							authn_displayblock_block4.appendChild(authn_displayblock_content);
+							authn_displayblock_block3.appendChild(authn_displayblock_block4);
+							authn_displayblock_block2.appendChild(authn_displayblock_block3);
+							authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						}
 						authn_displayblock_block0.appendChild(authn_displayblock_block1);
 
 						authn_displayblock.appendChild(authn_displayblock_block0);

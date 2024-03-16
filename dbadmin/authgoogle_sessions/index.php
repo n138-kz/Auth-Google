@@ -294,9 +294,17 @@ try {
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_result = $pdo_prepare->execute([ 'userid' => $result['google']['sub'] ]);
 				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
-					/* No have permission */
-					$result['datastore']['public']['authgoogle_role_internal_datastore'] = [];
-				
+				if ( $pdo_result['superuser'] || ( ( ( $pdo_result['authgoogle_userinfo'] & 4 ) === 4 ) && ( ( $pdo_result['authgoogle_sessions'] & 4 ) === 4 ) ) ) {
+					$sql  = 'SELECT public.authgoogle_userinfo.email, public.authgoogle_userinfo.name, public.authgoogle_sessions.iat, public.authgoogle_sessions.exp, public.authgoogle_sessions.token FROM public.authgoogle_sessions';
+					$sql .= ' INNER JOIN public.authgoogle_userinfo ON public.authgoogle_userinfo.id = public.authgoogle_sessions.userid';
+					$sql .= ' WHERE public.authgoogle_sessions.iat < EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) AND public.authgoogle_sessions.exp > EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)';
+					$sql .= ' ORDER BY exp DESC';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_result = $pdo_prepare->execute([]);
+					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
+					$result['datastore']['public']['authgoogle_role_internal_datastore'] = $pdo_result;
+				}
+
 				$pdo = null;
 			} catch (\Throwable $th) {
 				if ($config['external']['discord']['activate']['alert']) {

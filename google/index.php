@@ -536,7 +536,7 @@ try {
 				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_prepare -> execute([
-					time(),
+					microtime(TRUE),
 					$result['google']['user']['userid'],
 					$result['client']['address'],
 					$result['client']['referer'],

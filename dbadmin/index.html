@@ -623,6 +623,43 @@ padding-bottom: 100px;
 
 				if ( false ) {
 				} else if ( params.table == '' ) {
+				} else if ( params.table == 'authgoogle_sessions' ) {
+					response.map((e1)=>{
+						console.log(e1)
+						tr = document.createElement('tr');
+
+						td = document.createElement('td');
+						td.classList.add('userinfo');
+						td.classList.add('authn');
+						td.innerText = `${e1.name} <${e1.email}>`;
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						td.innerText = `${e1.address}`;
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						td.innerText = new Date((e1.iat*1000)).toLocaleString();
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						td.innerText = new Date((e1.exp*1000)).toLocaleString();
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authn');
+						td.innerText = e1.token.substr(0, 8);
+						tr.appendChild(td);
+						console.log( tbody );
+
+						tbody.appendChild(tr);
+					});
 				}
 				
 				params.output.item(0).appendChild(tbody);

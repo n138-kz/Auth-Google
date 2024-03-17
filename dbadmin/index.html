@@ -635,7 +635,7 @@ padding-bottom: 100px;
 						alink.innerText = `${e1.name} <${e1.email}>`;
 						alink.href = `mailto:${e1.email}`;
 						alink.target = '_blank';
-						td.appendChild(a);
+						td.appendChild(alink);
 						tr.appendChild(td);
 
 						td = document.createElement('td');
@@ -645,7 +645,7 @@ padding-bottom: 100px;
 						alink.innerText = `${e1.address}`;
 						alink.href = `https://ipinfo.io/${e1.address}`;
 						alink.target = '_blank';
-						td.appendChild(a);
+						td.appendChild(alink);
 						tr.appendChild(td);
 
 						td = document.createElement('td');

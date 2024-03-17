@@ -517,6 +517,28 @@
 			}
 		}
 	</script>
+	<script>
+		function _pageinit(params=[]) {
+			let content_block = null;
+			let content_legend = null;
+			content_block = document.createElement('div');
+			content_legend = document.createElement('h2');
+			content_legend.name = 'sessions';
+			content_legend.innerText = 'Active Sessions';
+			content_block.appendChild( content_legend );
+			document.body.appendChild( content_block );
+
+			content_block = document.createElement('div');
+			content_legend = document.createElement('h2');
+			content_legend.name = 'authnlog';
+			content_legend.innerText = 'Auth N log';
+			content_block.appendChild( content_legend );
+			document.body.appendChild( content_block );
+		}
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			_pageinit();
+		}, false);
+	</script>
 </head>
 <body></body>
 </html>

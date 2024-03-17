@@ -535,8 +535,39 @@
 			content_block.appendChild( content_legend );
 			document.body.appendChild( content_block );
 		}
+		function page_getItem_xhr(params=[]) {
+			let uri = params.uri;
+			fetch(uri, { method: 'GET', })
+			.then(response=>{
+				console.log(response);
+				if (response.status>=400) {
+					throw new Exception(response);
+				}
+				return response;
+			})
+			.then(response=>response.json())
+			.then(response=>response.datastore)
+			.then(response=>response.public)
+			.then(response=>response[params.table])
+			.then(response=>{
+				console.log(response);
+
+				return response;
+			})
+			.catch(listener=>{
+				console.error(listener);
+			})
+		}
+		page_getItem_xhr({
+			uri: './authgoogle_sessions/',
+			table: 'authgoogle_sessions',
+		});
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			_pageinit();
+			page_getItem_xhr({
+				uri: './authgoogle_sessions/',
+				table: 'authgoogle_sessions',
+			});
 		}, false);
 	</script>
 </head>

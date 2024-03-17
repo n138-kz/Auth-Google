@@ -341,7 +341,7 @@ try {
 			'credential' => CLIENT_TOKEN,
 		],
 	];
-	$result['setcookie'] = setcookie(
+	$result['setcookie'][session_name() . '_alt'] = setcookie(
 		session_name() . '_alt',
 		base64_encode(json_encode([
 			'authnaddr' => $result['client']['address'],

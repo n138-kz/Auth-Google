@@ -68,7 +68,8 @@
 						"iat": 0,
 						"exp": 0
 					}
-				}
+				},
+				"setcookie": {}
 			}
 		},
 		"databases": {

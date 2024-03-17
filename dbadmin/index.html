@@ -552,7 +552,7 @@
 			content_content2 = document.createElement('thead');
 
 			content_content3 = document.createElement('tr');
-			[].map((val)=>{
+			['timestamp', 'userid', 'address', 'origin', 'referer', 'useragent', 'returnval'].map((val)=>{
 				content_content4 = document.createElement('th');
 				content_content4.innerText = val;
 				content_content3.appendChild( content_content4 );

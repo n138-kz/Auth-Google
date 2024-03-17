@@ -641,7 +641,11 @@ padding-bottom: 100px;
 						td = document.createElement('td');
 						td.classList.add('authlimit');
 						td.classList.add('authn');
-						td.innerText = `${e1.address}`;
+						alink = document.createElement('a');
+						alink.innerText = `${e1.address}`;
+						alink.href = `https://ipinfo.io/${e1.address}`;
+						alink.target = '_blank';
+						td.appendChild(a);
 						tr.appendChild(td);
 
 						td = document.createElement('td');

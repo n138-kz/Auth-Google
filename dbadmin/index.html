@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Auth-Google</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://accounts.google.com/gsi/client" async defer></script>
+	<script src="https://www.google.com/recaptcha/api.js?render=6LfCHdcUAAAAAOwkHsW_7W7MfoOrvoIw9CXdLRBA"></script>
+	<style>
+		:root {
+			--default-font-size: 16pt;
+			--default-margin-padding-size: 0;
+			--default-background-color: #F0FFFFFF;
+			--default-text-color: #000000FF;
+			--color-preset-red: #FF0000FF;
+			--color-preset-yellow: #FFa000FF;
+			--color-preset-green: #008000FF;
+		}
+		:root[theme=dark] {
+			--default-background-color: #000000FF;
+			--default-text-color: #F00000FF;
+		}
+		html, body {
+			margin: var(--default-margin-padding-size);
+			padding: var(--default-margin-padding-size);
+			background-color: var(--default-background-color);
+			color: var(--default-text-color);
+			font-size: var(--default-font-size);
+		}
+		body {
+			margin: 0 auto;
+			width: 90%;
+			text-align: center;
+			padding-bottom: 100px;
+		}
+		@keyframes rotate1 {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+	</style>
+	<style>
+		div.div_button {
+			padding: 10px 15px;
+			border-radius: 50% / 100%;
+			margin-top: 1px;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<style>
+		.g_id_signin iframe {
+			margin: 0 auto !important;
+		}
+	</style>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			const html_top = document.createElement('a');
+			html_top.name='_';
+			document.querySelector('body').prepend(html_top);
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let favicon;
+			['icon', 'apple-touch-icon', 'favicon'].forEach((e)=>{
+				favicon = document.createElement('link');
+				favicon.rel = `${e}`;
+				favicon.href = 'https://www.google.com/s2/favicons?size=64&domain=https://google.com/';
+				document.querySelectorAll('head').forEach((e)=>e.prepend(favicon));
+			});
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let header1 = document.createElement('h1');
+			let header1_link = document.createElement('a');
+			header1_link.href = './';
+			header1_link.setAttribute('onclick', 'sessionStorage.clear();localStorage.clear();')
+			header1_link.title = document.title;
+			let header1_text = document.createTextNode(document.title);
+			header1_link.appendChild(header1_text);
+			header1.appendChild(header1_link);
+			document.querySelectorAll('body').forEach((e)=>e.prepend(header1));
+		}, false);
+	</script>
+	<script>
+		async function sha256(text){
+			/**
+			* @quote
+				https://qiita.com/economist/items/768d2f6a10d54d4fa39f
+			* @usage
+				sha256(document.querySelector(':root').innerHTML).then(hash => console.log(hash));
+			*/
+			const uint8  = new TextEncoder().encode(text)
+			const digest = await crypto.subtle.digest('SHA-256', uint8)
+			return Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2,'0')).join('')
+		}
+		async function hash_encode(encode, text){
+			/**
+			* @docs
+				https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+			* @args encode::text
+				- SHA-1
+				- SHA-256
+				- SHA-384
+				- SHA-512
+			* @args text::text
+				.*
+			*/
+			const uint8  = new TextEncoder().encode(text)
+			const digest = await crypto.subtle.digest(encode, uint8)
+			return Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2,'0')).join('')
+		}
+	</script>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let http_query = location.search.replace(/^\?/g, '');
+			if( http_query.indexOf('&') > 0 ) { http_query = http_query.split('&'); } else { http_query = [http_query]; }
+			let http_query_array = {};
+			for( let i=0; i<http_query.length; i++ ) {
+				http_query_array[http_query[i].split('=')[0]] = http_query[i].split('=')[1];
+			}
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
+			try {
+				http_query_array.dev;
+				http_query_array.dev = http_query_array.dev > 0;
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
+				if (!http_query_array.dev) { throw new Exception(); }
+			} catch (error) {
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify({ dev: false }) );
+				let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
+				if (!ctrlpanels) {
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
+						setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+					);
+				}
+			}
+		}, false);
+		function getGithubDeployStatus() {
+			fetch('https://api.github.com/repos/n138-kz/Auth-Google/deployments', {
+				method: 'GET',
+			})
+			.then(response=>{
+				if (false) {
+				} else if ( response.status === 200 ) {
+					return response.json()
+				} else if ( response.status >= 400 ) {
+					r=response.json();
+					throw new Error(`[${response.status}]Error has occured.`);
+				}
+			})
+			.then(r=>r[0])
+			.then(r=>{
+				console.debug(r);
+				document.querySelectorAll('#github_deploy a').item(0).innerText = r.sha.substr(0,7);
+				return r;
+			})
+			.then(r=>r.repository_url)
+			.then(r=>{
+				console.debug(r);
+				fetch(r, {
+					method: 'GET',
+				})
+				.then(r=>{
+					if (false) {
+					} else if ( r.status === 200 ) {
+						return r.json()
+					} else if ( r.status >= 400 ) {
+						let http = r.status;
+						r = r.json();
+						throw new Error(`[${http}]Error has occured. server-message:${r.message}, (${r.documentation_url})`);
+					}
+				})
+				.then(r=>{
+					document.querySelectorAll('#github_deploy a').item(0).href = r.html_url;
+				})
+			})
+			.catch(e=>{
+				console.debug(e);
+				document.querySelectorAll('#github_deploy a').item(0).innerText = 'Github';
+				document.querySelectorAll('#github_deploy a').item(0).href = 'https://github.com/n138-kz/Auth-Google';
+			});
+		}
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content1 = document.createElement('div');
+			content1.id = 'github_deploy';
+			let content2 = document.createElement('a');
+			content2.innerText = '';
+			
+			content1.style.position = 'fixed';
+			content1.style.bottom = '1.5em';
+			content1.style.left = '0';
+			content1.style.maxWidth = '40%';
+			content1.style.height = '1em';
+			content1.style.fontFamily = '"Myrica M", "Myrica N", "Myrica P", monospace';
+			content1.style.backgroundColor = 'var(--default-background-color)';
+			content1.style.textAlign = 'left';
+			content1.style.marginLeft = '5px';
+			
+			getGithubDeployStatus();
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_checkdeploystatus_self',
+				/* 5min */
+				setInterval(getGithubDeployStatus, (30 * 1000))
+			);
+
+			content1.appendChild( content2 );
+			document.body.appendChild( content1 );
+		}, false);
+	</script>
+	<script defer>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let g_id_signin = document.createElement('div');
+			g_id_signin.classList.add('div_button');
+			g_id_signin.classList.add('g_id_signin');
+			g_id_signin.dataset.type = 'standard';
+			g_id_signin.dataset.shape = 'rectangular';
+			g_id_signin.dataset.theme = 'outline';
+			g_id_signin.dataset.text = 'signin_with';
+			g_id_signin.dataset.size = 'large';
+			g_id_signin.dataset.logo_alignment = 'left';
+			document.querySelector('body').appendChild(g_id_signin);
+
+			let g_id_onload = document.createElement('div');
+			g_id_onload.id = 'g_id_onload';
+			g_id_onload.dataset.client_id = '784669840257-i0a06p3o6g8k0k1tk26jj09li1q2acud.apps.googleusercontent.com';
+			g_id_onload.dataset.context='signin';
+			g_id_onload.dataset.login_uri = location.origin;
+			g_id_onload.dataset.callback = 'onSignIn';
+			g_id_onload.dataset.ux_mode='popup';
+			g_id_onload.dataset.auto_select='true';
+			g_id_onload.dataset.itp_support='true';
+			document.querySelector('body').appendChild(g_id_onload);
+		}, false);
+	</script>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content = document.createElement('div');
+			content.id = 'authn_status';
+			content.innerText = 'anonymous';
+			document.body.appendChild( content );
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content = document.createElement('div');
+			content.id = 'locate_clock';
+			content.innerText = '';
+			document.body.appendChild( content );
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', 0);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1',
+				setInterval(()=>{
+					let execcount_locate_clock = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock' );
+					if ( execcount_locate_clock > 40 ) {
+						clearInterval( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1' ) );
+					} else {
+						execcount_locate_clock++;
+						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', execcount_locate_clock);
+					}
+					let cycle_clock = new Date();
+					cycle_clock = {
+						FullYear : (''+cycle_clock.getFullYear()),
+						Month : ('00'+(cycle_clock.getMonth()+1)).substr(-2),
+						Date : ('00'+cycle_clock.getDate()).substr(-2),
+						Hours : ('00'+cycle_clock.getHours()).substr(-2),
+						Minutes : ('00'+cycle_clock.getMinutes()).substr(-2),
+						Seconds : ('00'+cycle_clock.getSeconds()).substr(-2),
+					}
+					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
+					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
+					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 25)
+			);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock2',
+				setInterval(()=>{
+					let cycle_clock = new Date();
+					cycle_clock = {
+						FullYear : (''+cycle_clock.getFullYear()),
+						Month : ('00'+(cycle_clock.getMonth()+1)).substr(-2),
+						Date : ('00'+cycle_clock.getDate()).substr(-2),
+						Hours : ('00'+cycle_clock.getHours()).substr(-2),
+						Minutes : ('00'+cycle_clock.getMinutes()).substr(-2),
+						Seconds : ('00'+cycle_clock.getSeconds()).substr(-2),
+					}
+					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
+					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
+					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 1000)
+			);
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content1 = document.createElement('div');
+			content1.id = 'link_policy';
+			let content2 = document.createElement('a');
+			content2.href = 'https://n138-kz.github.io/policy/';
+			content2.innerText = 'Policy Notes';
+			content1.appendChild( content2 );
+			document.body.appendChild( content1 );
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content1 = document.createElement('div');
+			content1.id = 'connection_rtt';
+			let content2;
+			content2 = document.createElement('span');
+			content1.appendChild( content2 );
+			content2 = document.createElement('img');
+			content2.src = '11503.svg';
+			content2.alt = '[icoon-mono:11503]';
+			content1.appendChild( content2 );
+			document.body.appendChild( content1 );
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',
+				setInterval(()=>{
+					let process_1 = new Date().getTime();
+					let process_2 = new Date().getTime();
+
+					let connection_rtt_endpoint = location.href;
+					let authn_token = pickout_token();
+					if (false) {
+					} else if (!authn_token) {
+						/* 認証トークンを持っていない時 */
+						console.debug( 'No have token' );
+						if ( document.querySelectorAll('.g_id_signin').length === 0) {
+							location.replace(location.href);
+						}
+
+						fetch(connection_rtt_endpoint, { method: 'GET', })
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+							});
+						});
+					} else {
+						/* 認証トークンを持っている時 */
+						console.debug( 'Have a token' );
+						authn_token = authn_token.credential;
+						console.debug( 'authn_token.iat <:', parseInt(new Date().getTime()/1000) > authn_token.iat );
+						console.debug( 'authn_token.exp >:', parseInt(new Date().getTime()/1000) < authn_token.exp );
+						if( !(parseInt(new Date().getTime()/1000) >= authn_token.iat) || !(parseInt(new Date().getTime()/1000) < authn_token.exp) ){
+							sessionStorage.clear();
+							location.replace(location.href);
+						}
+						console.debug( 'switched uri:', authn_token.requestUri );
+						connection_rtt_endpoint = authn_token.requestUri;
+
+						fetch(connection_rtt_endpoint, {
+							method: 'POST',
+							mode: 'cors',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								ts: (Math.floor((new Date()).getTime()/1000)),
+								credential: authn_token.credential,
+								clientId: authn_token.clientId,
+							})
+						})
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+								e.style.color = 'var(--color-preset-red)';
+							});
+						});
+
+						/* auto reauth */
+						try {
+							onSignIn(pickout_token().credential, 1);
+						} catch (error) {
+							location.replace(location.href);
+						}
+					}
+				}, 1000)
+			);
+		}, false);
+	</script>
+	<style>
+		#connection_rtt {
+			position: fixed;
+			top: 1em;
+			right: 0;
+			max-width: 40%;
+			height: 1em;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: right;
+		}
+		#connection_rtt img {
+			height: 1em;
+		}
+		#locate_clock {
+			position: fixed;
+			top: 0;
+			right: 0;
+			max-width: 40%;
+			height: 1em;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: right;
+		}
+		@media all and (max-width: 530px) {
+			#locate_clock {
+				max-width: 100%;
+			}
+		}
+		#authn_status {
+			position: fixed;
+			top: 2em;
+			right: 0;
+			max-width: 40%;
+			height: 1em;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			background-repeat: no-repeat;
+			background-size: contain;
+			text-align: right;
+			background-position-x: right;
+		}
+		@media all and (max-width: 530px) {
+			#authn_status {
+				display: none;
+			}
+		}
+		#link_policy {
+			position: fixed;
+			bottom: 0.5em;
+			left: 0;
+			max-width: 40%;
+			height: 1em;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: left;
+			margin-left: 5px;
+		}
+		table.authn_result_landscape {
+			background-color: var(--default-background-color);
+			margin: 0 auto;
+		}
+		table.authn_result_landscape th {
+			text-align: center;
+		}
+		table.authn_result_landscape td {
+			text-align: left;
+		}
+		table.authn_result_landscape img {
+			border-radius: 20%;
+		}
+		div.authn_result_portrait {
+			background-color: var(--default-background-color);
+			text-align: left;
+		}
+		div.authn_result_portrait .block2,
+		div.authn_result_portrait .block3,
+		div.authn_result_portrait .block4 {
+			margin-left: 25px;
+		}
+		div.authn_result_portrait h2,
+		div.authn_result_portrait h3,
+		div.authn_result_portrait h4 {
+			margin: 0;
+		}
+		div.authn_result_portrait img {
+			border-radius: 50%;
+		}
+		@media all {
+			.authn_result_landscape {
+				display: none;
+			}
+			.authn_result_portrait {
+				display: none;
+			}
+		}
+		@media screen and (orientation: landscape) {
+			table.authn_result_landscape {
+				display: table;
+			}
+		}
+		@media screen and (orientation: portrait) {
+			div.authn_result_portrait {
+				display: grid;
+			}
+		}
+	</style>
+	<script>
+		function pickout_token() {
+			let params = JSON.parse( sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn') );
+
+			try {
+				/* time of expiry */
+				if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+					return null;
+				}
+	
+				return params;
+			} catch (error) {
+				return null;
+			}
+		}
+		function reAuthn(params) {
+			if (!params) { return false; }
+			console.debug(
+				[
+					new Date().getTime()/1000,
+					params.credential.iat,
+					params.credential.exp,
+					(new Date().getTime()/1000 > params.credential.iat),
+					(new Date().getTime()/1000 < params.credential.exp),
+				]
+			)
+			/* time of expiry */
+			if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+				return false;
+			}
+
+			fetch(params.requestUri, {
+				method: 'POST',
+				body: JSON.stringify({
+					ts: (Math.floor((new Date()).getTime()/1000)),
+					credential: params.credential.credential,
+					clientId: params.credential.clientId,
+				}),
+				cache: 'no-cache',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+				},
+			})
+			.then(response => {
+				console.debug(response);
+				if (false) {
+				} else if ( response.status === 200 ) {
+					return response.json();
+				} else if ( response.status >= 400 ) {
+					let http = response.json();
+					throw new Error(`[${response.status}]Error has occured. server-message:${response.message} ${response.documentation_url}`);
+				}
+			})
+			.catch(exception => {
+				console.error(exception);
+			});
+		}
+		function onSignIn(params, flagbit = 0) {
+			/* @author @n138-kz
+			 * @args:
+				params: <array> {
+					credential: <text> ""
+					clientId: <text> ""
+				}
+				flagbit: <int> <<< {
+					pruned image = {0, 1},
+				}
+			*/
+			let fullscreen_wp;
+			fullscreen_wp = document.querySelectorAll('.fullscreen_wp');
+			Array.prototype.forEach.call(fullscreen_wp, (e)=>{ e.remove(); });
+			fullscreen_wp = document.createElement('div');
+			fullscreen_wp.style.backgroundColor = '#c0c0c0c0'; /* near eq silver(#C0C0C0) */
+			fullscreen_wp.style.left = '0px';
+			fullscreen_wp.style.top = '0px';
+			fullscreen_wp.style.position = 'fixed';
+			fullscreen_wp.style.width = '100%';
+			fullscreen_wp.style.height = '100%';
+			fullscreen_wp.style.zIndex = '10000';
+			fullscreen_wp.classList.add('fullscreen_wp');
+			let loading_img = document.createElement('img');
+			loading_img.src = '12675.svg';
+			loading_img.alt = '12675';
+			loading_img.style.maxWidth = '80%';
+			loading_img.style.maxHeight = '80%';
+			loading_img.style.animationName = 'rotate1';
+			loading_img.style.animationDuration = '1.5s';
+			loading_img.style.animationTimingFunction = 'ease';
+			loading_img.style.animationIterationCount = 'infinite';
+			fullscreen_wp.appendChild(loading_img);
+			document.querySelector('body').appendChild(fullscreen_wp);
+			params.requestUri = 'https://authn.n138.jp/google/';
+			const http_query_array = JSON.parse( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' ) );
+			try {
+				if (http_query_array.dev) {
+					params.requestUri = './google/';
+				}
+			} catch (error) {}
+			console.debug([params, JSON.stringify(params)]);
+
+			try {
+				let xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = () => {
+					if ( xhr.readyState === 4 && xhr.status === 200 ) {
+						let responseText = xhr.responseText;
+						let response = JSON.parse(responseText);
+						console.debug(response);
+						/* authned */
+						let token = {
+							credential: {
+								credential: params.credential,
+								token: params.credential,
+								clientId: params.clientId,
+								client_id: params.clientId,
+								clientInfo: params.client,
+								requestUri: params.requestUri,
+								request_uri: params.requestUri,
+								withinexpire: false,
+								with_in_expire: (
+									((new Date()).getTime()/1000) > response.google.session.iat
+									&&
+									((new Date()).getTime()/1000) < response.google.session.exp
+								),
+								iat: response.google.session.iat,
+								iat_humanable: {
+									jst: new Date((response.google.session.iat)*1000).toLocaleString('ja-JP', { timeZone: 'jst' }),
+									utc: new Date((response.google.session.iat)*1000).toUTCString(),
+								},
+								exp: response.google.session.exp,
+								exp_humanable: {
+									jst: new Date((response.google.session.exp)*1000).toLocaleString('ja-JP', { timeZone: 'jst' }),
+									utc: new Date((response.google.session.exp)*1000).toUTCString(),
+								},
+								remote: response.remote,
+							},
+							sessions: {
+								id: response.authn.sessions.id,
+								name: response.authn.sessions.name,
+							},
+							iat: response.issue_at,
+						}
+						token.credential.withinexpire = token.credential.with_in_expire;
+						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'googleauthn',
+							JSON.stringify(token)
+						);
+						sessionStorage.setItem( '_' + '.'+'googleauthn', JSON.stringify(token) );
+
+						authn_displayblock = document.createElement('div');
+						authn_displayblock.style.backgroundColor = '#F0FFFF';
+						document.querySelector('#authn_status').innerText = response.google.user.name;
+						document.querySelector('#authn_status').style.backgroundImage = `url(${response.google.user.icon})`;
+
+						let debug;
+						debug = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' );
+						debug = JSON.parse( debug );
+						debug = debug.dev;
+						try {
+							if (debug) { debug = true; }
+							else { debug = false; }
+						} catch (error) {}
+
+						/* sample landscape */
+						authn_displayblock_table = document.createElement('table');
+						authn_displayblock_table.classList.add('authn_result_landscape');
+						authn_displayblock_table.border = 1;
+						authn_displayblock_table_section = document.createElement('tbody');
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'header';authn_displayblock_table_td.rowSpan = 3;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'http status';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.http.text;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'issue at';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (new Date(response.issue_at*1000)).toLocaleString();authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'address';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						var tmp = document.createElement('a');
+						tmp.innerText = `${response.remote}`;
+						tmp.href = `https://ipinfo.io/${response.client.address}`;
+						tmp.target = '_blank';
+						authn_displayblock_table_td.appendChild(tmp);
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'google';authn_displayblock_table_td.rowSpan = 8;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_td.rowSpan = 3;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'clientId';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						var tmp = document.createElement('input');
+						if (debug) {
+							tmp.value = `CLIENT_ID='${params.clientId}'`;
+						} else {
+							tmp.value = `${params.clientId}`;
+						}
+						tmp.readOnly = true;
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_table_td.appendChild(tmp);
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'credential';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						var tmp = document.createElement('input');
+						if (debug) {
+							tmp.value = `CLIENT_TOKEN='${params.credential}'`;
+						} else {
+							tmp.value = `${params.credential}`;
+						}
+						tmp.readOnly = true;
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_table_td.appendChild(tmp);
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');
+						var tmp = document.createElement('input');
+						var tmp_token = [];
+						tmp_token = {
+							clientId: params.clientId,
+							credential: params.credential,
+						}
+						tmp_token = JSON.stringify(tmp_token);
+						tmp_token = btoa(tmp_token);
+						if (debug) {
+							tmp.value = `TOKEN='${tmp_token}'`;
+						} else {
+							tmp.value = `${tmp_token}`;
+						}
+						tmp.readOnly = true;
+						tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_table_td.appendChild(tmp);
+						authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'session';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'iat';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (new Date(response.google.session.iat*1000)).toLocaleString();authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'exp';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (new Date(response.google.session.exp*1000)).toLocaleString();authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'user';authn_displayblock_table_td.rowSpan = 4;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'userid';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.google.user.userid;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'email';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.google.user.email;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'name';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.google.user.name;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						authn_displayblock_table_tr = document.createElement('tr');
+						authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'icon';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+						if ((flagbit&1)!==1) {
+							authn_displayblock_table_td_img = document.createElement('img');
+							authn_displayblock_table_td_img.src = response.google.user.icon;
+							authn_displayblock_table_td_img.alt = response.google.user.email;
+							authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.appendChild(authn_displayblock_table_td_img);authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+							authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
+						}
+
+						authn_displayblock_table.appendChild(authn_displayblock_table_section);
+						authn_displayblock.appendChild(authn_displayblock_table);
+						/* sample landscape */
+						/* sample portrait */
+						document.querySelectorAll('.authn_result_portrait.block1').forEach((e)=>{
+							e.parentNode.remove();
+						});
+						authn_displayblock_block0 = document.createElement('div');
+						authn_displayblock_block0.classList.add('authn_result_portrait');
+						authn_displayblock_block0.classList.add('block1');
+
+						authn_displayblock_block1 = document.createElement('div');
+						authn_displayblock_block1.classList.add('block1');
+						authn_displayblock_block2 = document.createElement('div');
+						authn_displayblock_block2.classList.add('block2');
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h2');
+						authn_displayblock_content.innerText = 'header';
+						authn_displayblock_block1.appendChild(authn_displayblock_content);
+
+						authn_displayblock_block2 = document.createElement('div');
+						authn_displayblock_block2.classList.add('block2');
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h3');
+						authn_displayblock_content.innerText = 'http status';
+						authn_displayblock_block2.appendChild(authn_displayblock_content);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('code');
+						authn_displayblock_content.innerText = response.http.text;
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+
+						authn_displayblock_block2 = document.createElement('div');
+						authn_displayblock_block2.classList.add('block2');
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h3');
+						authn_displayblock_content.innerText = 'issue at';
+						authn_displayblock_block2.appendChild(authn_displayblock_content);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('code');
+						authn_displayblock_content.innerText = (new Date(response.issue_at*1000)).toLocaleString();
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+
+						authn_displayblock_block2 = document.createElement('div');
+						authn_displayblock_block2.classList.add('block2');
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h3');
+						authn_displayblock_content.innerText = 'address';
+						authn_displayblock_block2.appendChild(authn_displayblock_content);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('a');
+						authn_displayblock_content.innerText = `${response.remote}`;
+						authn_displayblock_content.href = `https://ipinfo.io/${response.client.address}`;
+						authn_displayblock_content.target = '_blank';
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+
+						authn_displayblock_block0.appendChild(authn_displayblock_block1);
+						
+						authn_displayblock_block1 = document.createElement('div');
+						authn_displayblock_block1.classList.add('block1');
+						authn_displayblock_block2 = document.createElement('div');
+						authn_displayblock_block2.classList.add('block2');
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h2');
+						authn_displayblock_content.innerText = 'google';
+						authn_displayblock_block1.appendChild(authn_displayblock_content);
+						authn_displayblock_content = document.createElement('h3');
+						authn_displayblock_content.innerText = 'token';
+						authn_displayblock_block2.appendChild(authn_displayblock_content);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'clientId';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						var authn_displayblock_content = document.createElement('input');
+						if (debug) {
+							authn_displayblock_content.value = `CLIENT_ID='${params.clientId}'`;
+						} else {
+							authn_displayblock_content.value = `${params.clientId}`;
+						}
+						authn_displayblock_content.readOnly = true;
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'credential';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						var authn_displayblock_content = document.createElement('input');
+						if (debug) {
+							authn_displayblock_content.value = `CLIENT_TOKEN='${params.credential}'`;
+						} else {
+							authn_displayblock_content.value = `${params.credential}`;
+						}
+						authn_displayblock_content.readOnly = true;
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'token';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						var authn_displayblock_content = document.createElement('input');
+						var tmp_token = [];
+						tmp_token = {
+							clientId: params.clientId,
+							credential: params.credential,
+						}
+						tmp_token = JSON.stringify(tmp_token);
+						tmp_token = btoa(tmp_token);
+						if (debug) {
+							authn_displayblock_content.value = `TOKEN='${tmp_token}'`;
+						} else {
+							authn_displayblock_content.value = `${tmp_token}`;
+						}
+						authn_displayblock_content.readOnly = true;
+						authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block2 = document.createElement('div');
+						authn_displayblock_block2.classList.add('block2');
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h3');
+						authn_displayblock_content.innerText = 'session';
+						authn_displayblock_block2.appendChild(authn_displayblock_content);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'iat';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('code');
+						authn_displayblock_content.innerText = (new Date(response.google.session.iat*1000)).toLocaleString();
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'exp';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('code');
+						authn_displayblock_content.innerText = (new Date(response.google.session.exp*1000)).toLocaleString();
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block2 = document.createElement('div');
+						authn_displayblock_block2.classList.add('block2');
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h3');
+						authn_displayblock_content.innerText = 'user';
+						authn_displayblock_block2.appendChild(authn_displayblock_content);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'userid';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('code');
+						authn_displayblock_content.innerText = response.google.user.userid;
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'email';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('code');
+						authn_displayblock_content.innerText = response.google.user.email;
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_block3 = document.createElement('div');
+						authn_displayblock_block3.classList.add('block3');
+						authn_displayblock_block4 = document.createElement('div');
+						authn_displayblock_block4.classList.add('block4');
+						authn_displayblock_content = document.createElement('h4');
+						authn_displayblock_content.innerText = 'name';
+						authn_displayblock_block3.appendChild(authn_displayblock_content);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						authn_displayblock_content = document.createElement('code');
+						authn_displayblock_content.innerText = response.google.user.name;
+						authn_displayblock_block4.appendChild(authn_displayblock_content);
+						authn_displayblock_block3.appendChild(authn_displayblock_block4);
+						authn_displayblock_block2.appendChild(authn_displayblock_block3);
+						authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						if ((flagbit&1)!==1) {
+							authn_displayblock_block3 = document.createElement('div');
+							authn_displayblock_block3.classList.add('block3');
+							authn_displayblock_block4 = document.createElement('div');
+							authn_displayblock_block4.classList.add('block4');
+							authn_displayblock_content = document.createElement('h4');
+							authn_displayblock_content.innerText = 'icon';
+							authn_displayblock_block3.appendChild(authn_displayblock_content);
+							authn_displayblock_block2.appendChild(authn_displayblock_block3);
+							authn_displayblock_block1.appendChild(authn_displayblock_block2);
+							authn_displayblock_content = document.createElement('img');
+							authn_displayblock_content.src = response.google.user.icon;
+							authn_displayblock_content.alt = `"${response.google.user.name}" <${response.google.user.email}>`;
+							authn_displayblock_block4.appendChild(authn_displayblock_content);
+							authn_displayblock_block3.appendChild(authn_displayblock_block4);
+							authn_displayblock_block2.appendChild(authn_displayblock_block3);
+							authn_displayblock_block1.appendChild(authn_displayblock_block2);
+						}
+						authn_displayblock_block0.appendChild(authn_displayblock_block1);
+
+						authn_displayblock.appendChild(authn_displayblock_block0);
+
+						/* sample portrait */
+
+						document.querySelectorAll('body').forEach((e,i)=>e.appendChild(authn_displayblock));
+
+						document.querySelectorAll('.g_id_signin').forEach((e,i)=>e.remove());
+						document.querySelectorAll('#credential_picker_container').forEach((e,i)=>e.remove());
+
+					} else if ( xhr.readyState === 4 && xhr.status >= 500 ) {
+						throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
+					} else if ( xhr.readyState === 4 && xhr.status >= 400 ) {
+						throw new Error(`Error has occured. error-code=${xhr.status}(Client-error).`);
+					} else {
+						console.debug( [
+							xhr.responseText,
+							xhr.readyState,
+							xhr.status,
+						] );
+					}
+				}
+				xhr.open( 'POST', params.requestUri );
+				xhr.setRequestHeader( 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8' );
+				xhr.send( 'ts='+(Math.floor((new Date()).getTime()/1000)) + '&credential='+params.credential + '&clientId='+params.clientId );
+				
+			} catch (excep) {
+				console.error(excep.message);
+				var result_mesg;
+				result_mesg = document.createElement('p');
+				result_mesg.innerText = excep.message;
+				document.querySelectorAll('.g_id_signin').item( (document.querySelectorAll('.g_id_signin').length-1) ).after(result_mesg);
+			} finally {
+				fullscreen_wp = document.querySelectorAll('.fullscreen_wp');
+				Array.prototype.forEach.call(fullscreen_wp, (e)=>{ e.remove(); });
+			}
+		}
+	</script>
+</head>
+<body></body>
+</html>

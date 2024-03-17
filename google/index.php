@@ -289,7 +289,7 @@ try {
 				'user' => [
 					'userid' => isset($payload['sub']) ? $payload['sub'] : null,
 					'name' => isset($payload['name']) ? $payload['name'] : null,
-					'icon' => isset($payload['picture']) ? $payload['picture'] : null,
+					'icon' => isset($payload['picture']) ? $payload['picture'] : '',
 					'email' => isset($payload['email']) ? $payload['email'] : null,
 				],
 				'session' => [

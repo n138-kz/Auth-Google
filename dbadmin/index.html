@@ -522,8 +522,9 @@
 			let content_block = null;
 			let content_legend = null;
 			content_block = document.createElement('div');
+			content_block.id = 'sessions';
 			content_legend = document.createElement('h2');
-			content_legend.name = 'sessions';
+			content_legend.name = content_block.id;
 			content_legend.innerText = 'Active Sessions';
 			content_block.appendChild( content_legend );
 			document.body.appendChild( content_block );

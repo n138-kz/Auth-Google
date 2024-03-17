@@ -101,7 +101,7 @@
 							"id": [ "numeric", "not null", "primary key" ],
 							"name": [ "text", "not null" ],
 							"email": [ "text", "not null" ],
-							"icon": [ "text", "not null" ],
+							"icon": [ "text", "not null", "default ''" ],
 							"regat": [ "integer", "not null" ],
 							"regip": [ "text", "not null" ],
 							"reguseragent": [ "text", "not null" ],

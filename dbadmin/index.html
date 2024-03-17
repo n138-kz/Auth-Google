@@ -220,9 +220,6 @@
 					} else if (!authn_token) {
 						/* 認証トークンを持っていない時 */
 						console.debug( 'No have token' );
-						if ( document.querySelectorAll('.g_id_signin').length === 0) {
-							location.replace(location.href);
-						}
 
 						fetch(connection_rtt_endpoint, { method: 'GET', })
 						.then(r=>r.text())

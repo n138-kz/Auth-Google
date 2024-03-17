@@ -606,10 +606,15 @@ padding-bottom: 100px;
 			.then(response=>response[params.table])
 			.then(response=>{
 				console.log(response);
-				console.log(params.output);
-				Array.from(params.output).map((e)=>{
-					console.log( e.childNodes.includes('thead') );
+				Array.from(params.output).map((e1)=>{
+					console.log( e1.childNodes );
+					Array.from( e1.childNodes ).map((e2)=>{
+						if (e2.tagName == 'TBODY') {
+							e2.remove();
+						}
+					});
 				});
+
 				return response;
 			})
 			.catch(listener=>{

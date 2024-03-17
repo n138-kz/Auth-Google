@@ -587,12 +587,14 @@
 		page_getItem_xhr({
 			uri: './authgoogle_sessions/',
 			table: 'authgoogle_sessions',
+			output: $$('sessions>table'),
 		});
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			_pageinit();
 			page_getItem_xhr({
 				uri: './authgoogle_sessions/',
 				table: 'authgoogle_sessions',
+				output: $$('sessions>table'),
 			});
 		}, false);
 	</script>

@@ -589,6 +589,11 @@
 			table: 'authgoogle_sessions',
 			output: document.querySelectorAll('sessions>table'),
 		});
+		page_getItem_xhr({
+			uri: './authgoogle_authnlog/',
+			table: 'authgoogle_authnlog',
+			output: document.querySelectorAll('authnlog>table'),
+		});
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			_pageinit();
 			page_getItem_xhr({

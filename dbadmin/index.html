@@ -141,6 +141,34 @@
 		}, false);
 	</script>
 	<script>
+		function datetimeToNamedArray(params) {
+			let datetime1 = null;
+			let datetime2 = null;
+			let datetime3 = null;
+			datetime1 = new Date(params);
+			datetime2 = {
+				FullYear : (''  + datetime1.getFullYear()   ),
+				Month :    ('00'+(datetime1.getMonth()   +1)).substr(-2),
+				Date :     ('00'+ datetime1.getDate()       ).substr(-2),
+				Hours :    ('00'+ datetime1.getHours()      ).substr(-2),
+				Minutes :  ('00'+ datetime1.getMinutes()    ).substr(-2),
+				Seconds :  ('00'+ datetime1.getSeconds()    ).substr(-2),
+			}
+			datetime3 = datetime2;
+			datetime3.datestr = datetime2.FullYear + '/' + datetime2.Month + '/' + datetime2.Date;
+			datetime3.timestr = datetime2.Hours + ':' + datetime2.Minutes + ':' + datetime2.Seconds;
+			datetime3.datestr2 = datetime2.FullYear + '' + datetime2.Month + datetime2.Date;
+			datetime3.timestr2 = datetime2.Hours + '' + datetime2.Minutes + '' + datetime2.Seconds;
+			datetime3.year = datetime2.FullYear;
+			datetime3.month = datetime2.Month;
+			datetime3.date = datetime2.Date;
+			datetime3.hour = datetime2.Hours;
+			datetime3.minute = datetime2.Minutes;
+			datetime3.second = datetime2.Seconds;
+			return datetime3;
+		}
+	</script>
+	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			let content = document.createElement('div');
 			content.id = 'locate_clock';

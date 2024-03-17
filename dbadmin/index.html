@@ -603,7 +603,10 @@
 			.then(response=>response[params.table])
 			.then(response=>{
 				console.log(response);
-
+				console.log(params.output);
+				Array.from(params.output).map((e)=>{
+					console.log( e.childNodes.includes('thead') );
+				});
 				return response;
 			})
 			.catch(listener=>{

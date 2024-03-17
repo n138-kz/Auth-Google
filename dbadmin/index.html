@@ -587,7 +587,7 @@
 		page_getItem_xhr({
 			uri: './authgoogle_sessions/',
 			table: 'authgoogle_sessions',
-			output: $$('sessions>table'),
+			output: document.querySelectorAll('sessions>table'),
 		});
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			_pageinit();

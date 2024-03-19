@@ -289,7 +289,7 @@ try {
 				'user' => [
 					'userid' => isset($payload['sub']) ? $payload['sub'] : null,
 					'name' => isset($payload['name']) ? $payload['name'] : null,
-					'icon' => isset($payload['picture']) ? $payload['picture'] : null,
+					'icon' => isset($payload['picture']) ? $payload['picture'] : '',
 					'email' => isset($payload['email']) ? $payload['email'] : null,
 				],
 				'session' => [
@@ -341,7 +341,7 @@ try {
 			'credential' => CLIENT_TOKEN,
 		],
 	];
-	setcookie(
+	$result['setcookie'][session_name() . '_alt'] = setcookie(
 		session_name() . '_alt',
 		base64_encode(json_encode([
 			'authnaddr' => $result['client']['address'],
@@ -349,7 +349,8 @@ try {
 			'credential' => CLIENT_TOKEN,
 			'iat' => time(),
 		])),
-		$result['google']['session']['exp']
+		$result['google']['session']['exp'],
+		'/'
 	);
 	$headers_list = [];
 	foreach (headers_list() as $key => $val) {
@@ -396,7 +397,6 @@ try {
 
 				/* ADD TABLE IF NOT EXISTS */
 				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
-					$pdo->beginTransaction();
 					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
 						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '';
 						$sql .= '(';
@@ -413,7 +413,6 @@ try {
 						$sql = str_replace(',)', ')', $sql);
 						$pdo->query($sql);
 					}
-					$pdo->commit();
 				}
 
 				/* ADD VALUE TO TABLE IF NOT EXISTS */
@@ -517,13 +516,27 @@ try {
 
 				}
 
+				/* ADD VALUE TO TABLE IF NOT EXISTS */
+				$sql = 'SELECT COUNT(userid) AS COUNT FROM public.authgoogle_role_internal_datastore WHERE userid=?';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_result = $pdo_prepare->execute([ $result['google']['user']['userid'] ]);
+				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				if ($pdo_result['count'] === 0) {
+					/* New user */
+					$sql = 'INSERT INTO public.authgoogle_role_internal_datastore (userid) VALUES (:userid);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_result = $pdo_prepare->execute([
+						'userid' => $result['google']['user']['userid'],
+					]);
+				}
+
 				/* ADD VALUE TO LOG TABLE */
 				$sql = 'INSERT INTO public.authgoogle_authnlog (';
 				$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
 				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
 				$pdo_prepare = $pdo->prepare($sql);
 				$pdo_prepare -> execute([
-					time(),
+					microtime(TRUE),
 					$result['google']['user']['userid'],
 					$result['client']['address'],
 					$result['client']['referer'],

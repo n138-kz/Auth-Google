@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Auth-Google</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://accounts.google.com/gsi/client" async defer></script>
+	<script src="https://www.google.com/recaptcha/api.js?render=6LfCHdcUAAAAAOwkHsW_7W7MfoOrvoIw9CXdLRBA"></script>
+	<style>
+		:root {
+			--default-font-size: 16pt;
+			--default-margin-padding-size: 0;
+			--default-background-color: #F0FFFFFF;
+			--default-text-color: #000000FF;
+			--color-preset-red: #FF0000FF;
+			--color-preset-yellow: #FFa000FF;
+			--color-preset-green: #008000FF;
+		}
+		:root[theme=dark] {
+			--default-background-color: #000000FF;
+			--default-text-color: #F00000FF;
+		}
+		html, body {
+			margin: var(--default-margin-padding-size);
+			padding: var(--default-margin-padding-size);
+			background-color: var(--default-background-color);
+			color: var(--default-text-color);
+			font-size: var(--default-font-size);
+		}
+		body {
+			margin: 0 auto;
+			width: 90%;
+			text-align: center;
+			padding-bottom: 100px;
+		}
+		@keyframes rotate1 {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+	</style>
+	<style>
+		div.div_button {
+			padding: 10px 15px;
+			border-radius: 50% / 100%;
+			margin-top: 1px;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<style>
+		.g_id_signin iframe {
+			margin: 0 auto !important;
+		}
+	</style>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			const html_top = document.createElement('a');
+			html_top.name='_';
+			document.querySelector('body').prepend(html_top);
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let favicon;
+			['icon', 'apple-touch-icon', 'favicon'].forEach((e)=>{
+				favicon = document.createElement('link');
+				favicon.rel = `${e}`;
+				favicon.href = 'https://www.google.com/s2/favicons?size=64&domain=https://google.com/';
+				document.querySelectorAll('head').forEach((e)=>e.prepend(favicon));
+			});
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let header1 = document.createElement('h1');
+			let header1_link = document.createElement('a');
+			header1_link.href = './';
+			header1_link.setAttribute('onclick', 'sessionStorage.clear();localStorage.clear();')
+			header1_link.title = document.title;
+			let header1_text = document.createTextNode(document.title);
+			header1_link.appendChild(header1_text);
+			header1.appendChild(header1_link);
+			document.querySelectorAll('body').forEach((e)=>e.prepend(header1));
+		}, false);
+	</script>
+	<script>
+		async function sha256(text){
+			/**
+			* @quote
+				https://qiita.com/economist/items/768d2f6a10d54d4fa39f
+			* @usage
+				sha256(document.querySelector(':root').innerHTML).then(hash => console.log(hash));
+			*/
+			const uint8  = new TextEncoder().encode(text)
+			const digest = await crypto.subtle.digest('SHA-256', uint8)
+			return Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2,'0')).join('')
+		}
+		async function hash_encode(encode, text){
+			/**
+			* @docs
+				https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+			* @args encode::text
+				- SHA-1
+				- SHA-256
+				- SHA-384
+				- SHA-512
+			* @args text::text
+				.*
+			*/
+			const uint8  = new TextEncoder().encode(text)
+			const digest = await crypto.subtle.digest(encode, uint8)
+			return Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2,'0')).join('')
+		}
+	</script>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let http_query = location.search.replace(/^\?/g, '');
+			if( http_query.indexOf('&') > 0 ) { http_query = http_query.split('&'); } else { http_query = [http_query]; }
+			let http_query_array = {};
+			for( let i=0; i<http_query.length; i++ ) {
+				http_query_array[http_query[i].split('=')[0]] = http_query[i].split('=')[1];
+			}
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
+			try {
+				http_query_array.dev;
+				http_query_array.dev = http_query_array.dev > 0;
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify(http_query_array) );
+				if (!http_query_array.dev) { throw new Exception(); }
+			} catch (error) {
+				sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array', JSON.stringify({ dev: false }) );
+				let ctrlpanels = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path' );
+				if (!ctrlpanels) {
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'deactivate_rewrite_path', true );
+					sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'timeout_rewrite_path',
+						setTimeout(()=>{if ( location.host != 'n138-kz.github.io' ) {location.replace('https://n138-kz.github.io/Auth-Google/html/')}}, 100)
+					);
+				}
+			}
+		}, false);
+	</script>
+	<script>
+		function datetimeToNamedArray(params) {
+			let datetime1 = null;
+			let datetime2 = null;
+			let datetime3 = null;
+			datetime1 = new Date(params);
+			datetime2 = {
+				FullYear : (''  + datetime1.getFullYear()   ),
+				Month :    ('00'+(datetime1.getMonth()   +1)).substr(-2),
+				Date :     ('00'+ datetime1.getDate()       ).substr(-2),
+				Hours :    ('00'+ datetime1.getHours()      ).substr(-2),
+				Minutes :  ('00'+ datetime1.getMinutes()    ).substr(-2),
+				Seconds :  ('00'+ datetime1.getSeconds()    ).substr(-2),
+			}
+			datetime3 = datetime2;
+			datetime3.datestr = datetime2.FullYear + '/' + datetime2.Month + '/' + datetime2.Date;
+			datetime3.timestr = datetime2.Hours + ':' + datetime2.Minutes + ':' + datetime2.Seconds;
+			datetime3.datestr2 = datetime2.FullYear + '' + datetime2.Month + datetime2.Date;
+			datetime3.timestr2 = datetime2.Hours + '' + datetime2.Minutes + '' + datetime2.Seconds;
+			datetime3.year = datetime2.FullYear;
+			datetime3.month = datetime2.Month;
+			datetime3.date = datetime2.Date;
+			datetime3.hour = datetime2.Hours;
+			datetime3.minute = datetime2.Minutes;
+			datetime3.second = datetime2.Seconds;
+			return datetime3;
+		}
+	</script>
+	<script>
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content = document.createElement('div');
+			content.id = 'locate_clock';
+			content.innerText = '';
+			document.body.appendChild( content );
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', 0);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1',
+				setInterval(()=>{
+					let execcount_locate_clock = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock' );
+					if ( execcount_locate_clock > 40 ) {
+						clearInterval( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock1' ) );
+					} else {
+						execcount_locate_clock++;
+						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'execcount_locate_clock', execcount_locate_clock);
+					}
+					let cycle_clock = new Date();
+					cycle_clock = {
+						FullYear : (''+cycle_clock.getFullYear()),
+						Month : ('00'+(cycle_clock.getMonth()+1)).substr(-2),
+						Date : ('00'+cycle_clock.getDate()).substr(-2),
+						Hours : ('00'+cycle_clock.getHours()).substr(-2),
+						Minutes : ('00'+cycle_clock.getMinutes()).substr(-2),
+						Seconds : ('00'+cycle_clock.getSeconds()).substr(-2),
+					}
+					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
+					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
+					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 25)
+			);
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock2',
+				setInterval(()=>{
+					let cycle_clock = new Date();
+					cycle_clock = {
+						FullYear : (''+cycle_clock.getFullYear()),
+						Month : ('00'+(cycle_clock.getMonth()+1)).substr(-2),
+						Date : ('00'+cycle_clock.getDate()).substr(-2),
+						Hours : ('00'+cycle_clock.getHours()).substr(-2),
+						Minutes : ('00'+cycle_clock.getMinutes()).substr(-2),
+						Seconds : ('00'+cycle_clock.getSeconds()).substr(-2),
+					}
+					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
+					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
+					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
+					console.debug(document.querySelector('#locate_clock').innerText);
+				}, 1000)
+			);
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content1 = document.createElement('div');
+			content1.id = 'link_policy';
+			let content2 = document.createElement('a');
+			content2.href = 'https://n138-kz.github.io/policy/';
+			content2.innerText = 'Policy Notes';
+			content1.appendChild( content2 );
+			document.body.appendChild( content1 );
+		}, false);
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			let content1 = document.createElement('div');
+			content1.id = 'connection_rtt';
+			let content2;
+			content2 = document.createElement('span');
+			content1.appendChild( content2 );
+			content2 = document.createElement('img');
+			content2.src = '../11503.svg';
+			content2.alt = '[icoon-mono:11503]';
+			content1.appendChild( content2 );
+			document.body.appendChild( content1 );
+			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',
+				setInterval(()=>{
+					let process_1 = new Date().getTime();
+					let process_2 = new Date().getTime();
+
+					let connection_rtt_endpoint = location.href;
+					let authn_token = pickout_token();
+					if (false) {
+					} else if (!authn_token) {
+						/* 認証トークンを持っていない時 */
+						console.debug( 'No have token' );
+
+						fetch(connection_rtt_endpoint, { method: 'GET', })
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+							});
+						});
+					} else {
+						/* 認証トークンを持っている時 */
+						console.debug( 'Have a token' );
+						authn_token = authn_token.credential;
+						console.debug( 'authn_token.iat <:', parseInt(new Date().getTime()/1000) > authn_token.iat );
+						console.debug( 'authn_token.exp >:', parseInt(new Date().getTime()/1000) < authn_token.exp );
+						if( !(parseInt(new Date().getTime()/1000) >= authn_token.iat) || !(parseInt(new Date().getTime()/1000) < authn_token.exp) ){
+							sessionStorage.clear();
+							location.replace(location.href);
+						}
+						console.debug( 'switched uri:', authn_token.requestUri );
+						connection_rtt_endpoint = authn_token.requestUri;
+
+						fetch(connection_rtt_endpoint, {
+							method: 'POST',
+							mode: 'cors',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								ts: (Math.floor((new Date()).getTime()/1000)),
+								credential: authn_token.credential,
+								clientId: authn_token.clientId,
+							})
+						})
+						.then(r=>r.text())
+						.then(r=>{
+							process_2 = new Date().getTime();
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								let rtt = process_2-process_1;
+								e.innerText = rtt+'ms';
+								if ( false ) {
+								} else if ( rtt < 250 ) {
+									e.style.color = 'var(--color-preset-green)';
+								} else if ( rtt < 500 ) {
+									e.style.color = 'var(--color-preset-yellow)';
+								} else {
+									e.style.color = 'var(--color-preset-red)';
+								}
+							});
+						})
+						.catch(e=>{
+							console.error(e);
+							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+								e.innerText = 'infinity';
+								e.style.color = 'var(--color-preset-red)';
+							});
+						});
+
+						/* auto reauth */
+						try {
+							onSignIn(pickout_token().credential, 1);
+						} catch (error) {
+							location.replace(location.href);
+						}
+					}
+				}, 1000)
+			);
+		}, false);
+	</script>
+	<style>
+		#connection_rtt {
+			position: fixed;
+			top: 1em;
+			right: 0;
+			max-width: 40%;
+			height: 1em;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: right;
+		}
+		#connection_rtt img {
+			height: 1em;
+		}
+		#locate_clock {
+			position: fixed;
+			top: 0;
+			right: 0;
+			max-width: 40%;
+			height: 1em;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: right;
+		}
+		@media all and (max-width: 530px) {
+			#locate_clock {
+				max-width: 100%;
+			}
+		}
+		@media all and (max-width: 530px) {
+			#authn_status {
+				display: none;
+			}
+		}
+		#link_policy {
+			position: fixed;
+			bottom: 0.5em;
+			left: 0;
+			max-width: 40%;
+			height: 1em;
+			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
+			background-color: var(--default-background-color);
+			text-align: left;
+			margin-left: 5px;
+		}
+		table.authn_result_landscape {
+			background-color: var(--default-background-color);
+			margin: 0 auto;
+		}
+		table.authn_result_landscape th {
+			text-align: center;
+		}
+		table.authn_result_landscape td {
+			text-align: left;
+		}
+		table.authn_result_landscape img {
+			border-radius: 20%;
+		}
+		div.authn_result_portrait {
+			background-color: var(--default-background-color);
+			text-align: left;
+		}
+		div.authn_result_portrait .block2,
+		div.authn_result_portrait .block3,
+		div.authn_result_portrait .block4 {
+			margin-left: 25px;
+		}
+		div.authn_result_portrait h2,
+		div.authn_result_portrait h3,
+		div.authn_result_portrait h4 {
+			margin: 0;
+		}
+		div.authn_result_portrait img {
+			border-radius: 50%;
+		}
+		@media all {
+			.authn_result_landscape {
+				display: none;
+			}
+			.authn_result_portrait {
+				display: none;
+			}
+		}
+		@media screen and (orientation: landscape) {
+			table.authn_result_landscape {
+				display: table;
+			}
+		}
+		@media screen and (orientation: portrait) {
+			div.authn_result_portrait {
+				display: grid;
+			}
+		}
+	</style>
+	<script>
+		function pickout_token() {
+			let params = JSON.parse( sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn') );
+
+			try {
+				/* time of expiry */
+				if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
+					return null;
+				}
+	
+				return params;
+			} catch (error) {
+				return null;
+			}
+		}
+		function onSignIn(params, flagbit = 0) {
+			/* @author @n138-kz
+			 * @args:
+				params: <array> {
+					credential: <text> ""
+					clientId: <text> ""
+				}
+				flagbit: <int> <<< {
+					pruned image = {0, 1},
+				}
+			*/
+			params.requestUri = 'https://authn.n138.jp/google/';
+			const http_query_array = JSON.parse( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' ) );
+			try {
+				if (http_query_array.dev) {
+					params.requestUri = './google/';
+				}
+			} catch (error) {}
+			console.debug([params, JSON.stringify(params)]);
+
+			try {
+				let xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = () => {
+					if ( xhr.readyState === 4 && xhr.status === 200 ) {
+						let responseText = xhr.responseText;
+						let response = JSON.parse(responseText);
+						console.debug(response);
+						/* authned */
+						let token = {
+							credential: {
+								credential: params.credential,
+								token: params.credential,
+								clientId: params.clientId,
+								client_id: params.clientId,
+								clientInfo: params.client,
+								requestUri: params.requestUri,
+								request_uri: params.requestUri,
+								withinexpire: false,
+								with_in_expire: (
+									((new Date()).getTime()/1000) > response.google.session.iat
+									&&
+									((new Date()).getTime()/1000) < response.google.session.exp
+								),
+								iat: response.google.session.iat,
+								iat_humanable: {
+									jst: new Date((response.google.session.iat)*1000).toLocaleString('ja-JP', { timeZone: 'jst' }),
+									utc: new Date((response.google.session.iat)*1000).toUTCString(),
+								},
+								exp: response.google.session.exp,
+								exp_humanable: {
+									jst: new Date((response.google.session.exp)*1000).toLocaleString('ja-JP', { timeZone: 'jst' }),
+									utc: new Date((response.google.session.exp)*1000).toUTCString(),
+								},
+								remote: response.remote,
+							},
+							sessions: {
+								id: response.authn.sessions.id,
+								name: response.authn.sessions.name,
+							},
+							iat: response.issue_at,
+						}
+						token.credential.withinexpire = token.credential.with_in_expire;
+						sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'googleauthn',
+							JSON.stringify(token)
+						);
+						sessionStorage.setItem( '_' + '.'+'googleauthn', JSON.stringify(token) );
+
+						let debug;
+						debug = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' );
+						debug = JSON.parse( debug );
+						debug = debug.dev;
+						try {
+							if (debug) { debug = true; }
+							else { debug = false; }
+						} catch (error) {}
+
+					} else if ( xhr.readyState === 4 && xhr.status >= 500 ) {
+						throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
+					} else if ( xhr.readyState === 4 && xhr.status >= 400 ) {
+						throw new Error(`Error has occured. error-code=${xhr.status}(Client-error).`);
+					} else {
+						console.debug( [
+							xhr.responseText,
+							xhr.readyState,
+							xhr.status,
+						] );
+					}
+				}
+				xhr.open( 'POST', params.requestUri );
+				xhr.setRequestHeader( 'content-type', 'application/x-www-form-urlencoded;charset=UTF-8' );
+				xhr.send( 'ts='+(Math.floor((new Date()).getTime()/1000)) + '&credential='+params.credential + '&clientId='+params.clientId );
+				
+			} catch (excep) {
+				console.error(excep.message);
+				var result_mesg;
+				result_mesg = document.createElement('p');
+				result_mesg.innerText = excep.message;
+				document.querySelectorAll('.g_id_signin').item( (document.querySelectorAll('.g_id_signin').length-1) ).after(result_mesg);
+			} finally {
+				fullscreen_wp = document.querySelectorAll('.fullscreen_wp');
+				Array.prototype.forEach.call(fullscreen_wp, (e)=>{ e.remove(); });
+			}
+		}
+	</script>
+	<style>
+body {
+padding-bottom: 100px;
+}
+		table {
+			width: 100%;
+		}
+		#sessions table {
+			border: 1px solid #000;
+		}
+		#sessions table th {
+			border: 1px solid #000;
+		}
+		#sessions table td {
+			border: 1px solid #000;
+		}
+		#authnlog table {
+			border: 1px solid #000;
+		}
+		#authnlog table th {
+			border: 1px solid #000;
+		}
+		#authnlog table td {
+			border: 1px solid #000;
+		}
+
+	</style>
+	<script>
+		function _pageinit(params=[]) {
+			let content_block = null;
+			let content_legend = null;
+			content_block = document.createElement('div');
+			content_block.id = 'sessions';
+			content_legend = document.createElement('h2');
+			content_legend.name = content_block.id;
+			content_legend.innerText = 'Active Sessions';
+			content_block.appendChild( content_legend );
+			content_content1 = document.createElement('table');
+			content_content2 = document.createElement('thead');
+
+			content_content3 = document.createElement('tr');
+			['userid', 'address', 'iat', 'exp', 'token'].map((val)=>{
+				content_content4 = document.createElement('th');
+				content_content4.innerText = val;
+				content_content3.appendChild( content_content4 );
+			});
+			content_content2.appendChild( content_content3 );
+
+			content_content1.appendChild( content_content2 );
+			content_block.appendChild( content_content1 );
+			document.body.appendChild( content_block );
+
+			content_block = document.createElement('div');
+			content_block.id = 'authnlog';
+			content_legend = document.createElement('h2');
+			content_legend.name = content_block.id;
+			content_legend.innerText = 'Authentication log';
+			content_block.appendChild( content_legend );
+			content_content1 = document.createElement('table');
+			content_content2 = document.createElement('thead');
+
+			content_content3 = document.createElement('tr');
+			['timestamp', 'userid', 'address', 'origin', 'referer', 'useragent', 'returnval'].map((val)=>{
+				content_content4 = document.createElement('th');
+				content_content4.innerText = val;
+				content_content3.appendChild( content_content4 );
+			});
+			content_content2.appendChild( content_content3 );
+
+			content_content1.appendChild( content_content2 );
+			content_block.appendChild( content_content1 );
+			document.body.appendChild( content_block );
+		}
+		function page_getItem_xhr(params=[]) {
+			let uri = params.uri;
+			fetch(uri, { method: 'GET', })
+			.then(response=>{
+				console.log(response);
+				if (response.status>=400) {
+					throw new Exception(response);
+				}
+				return response;
+			})
+			.then(response=>response.json())
+			.then(response=>response.datastore)
+			.then(response=>response.public)
+			.then(response=>response[params.table])
+			.then(response=>{
+				console.log(response);
+				Array.from(params.output).map((e1)=>{
+					console.log( e1.childNodes );
+					Array.from( e1.childNodes ).map((e2)=>{
+						if (e2.tagName == 'TBODY') {
+							e2.remove();
+						}
+					});
+				});
+
+				let tbody = null;
+				let tr = null;
+				let td = null;
+				let alink = null;
+				let misc = null;
+				tbody = document.createElement('tbody');
+
+				if ( false ) {
+				} else if ( params.table == '' ) {
+				} else if ( params.table == 'authgoogle_sessions' ) {
+					response.map((e1)=>{
+						console.log(e1)
+						tr = document.createElement('tr');
+
+						td = document.createElement('td');
+						td.classList.add('userinfo');
+						td.classList.add('authn');
+						alink = document.createElement('a');
+						alink.href = `mailto:${e1.email}`;
+						alink.target = '_blank';
+						misc = document.createTextNode(`${e1.name}`);
+						alink.appendChild(misc);
+						misc = document.createTextNode(' ');
+						alink.appendChild(misc);
+						misc = document.createTextNode(`<${e1.email}>`);
+						alink.appendChild(misc);
+						misc = document.createElement('br');
+						alink.appendChild(misc);
+						misc = document.createTextNode(`${e1.userid}`);
+						alink.appendChild(misc);
+						td.appendChild(alink);
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						alink = document.createElement('a');
+						alink.innerText = `${e1.address}`;
+						alink.href = `https://ipinfo.io/${e1.address}`;
+						alink.target = '_blank';
+						td.appendChild(alink);
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						td.innerHTML = new Date((e1.iat*1000)).toLocaleString().replace(' ', '<br />');
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						td.innerHTML = new Date((e1.exp*1000)).toLocaleString().replace(' ', '<br />');
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authn');
+						td.innerText = e1.token.substr(0, 8);
+						tr.appendChild(td);
+						console.log( tbody );
+
+						tbody.appendChild(tr);
+					});
+				} else if ( params.table == 'authgoogle_authnlog' ) {
+					response.map((e1)=>{
+						console.log(e1)
+						tr = document.createElement('tr');
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						td.innerText = new Date((e1.timestamp*1000)).toLocaleString();
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('userinfo');
+						td.classList.add('authn');
+						alink = document.createElement('a');
+						alink.href = `mailto:${e1.email}`;
+						alink.target = '_blank';
+						misc = document.createTextNode(`${e1.name}`);
+						alink.appendChild(misc);
+						misc = document.createTextNode(' ');
+						alink.appendChild(misc);
+						misc = document.createTextNode(`<${e1.email}>`);
+						alink.appendChild(misc);
+						misc = document.createElement('br');
+						alink.appendChild(misc);
+						misc = document.createTextNode(`${e1.userid}`);
+						alink.appendChild(misc);
+						td.appendChild(alink);
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authlimit');
+						td.classList.add('authn');
+						alink = document.createElement('a');
+						alink.innerText = `${e1.address}`;
+						alink.href = `https://ipinfo.io/${e1.address}`;
+						alink.target = '_blank';
+						td.appendChild(alink);
+						tr.appendChild(td);
+
+						td = document.createElement('td');
+						td.classList.add('authn');
+						td.innerText = `${e1.origin}`;
+						tr.appendChild(td);
+						console.log( tbody );
+
+						td = document.createElement('td');
+						td.classList.add('authn');
+						td.innerText = `${e1.referer}`;
+						tr.appendChild(td);
+						console.log( tbody );
+
+						td = document.createElement('td');
+						td.classList.add('authn');
+						td.innerText = `${e1.useragent}`;
+						tr.appendChild(td);
+						console.log( tbody );
+
+						td = document.createElement('td');
+						td.classList.add('authn');
+						alink = document.createElement('a');
+						misc = new Blob([JSON.stringify( JSON.parse(e1.returnval), null, '  ' )], {type: 'application/json'});
+						alink.href = window.URL.createObjectURL(misc);
+						misc = datetimeToNamedArray(new Date((e1.timestamp*1000)).getTime());
+						alink.download = e1.userid + '_' + parseInt(e1.timestamp) + '(' + misc.datestr.replace(/\//g, '-') + '-' + misc.timestr.replace(/:/g, '-') + ')' + '.json';
+						misc = document.createTextNode('[json]');
+						alink.appendChild(misc);
+						misc = document.createElement('br');
+						alink.appendChild(misc);
+						misc = document.createTextNode(`${e1.userid}`);
+						alink.appendChild(misc);
+						misc = document.createElement('br');
+						alink.appendChild(misc);
+						misc = document.createTextNode(parseInt(e1.timestamp));
+						alink.appendChild(misc);
+						td.appendChild(alink);
+						tr.appendChild(td);
+						console.log( tbody );
+
+						tbody.appendChild(tr);
+					});
+				}
+				
+				params.output.item(0).appendChild(tbody);
+				return response;
+			})
+			.catch(listener=>{
+				console.error(listener);
+			})
+		}
+		window.addEventListener('DOMContentLoaded', (e)=>{
+			_pageinit();
+			page_getItem_xhr({
+				uri: './authgoogle_sessions/',
+				table: 'authgoogle_sessions',
+				output: document.querySelectorAll('#sessions>table'),
+			});
+			page_getItem_xhr({
+				uri: './authgoogle_authnlog/',
+				table: 'authgoogle_authnlog',
+				output: document.querySelectorAll('#authnlog>table'),
+			});
+		}, false);
+	</script>
+</head>
+<body></body>
+</html>

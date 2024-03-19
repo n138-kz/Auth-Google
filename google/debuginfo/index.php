@@ -257,7 +257,7 @@ try {
 	$result['last_checkpoint'] = __LINE__;
 
 	header('Content-Type: text/html; charset=UTF-8');
-	phpinfo();
+	echo 'phpinfo() is a deactivated.' ;#phpinfo();
 	exit(0);
 } catch (\Exception $th) {
 	set_http_response_code(500);

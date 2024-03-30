@@ -537,29 +537,39 @@ try {
 
 				/* GET ACCESABLE URL IN INTERNAL */
 				try {
+					/* get priv level in user. */
 					$sql = 'SELECT userid, privlevel FROM public.authgoogle_role_internal_datastore WHERE userid=?;';
 					$pdo_prepare = $pdo->prepare($sql);
-					$pdo_prepare -> execute([
-						$result['google']['user']['userid'],
-					]);
-					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_NUM);
-					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=? OR privid=?;';
-					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
-					$pdo_prepare = $pdo->prepare($sql);
-					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];
-					foreach( $pdo_result as $k => $v ){
-						$pdo_prepare -> execute([
-							$v,
-						]);
-					}
+					$pdo_prepare -> execute([ $result['google']['user']['userid'], ]);
 					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
 
+					/* use priv level */
+					$sql = 'SELECT links FROM public.authgoogle_internallinks WHERE activate=true AND privid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([ $pdo_result['privlevel'] ]);
+					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
+					foreach ( $pdo_result as $k => $v ) {
+						/* append from privid group */
+						$result['links'][] = json_decode($v['links'], TRUE);
+					}
 
+					/* use userid */
+					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([ $result['google']['user']['userid'], ]);
+					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
+					foreach ( $pdo_result as $k => $v ) {
+						/* append from userid group */
+						$result['links'][] = json_decode($v['links'], TRUE);
+					}
 
-
-
-
-					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];
+					/* href is null or name is null then trim */
+					foreach ( $result['links'] as $k => $v ) {
+						if ( ( is_null( $v['href'] ) ) || (is_null( $v['name'] ) ) ) {
+							unset($result['links'][$k]);
+						}
+					}
+					$result['links'] = array_values( $result['links'] );
 				} catch (\Exception $th) {
 					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}

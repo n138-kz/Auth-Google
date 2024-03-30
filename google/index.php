@@ -553,22 +553,16 @@ try {
 						$result['links'][] = json_decode($v['links'], TRUE);
 					}
 
+					/* use userid */
 					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
 					$pdo_prepare = $pdo->prepare($sql);
-					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];
-					foreach( $pdo_result as $k => $v ){
-						$pdo_prepare -> execute([
-							$v,
-						]);
+					$pdo_prepare -> execute([ $result['google']['user']['userid'], ]);
+					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
+					foreach ( $pdo_result as $k => $v ) {
+						/* append from userid group */
+						$result['links'][] = json_decode($v['links'], TRUE);
 					}
-					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
 
-
-
-
-
-
-					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];
 				} catch (\Exception $th) {
 					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}

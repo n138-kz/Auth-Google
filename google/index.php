@@ -27,7 +27,7 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 }
 $description = [];
 $description['http-status-code'] = dirname(__FILE__) . '/' . 'http-status-code.json';
-if ( file_exists($config) && filesize($config) > 0 ) {
+if ( file_exists($description['http-status-code']) && filesize($description['http-status-code']) > 0 ) {
 	try {
 		$description['http-status-code'] = json_decode(file_get_contents($description['http-status-code']), true);
 	} catch (\Exception $e) {

@@ -25,6 +25,17 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 		$config_loaded = false;
 	}
 }
+$description = [];
+$description['http-status-code'] = dirname(__FILE__) . '/' . 'http-status-code.json';
+if ( file_exists($config) && filesize($config) > 0 ) {
+	try {
+		$description['http-status-code'] = json_decode(file_get_contents($description['http-status-code']), true);
+	} catch (\Exception $e) {
+		$description['http-status-code'] = false;
+	}
+} else {
+	$description['http-status-code'] = false;
+}
 
 function is_empty($arg) {
 	return ( !isset($arg) || empty($arg) );

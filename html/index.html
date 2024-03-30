@@ -576,6 +576,7 @@
 			try {
 				let xhr = new XMLHttpRequest();
 				xhr.onreadystatechange = () => {
+					Array.from(document.querySelectorAll('#errors_http')).map(e=>e.remove());
 					if ( xhr.readyState === 4 && xhr.status === 200 ) {
 						let responseText = xhr.responseText;
 						let response = JSON.parse(responseText);
@@ -1095,10 +1096,40 @@
 						document.querySelectorAll('body').forEach((e,i)=>e.appendChild(rawjson1));
 						*/
 
-					} else if ( xhr.readyState === 4 && xhr.status >= 500 ) {
-						throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
 					} else if ( xhr.readyState === 4 && xhr.status >= 400 ) {
-						throw new Error(`Error has occured. error-code=${xhr.status}(Client-error).`);
+						let dom_element = [];
+						dom_element[0] = document.createElement('div');
+						dom_element[0].classList.add('errors');
+						dom_element[0].id = 'errors_http';
+						dom_element[1] = document.createElement('h1');
+						dom_element[2] = document.createTextNode(`${xhr.status} ${xhr.statusText}`);
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						dom_element[1] = document.createElement('h2');
+						dom_element[2] = document.createTextNode('Currently an unexpected error has occurred');
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						dom_element[1] = document.createElement('h2');
+						dom_element[2] = document.createTextNode('Please wait for a while until recovery');
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						dom_element[1] = document.createElement('h2');
+						dom_element[2] = document.createTextNode('現在障害発生中ですが対応中です');
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						dom_element[1] = document.createElement('h2');
+						dom_element[2] = document.createTextNode('復旧まで今暫くお待ちください');
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						Array.from(document.querySelectorAll('#g_id_onload')).map(e=>{
+							e.after(dom_element[0]);
+						});
+						if ( false ) {
+						} else if ( xhr.status >= 500 ) {
+							throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
+						} else if ( xhr.status >= 400 ) {
+							throw new Error(`Error has occured. error-code=${xhr.status}(Client-error).`);
+						}
 					} else {
 						console.debug( [
 							xhr.responseText,

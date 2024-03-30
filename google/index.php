@@ -548,9 +548,10 @@ try {
 					$pdo_prepare = $pdo->prepare($sql);
 					$pdo_prepare -> execute([ $pdo_result['privlevel'] ]);
 					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
-
-					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result, $result['google']['user']['userid'] ];
-					error_log( json_encode( $result['variable']['pdo_result'] ) );
+					foreach ( $pdo_result as $k => $v ) {
+						/* append from privid group */
+						$result['links'][] = json_decode($v['links'], TRUE);
+					}
 
 					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
 					$pdo_prepare = $pdo->prepare($sql);

@@ -69,7 +69,13 @@
 						"exp": 0
 					}
 				},
-				"setcookie": {}
+				"setcookie": {},
+				"links": [
+					{
+						"href": null,
+						"name": null
+					}
+				]
 			}
 		},
 		"databases": {

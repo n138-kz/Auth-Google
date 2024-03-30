@@ -543,6 +543,15 @@ try {
 					$pdo_prepare -> execute([ $result['google']['user']['userid'], ]);
 					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
 
+					/* use priv level */
+					$sql = 'SELECT links FROM public.authgoogle_internallinks WHERE activate=true AND privid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([ $pdo_result['privlevel'] ]);
+					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
+
+					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result, $result['google']['user']['userid'] ];
+					error_log( json_encode( $result['variable']['pdo_result'] ) );
+
 					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
 					$pdo_prepare = $pdo->prepare($sql);
 					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];

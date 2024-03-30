@@ -307,6 +307,10 @@ try {
 		$headers_list[trim($split[0])] = trim($split[1]);
 	}
 	$result['variable'] = [
+		'_config'  => [
+			'loaded' => $config_loaded,
+			'body'   => $config,
+		],
 		'_session' => $_SESSION,
 		'_request' => $_REQUEST,
 		'_get'     => $_GET,

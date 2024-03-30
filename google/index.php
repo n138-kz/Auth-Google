@@ -553,8 +553,8 @@ try {
 				} catch (\Exception $th) {
 					error_log( $th->getMessage() );
 				}
-				
-				
+
+
 
 				$pdo = null;
 			} catch (\Throwable $th) {

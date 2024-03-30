@@ -537,6 +537,7 @@ try {
 
 				/* GET ACCESABLE URL IN INTERNAL */
 				try {
+					/* get priv level in user. */
 					$sql = 'SELECT userid, privlevel FROM public.authgoogle_role_internal_datastore WHERE userid=?;';
 					$pdo_prepare = $pdo->prepare($sql);
 					$pdo_prepare -> execute([

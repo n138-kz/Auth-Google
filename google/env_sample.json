@@ -134,6 +134,14 @@
 							"token": [ "text", "not null" ]
 						},
 						"indexes": []
+					},
+					"authgoogle_internallinks": {
+						"column": {
+							"userid": [ "numeric", "not null" ],
+							"links": [ "json", "not null", "default '[null]'" ],
+							"activate": [ "boolean", "not null", "default true" ]
+						},
+						"indexes": []
 					}
 				}
 			}

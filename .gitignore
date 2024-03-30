@@ -4,6 +4,7 @@ backup/
 *.bak*
 
 # Temporary files
+*.swp
 *.tmp
 *.dat
 *.env

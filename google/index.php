@@ -27,7 +27,7 @@ if ( file_exists($config) && filesize($config) > 0 ) {
 }
 $description = [];
 $description['http-status-code'] = dirname(__FILE__) . '/' . 'http-status-code.json';
-if ( file_exists($config) && filesize($config) > 0 ) {
+if ( file_exists($description['http-status-code']) && filesize($description['http-status-code']) > 0 ) {
 	try {
 		$description['http-status-code'] = json_decode(file_get_contents($description['http-status-code']), true);
 	} catch (\Exception $e) {
@@ -112,6 +112,7 @@ $result['issue_at'] = microtime(TRUE);
 $result['error']['code'] = 0;
 $result['http']['code'] = http_response_code();
 if (!!$description['http-status-code']) {
+	$http = http_response_code();
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . $description['http-status-code'][$http];
 }
 $result['last_checkpoint'] = __LINE__;
@@ -307,6 +308,10 @@ try {
 		$headers_list[trim($split[0])] = trim($split[1]);
 	}
 	$result['variable'] = [
+		'_config'  => [
+			'loaded' => $config_loaded,
+			'body'   => $config,
+		],
 		'_session' => $_SESSION,
 		'_request' => $_REQUEST,
 		'_get'     => $_GET,
@@ -346,6 +351,7 @@ try {
 
 				/* ADD TABLE IF NOT EXISTS */
 				foreach ($config['internal']['databases']['tables'] as $scheme_key => $scheme_val) {
+					$pdo->beginTransaction();
 					foreach ($config['internal']['databases']['tables'][$scheme_key] as $tables_key => $tables_val) {
 						$sql = 'CREATE TABLE IF NOT EXISTS ' . $scheme_key . '.' . $tables_key . ' ' . '';
 						$sql .= '(';
@@ -362,6 +368,7 @@ try {
 						$sql = str_replace(',)', ')', $sql);
 						$pdo->query($sql);
 					}
+					$pdo->commit();
 				}
 
 				/* ADD VALUE TO TABLE IF NOT EXISTS */
@@ -453,7 +460,6 @@ try {
 									'email' => $result['google']['user']['email'],
 									'userid' => $result['google']['user']['userid'],
 									'name' => $result['google']['user']['name'],
-									'icon' => $result['google']['user']['icon'],
 									'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
 									'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
 								], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.
@@ -480,69 +486,117 @@ try {
 				}
 
 				/* ADD VALUE TO LOG TABLE */
-				$sql = 'INSERT INTO public.authgoogle_authnlog (';
-				$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
-				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
-				$pdo_prepare = $pdo->prepare($sql);
-				$pdo_prepare -> execute([
-					microtime(TRUE),
-					$result['google']['user']['userid'],
-					$result['client']['address'],
-					$result['client']['referer'],
-					$result['client']['user_agent'],
-					$result['client']['origin'],
-					json_encode($result),
-				]);
+				try {
+					$sql = 'INSERT INTO public.authgoogle_authnlog (';
+					$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
+					$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						time(),
+						$result['google']['user']['userid'],
+						$result['client']['address'],
+						$result['client']['referer'],
+						$result['client']['user_agent'],
+						$result['client']['origin'],
+						json_encode($result),
+					]);
+				} catch (\Exception $th) {
+					if (FALSE) {
+					} elseif ( FALSE ) {
+					} elseif ( strpos($th->getMessage(), 'duplicate key value violates unique constraint' ) !== FALSE ) {
+					} else {
+						error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
+					}
+				}
 
 				/* ADD SESSION INFO TO TABLE */
-				$sql = 'SELECT count(exp) FROM public.authgoogle_sessions WHERE userid=? AND token=?;';
-				$pdo_prepare = $pdo->prepare($sql);
-				$pdo_prepare -> execute([
-					$result['google']['user']['userid'],
-					hash('sha512', CLIENT_TOKEN),
-				]);
-				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
-				if ( $pdo_result['count'] == 0 ) {
-					$sql = 'INSERT INTO public.authgoogle_sessions (';
-					$sql .= 'userid, useragent, address, token, iat, exp';
-					$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
+				try {
+					$sql = 'SELECT count(exp) FROM public.authgoogle_sessions WHERE userid=? AND token=?;';
 					$pdo_prepare = $pdo->prepare($sql);
 					$pdo_prepare -> execute([
 						$result['google']['user']['userid'],
-						$result['client']['user_agent'],
-						$result['client']['address'],
 						hash('sha512', CLIENT_TOKEN),
-						$result['google']['session']['iat'],
-						$result['google']['session']['exp'],
 					]);
+					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+					if ( $pdo_result['count'] == 0 ) {
+						$sql = 'INSERT INTO public.authgoogle_sessions (';
+						$sql .= 'userid, useragent, address, token, iat, exp';
+						$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
+						$pdo_prepare = $pdo->prepare($sql);
+						$pdo_prepare -> execute([
+							$result['google']['user']['userid'],
+							$result['client']['user_agent'],
+							$result['client']['address'],
+							hash('sha512', CLIENT_TOKEN),
+							$result['google']['session']['iat'],
+							$result['google']['session']['exp'],
+						]);
 
-				} else {
-					$sql = 'UPDATE public.authgoogle_sessions ';
-					$sql .= 'SET useragent=?, address=?, iat=?, exp=?';
-					$sql .= 'WHERE userid=? AND token=?;';
-					$pdo_prepare = $pdo->prepare($sql);
-					$pdo_prepare -> execute([
-						$result['client']['user_agent'],
-						$result['client']['address'],
-						$result['google']['session']['iat'],
-						$result['google']['session']['exp'],
-						$result['google']['user']['userid'],
-						hash('sha512', CLIENT_TOKEN),
-					]);
+					} else {
+						$sql = 'UPDATE public.authgoogle_sessions ';
+						$sql .= 'SET useragent=?, address=?, iat=?, exp=?';
+						$sql .= 'WHERE userid=? AND token=?;';
+						$pdo_prepare = $pdo->prepare($sql);
+						$pdo_prepare -> execute([
+							$result['client']['user_agent'],
+							$result['client']['address'],
+							$result['google']['session']['iat'],
+							$result['google']['session']['exp'],
+							$result['google']['user']['userid'],
+							hash('sha512', CLIENT_TOKEN),
+						]);
+					}
+				} catch (\Exception $th) {
+					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}
 
 				/* GET ACCESABLE URL IN INTERNAL */
-				$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
-				$pdo_prepare = $pdo->prepare($sql);
-				$pdo_prepare -> execute([
-					$result['google']['user']['userid'],
-				]);
-				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
-				
-				
+				try {
+					/* get priv level in user. */
+					$sql = 'SELECT userid, privlevel FROM public.authgoogle_role_internal_datastore WHERE userid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([ $result['google']['user']['userid'], ]);
+					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+
+					/* use priv level */
+					$sql = 'SELECT links FROM public.authgoogle_internallinks WHERE activate=true AND privid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([ $pdo_result['privlevel'] ]);
+					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
+					foreach ( $pdo_result as $k => $v ) {
+						/* append from privid group */
+						$result['links'][] = json_decode($v['links'], TRUE);
+					}
+
+					/* use userid */
+					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([ $result['google']['user']['userid'], ]);
+					$pdo_result = $pdo_prepare->fetchAll(PDO::FETCH_ASSOC);
+					foreach ( $pdo_result as $k => $v ) {
+						/* append from userid group */
+						$result['links'][] = json_decode($v['links'], TRUE);
+					}
+
+					/* href is null or name is null then trim */
+					foreach ( $result['links'] as $k => $v ) {
+						if ( ( is_null( $v['href'] ) ) || (is_null( $v['name'] ) ) ) {
+							unset($result['links'][$k]);
+						}
+					}
+					$result['links'] = array_values( $result['links'] );
+				} catch (\Exception $th) {
+					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
+				}
+
+
 
 				$pdo = null;
 			} catch (\Throwable $th) {
+				set_http_response_code(500);
+				error_log($th->getMessage());
+				$result['issue_at'] = microtime(TRUE);
+				$result['last_checkpoint'] = __LINE__;
 				if ($config['external']['discord']['activate']['alert']) {
 					(json_encode(push2discord(
 						$config['external']['discord']['uri']['alert'],

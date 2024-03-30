@@ -69,7 +69,13 @@
 						"exp": 0
 					}
 				},
-				"setcookie": {}
+				"setcookie": {},
+				"links": [
+					{
+						"href": null,
+						"name": null
+					}
+				]
 			}
 		},
 		"databases": {
@@ -149,10 +155,11 @@
 					},
 					"authgoogle_internallinks": {
 						"column": {
-							"userid": [ "numeric", "not null" ],
-							"privid": [ "integer", "not null", "default 15" ],
-							"links": [ "json", "not null", "default '[{\"href\":\"\",\"name\":\"\",\"enable\":false}]'" ],
-							"activate": [ "boolean", "not null", "default true" ]
+							"id": ["integer", "primary key", "not null", "default CAST(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) AS INTEGER)" ],
+							"userid": [ "numeric" ],
+							"privid": [ "integer", "default 15" ],
+							"links": [ "json", "not null", "default '{\"href\":\"\",\"name\":\"\"}'" ],
+							"activate": [ "boolean", "not null", "default false" ]
 						},
 						"indexes": []
 					}

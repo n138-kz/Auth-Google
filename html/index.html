@@ -1053,6 +1053,15 @@
 						document.querySelectorAll('.g_id_signin').forEach((e,i)=>e.remove());
 						document.querySelectorAll('#credential_picker_container').forEach((e,i)=>e.remove());
 
+						/*
+						let rawjson1 = document.createElement('div');
+						rawjson1.style.textAlign = 'left';
+						rawjson1.style.whiteSpace = 'pre-wrap';
+						rawjson1.style.fontSize = '8pt';
+						rawjson1.innerText = JSON.stringify(response.variable.pdo_result, null, '  ');
+						document.querySelectorAll('body').forEach((e,i)=>e.appendChild(rawjson1));
+						*/
+
 					} else if ( xhr.readyState === 4 && xhr.status >= 500 ) {
 						throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
 					} else if ( xhr.readyState === 4 && xhr.status >= 400 ) {

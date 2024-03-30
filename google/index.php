@@ -540,11 +540,9 @@ try {
 					/* get priv level in user. */
 					$sql = 'SELECT userid, privlevel FROM public.authgoogle_role_internal_datastore WHERE userid=?;';
 					$pdo_prepare = $pdo->prepare($sql);
-					$pdo_prepare -> execute([
-						$result['google']['user']['userid'],
-					]);
-					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_NUM);
-					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=? OR privid=?;';
+					$pdo_prepare -> execute([ $result['google']['user']['userid'], ]);
+					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+
 					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
 					$pdo_prepare = $pdo->prepare($sql);
 					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];

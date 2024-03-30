@@ -1,6 +1,6 @@
 {
-    "name": "n138-kz/authz",
-    "description": "htttps://authz.n138.jp/google",
+    "name": "n138-kz/authn",
+    "description": "https://github.com/n138-kz/Auth-Google",
     "license": "MIT",
     "require": {
       "google/apiclient": "^2.0"

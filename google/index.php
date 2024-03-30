@@ -82,8 +82,12 @@ function push2discord($endpoint, $content_author='Webhooks', $content_author_ava
 function set_http_response_code ( $http ) {
 	http_response_code( $http );
 	global $result;
+	global $description;
 	$result['http']['code'] = $http;
-	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . get_message_with_http_response_code($http);
+	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . $http;
+	if (!!$description['http-status-code']) {
+		$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . $description['http-status-code'][$http];
+	}
 }
 
 $_SESSION = [];

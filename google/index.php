@@ -486,7 +486,12 @@ try {
 						json_encode($result),
 					]);
 				} catch (\Exception $th) {
-					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
+					if (FALSE) {
+					} elseif ( FALSE ) {
+					} elseif ( strpos($th->getMessage(), 'duplicate key value violates unique constraint' ) !== FALSE ) {
+					} else {
+						error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
+					}
 				}
 
 				/* ADD SESSION INFO TO TABLE */

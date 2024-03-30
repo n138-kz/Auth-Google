@@ -472,69 +472,96 @@ try {
 				}
 
 				/* ADD VALUE TO LOG TABLE */
-				$sql = 'INSERT INTO public.authgoogle_authnlog (';
-				$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
-				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
-				$pdo_prepare = $pdo->prepare($sql);
-				$pdo_prepare -> execute([
-					time(),
-					$result['google']['user']['userid'],
-					$result['client']['address'],
-					$result['client']['referer'],
-					$result['client']['user_agent'],
-					$result['client']['origin'],
-					json_encode($result),
-				]);
+				try {
+					$sql = 'INSERT INTO public.authgoogle_authnlog (';
+					$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
+					$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						time(),
+						$result['google']['user']['userid'],
+						$result['client']['address'],
+						$result['client']['referer'],
+						$result['client']['user_agent'],
+						$result['client']['origin'],
+						json_encode($result),
+					]);
+				} catch (\Exception $th) {
+					error_log( $th->getMessage() );
+				}
 
 				/* ADD SESSION INFO TO TABLE */
-				$sql = 'SELECT count(exp) FROM public.authgoogle_sessions WHERE userid=? AND token=?;';
-				$pdo_prepare = $pdo->prepare($sql);
-				$pdo_prepare -> execute([
-					$result['google']['user']['userid'],
-					hash('sha512', CLIENT_TOKEN),
-				]);
-				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
-				if ( $pdo_result['count'] == 0 ) {
-					$sql = 'INSERT INTO public.authgoogle_sessions (';
-					$sql .= 'userid, useragent, address, token, iat, exp';
-					$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
+				try {
+					$sql = 'SELECT count(exp) FROM public.authgoogle_sessions WHERE userid=? AND token=?;';
 					$pdo_prepare = $pdo->prepare($sql);
 					$pdo_prepare -> execute([
 						$result['google']['user']['userid'],
-						$result['client']['user_agent'],
-						$result['client']['address'],
 						hash('sha512', CLIENT_TOKEN),
-						$result['google']['session']['iat'],
-						$result['google']['session']['exp'],
 					]);
+					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+					if ( $pdo_result['count'] == 0 ) {
+						$sql = 'INSERT INTO public.authgoogle_sessions (';
+						$sql .= 'userid, useragent, address, token, iat, exp';
+						$sql .= ') VALUES (?, ?, ?, ?, ?, ?);';
+						$pdo_prepare = $pdo->prepare($sql);
+						$pdo_prepare -> execute([
+							$result['google']['user']['userid'],
+							$result['client']['user_agent'],
+							$result['client']['address'],
+							hash('sha512', CLIENT_TOKEN),
+							$result['google']['session']['iat'],
+							$result['google']['session']['exp'],
+						]);
 
-				} else {
-					$sql = 'UPDATE public.authgoogle_sessions ';
-					$sql .= 'SET useragent=?, address=?, iat=?, exp=?';
-					$sql .= 'WHERE userid=? AND token=?;';
-					$pdo_prepare = $pdo->prepare($sql);
-					$pdo_prepare -> execute([
-						$result['client']['user_agent'],
-						$result['client']['address'],
-						$result['google']['session']['iat'],
-						$result['google']['session']['exp'],
-						$result['google']['user']['userid'],
-						hash('sha512', CLIENT_TOKEN),
-					]);
+					} else {
+						$sql = 'UPDATE public.authgoogle_sessions ';
+						$sql .= 'SET useragent=?, address=?, iat=?, exp=?';
+						$sql .= 'WHERE userid=? AND token=?;';
+						$pdo_prepare = $pdo->prepare($sql);
+						$pdo_prepare -> execute([
+							$result['client']['user_agent'],
+							$result['client']['address'],
+							$result['google']['session']['iat'],
+							$result['google']['session']['exp'],
+							$result['google']['user']['userid'],
+							hash('sha512', CLIENT_TOKEN),
+						]);
+					}
+				} catch (\Exception $th) {
+					error_log( $th->getMessage() );
 				}
 
 				/* GET ACCESABLE URL IN INTERNAL */
-				$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
-				$pdo_prepare = $pdo->prepare($sql);
-				$pdo_prepare -> execute([
-					$result['google']['user']['userid'],
-				]);
-				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				try {
+					$sql = 'SELECT userid, privlevel FROM public.authgoogle_role_internal_datastore WHERE userid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						$result['google']['user']['userid'],
+					]);
+					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_NUM);
+					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=? OR privid=?;';
+					$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
+					$pdo_prepare = $pdo->prepare($sql);
+					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];
+					foreach( $pdo_result as $k => $v ){
+						$pdo_prepare -> execute([
+							$v,
+						]);
+					}
+					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];
+				} catch (\Exception $th) {
+					error_log( $th->getMessage() );
+				}
 				
 				
 
 				$pdo = null;
 			} catch (\Throwable $th) {
+				set_http_response_code(500);
+				error_log($th->getMessage());
+				$result['issue_at'] = microtime(TRUE);
+				$result['last_checkpoint'] = __LINE__;
 				if ($config['external']['discord']['activate']['alert']) {
 					(json_encode(push2discord(
 						$config['external']['discord']['uri']['alert'],

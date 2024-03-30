@@ -787,6 +787,20 @@
 							/* google */
 
 							/* links */
+								authn_displayblock_table_tr = document.createElement('tr');
+								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'links';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = '';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+								authn_displayblock_table_td = document.createElement('td');
+								response.links.map((v1)=>{
+									var tmp = document.createElement('a');
+									tmp.innerText = `${v1.name}`;
+									tmp.href = `${v1.href}`;
+									tmp.target = '_blank';
+									authn_displayblock_table_td.appendChild(tmp);
+								});
+								
+								authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
+								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
 							/* links */
 
 							authn_displayblock_table.appendChild(authn_displayblock_table_section);

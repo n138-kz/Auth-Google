@@ -563,6 +563,13 @@ try {
 						$result['links'][] = json_decode($v['links'], TRUE);
 					}
 
+					/* href is null or name is null then trim */
+					foreach ( $result['links'] as $k => $v ) {
+						if ( ( is_null( $v['href'] ) ) || (is_null( $v['name'] ) ) ) {
+							unset($result['links'][$k]);
+						}
+					}
+					$result['links'] = array_values( $result['links'] );
 				} catch (\Exception $th) {
 					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}

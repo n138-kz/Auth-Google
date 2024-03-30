@@ -531,19 +531,22 @@ try {
 				}
 
 				/* ADD VALUE TO LOG TABLE */
-				$sql = 'INSERT INTO public.authgoogle_authnlog (';
-				$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
-				$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
-				$pdo_prepare = $pdo->prepare($sql);
-				$pdo_prepare -> execute([
-					microtime(TRUE),
-					$result['google']['user']['userid'],
-					$result['client']['address'],
-					$result['client']['referer'],
-					$result['client']['user_agent'],
-					$result['client']['origin'],
-					json_encode($result),
-				]);
+				try{
+					$sql = 'INSERT INTO public.authgoogle_authnlog (';
+					$sql .= 'timestamp, userid, address, referer, useragent, origin, returnval';
+					$sql .= ') VALUES (?, ?, ?, ?, ?, ?, ?);';
+					$pdo_prepare = $pdo->prepare($sql);
+					$pdo_prepare -> execute([
+						microtime(TRUE),
+						$result['google']['user']['userid'],
+						$result['client']['address'],
+						$result['client']['referer'],
+						$result['client']['user_agent'],
+						$result['client']['origin'],
+						json_encode($result),
+					]);
+				} catch (\Exception $th) {
+				}
 
 				/* ADD SESSION INFO TO TABLE */
 				$sql = 'SELECT count(exp) FROM public.authgoogle_sessions WHERE userid=? AND token=?;';

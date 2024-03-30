@@ -486,7 +486,7 @@ try {
 						json_encode($result),
 					]);
 				} catch (\Exception $th) {
-					error_log( $th->getMessage() );
+					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}
 
 				/* ADD SESSION INFO TO TABLE */
@@ -527,7 +527,7 @@ try {
 						]);
 					}
 				} catch (\Exception $th) {
-					error_log( $th->getMessage() );
+					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}
 
 				/* GET ACCESABLE URL IN INTERNAL */
@@ -548,9 +548,15 @@ try {
 						]);
 					}
 					$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+
+
+
+
+
+
 					$result['variable']['pdo_result'] = [ $sql, $pdo_prepare, $pdo_result ];
 				} catch (\Exception $th) {
-					error_log( $th->getMessage() );
+					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}
 
 

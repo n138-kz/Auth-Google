@@ -239,7 +239,7 @@ try {
 				'user' => [
 					'userid' => isset($payload['sub']) ? $payload['sub'] : null,
 					'name' => isset($payload['name']) ? $payload['name'] : null,
-					'icon' => isset($payload['picture']) ? $payload['picture'] : null,
+					'icon' => isset($payload['picture']) ? $payload['picture'] : '',
 					'email' => isset($payload['email']) ? $payload['email'] : null,
 				],
 				'session' => [
@@ -291,7 +291,7 @@ try {
 			'credential' => CLIENT_TOKEN,
 		],
 	];
-	setcookie(
+	$result['setcookie'][session_name() . '_alt'] = setcookie(
 		session_name() . '_alt',
 		base64_encode(json_encode([
 			'authnaddr' => $result['client']['address'],
@@ -299,7 +299,8 @@ try {
 			'credential' => CLIENT_TOKEN,
 			'iat' => time(),
 		])),
-		$result['google']['session']['exp']
+		$result['google']['session']['exp'],
+		'/'
 	);
 	$headers_list = [];
 	foreach (headers_list() as $key => $val) {

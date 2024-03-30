@@ -107,7 +107,7 @@
 							"id": [ "numeric", "not null", "primary key" ],
 							"name": [ "text", "not null" ],
 							"email": [ "text", "not null" ],
-							"icon": [ "text", "not null" ],
+							"icon": [ "text", "not null", "default ''" ],
 							"regat": [ "integer", "not null" ],
 							"regip": [ "text", "not null" ],
 							"reguseragent": [ "text", "not null" ],
@@ -120,7 +120,7 @@
 					},
 					"authgoogle_authnlog": {
 						"column": {
-							"timestamp": [ "integer", "not null", "primary key" ],
+							"timestamp": [ "numeric", "not null", "primary key" ],
 							"userid": [ "numeric", "not null" ],
 							"address": [ "text", "not null" ],
 							"referer": [ "text", "not null" ],
@@ -137,7 +137,19 @@
 							"address": [ "text", "not null" ],
 							"iat": [ "integer", "not null", "default 0" ],
 							"exp": [ "integer", "not null", "default 0" ],
-							"token": [ "text", "not null" ]
+							"token": [ "text", "not null" ],
+							"UNIQUE": [ "(token)" ]
+						},
+						"indexes": []
+					},
+					"authgoogle_role_internal_datastore": {
+						"column": {
+							"userid": [ "numeric", "not null", "primary key" ],
+							"privlevel": [ "numeric", "not null", "default 0" ],
+							"superuser": [ "boolean", "not null", "default false" ],
+							"authgoogle_userinfo": [ "integer", "not null", "default 0" ],
+							"authgoogle_authnlog": [ "integer", "not null", "default 0" ],
+							"authgoogle_sessions": [ "integer", "not null", "default 0" ]
 						},
 						"indexes": []
 					},
@@ -156,3 +168,4 @@
 		}
 	}
 }
+

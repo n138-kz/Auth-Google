@@ -606,7 +606,7 @@
 			const http_query_array = JSON.parse( sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' ) );
 			try {
 				if (http_query_array.dev) {
-					params.requestUri = './google/';
+					params.requestUri = './google/?dev=1';
 				}
 			} catch (error) {}
 			console.debug([params, JSON.stringify(params)]);

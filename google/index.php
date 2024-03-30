@@ -546,6 +546,7 @@ try {
 						json_encode($result),
 					]);
 				} catch (\Exception $th) {
+					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}
 
 				/* ADD SESSION INFO TO TABLE */
@@ -586,6 +587,7 @@ try {
 						]);
 					}
 				} catch (\Exception $th) {
+					error_log( $th->getMessage() . PHP_EOL . '' . __FILE__ . '#' . __LINE__ );
 				}
 
 

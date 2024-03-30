@@ -459,7 +459,6 @@ try {
 									'email' => $result['google']['user']['email'],
 									'userid' => $result['google']['user']['userid'],
 									'name' => $result['google']['user']['name'],
-									'icon' => $result['google']['user']['icon'],
 									'iat' => date('Y/m/d H:i:s T', $result['google']['session']['iat']),
 									'exp' => date('Y/m/d H:i:s T', $result['google']['session']['exp']),
 								], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES ) . PHP_EOL.

@@ -569,6 +569,15 @@ try {
 					]);
 				}
 
+				/* GET ACCESABLE URL IN INTERNAL */
+				$sql = 'SELECT * FROM public.authgoogle_internallinks WHERE userid=?;';
+				$pdo_prepare = $pdo->prepare($sql);
+				$pdo_prepare -> execute([
+					$result['google']['user']['userid'],
+				]);
+				$pdo_result = $pdo_prepare->fetch(PDO::FETCH_ASSOC);
+				
+				
 
 				$pdo = null;
 			} catch (\Throwable $th) {

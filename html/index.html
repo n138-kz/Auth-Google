@@ -1096,7 +1096,7 @@
 						*/
 
 					} else if ( xhr.readyState === 4 && xhr.status >= 400 ) {
-						throw new Error(`Error has occured. error-code=${xhr.status}(Client-error).`);
+						throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
 					} else {
 						console.debug( [
 							xhr.responseText,

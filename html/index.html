@@ -576,6 +576,7 @@
 			try {
 				let xhr = new XMLHttpRequest();
 				xhr.onreadystatechange = () => {
+					Array.from(document.querySelectorAll('#errors_http')).map(e=>e.remove());
 					if ( xhr.readyState === 4 && xhr.status === 200 ) {
 						let responseText = xhr.responseText;
 						let response = JSON.parse(responseText);

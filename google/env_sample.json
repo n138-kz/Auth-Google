@@ -68,7 +68,14 @@
 						"iat": 0,
 						"exp": 0
 					}
-				}
+				},
+				"setcookie": {},
+				"links": [
+					{
+						"href": null,
+						"name": null
+					}
+				]
 			}
 		},
 		"databases": {
@@ -100,7 +107,7 @@
 							"id": [ "numeric", "not null", "primary key" ],
 							"name": [ "text", "not null" ],
 							"email": [ "text", "not null" ],
-							"icon": [ "text", "not null" ],
+							"icon": [ "text", "not null", "default ''" ],
 							"regat": [ "integer", "not null" ],
 							"regip": [ "text", "not null" ],
 							"reguseragent": [ "text", "not null" ],
@@ -113,7 +120,7 @@
 					},
 					"authgoogle_authnlog": {
 						"column": {
-							"timestamp": [ "integer", "not null", "primary key" ],
+							"timestamp": [ "numeric", "not null", "primary key" ],
 							"userid": [ "numeric", "not null" ],
 							"address": [ "text", "not null" ],
 							"referer": [ "text", "not null" ],
@@ -130,7 +137,29 @@
 							"address": [ "text", "not null" ],
 							"iat": [ "integer", "not null", "default 0" ],
 							"exp": [ "integer", "not null", "default 0" ],
-							"token": [ "text", "not null" ]
+							"token": [ "text", "not null" ],
+							"UNIQUE": [ "(token)" ]
+						},
+						"indexes": []
+					},
+					"authgoogle_role_internal_datastore": {
+						"column": {
+							"userid": [ "numeric", "not null", "primary key" ],
+							"privlevel": [ "numeric", "not null", "default 0" ],
+							"superuser": [ "boolean", "not null", "default false" ],
+							"authgoogle_userinfo": [ "integer", "not null", "default 0" ],
+							"authgoogle_authnlog": [ "integer", "not null", "default 0" ],
+							"authgoogle_sessions": [ "integer", "not null", "default 0" ]
+						},
+						"indexes": []
+					},
+					"authgoogle_internallinks": {
+						"column": {
+							"id": ["integer", "primary key", "not null", "default CAST(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) AS INTEGER)" ],
+							"userid": [ "numeric" ],
+							"privid": [ "integer", "default 15" ],
+							"links": [ "json", "not null", "default '{\"href\":\"\",\"name\":\"\"}'" ],
+							"activate": [ "boolean", "not null", "default false" ]
 						},
 						"indexes": []
 					}
@@ -139,3 +168,4 @@
 		}
 	}
 }
+

@@ -1095,8 +1095,6 @@
 						document.querySelectorAll('body').forEach((e,i)=>e.appendChild(rawjson1));
 						*/
 
-					} else if ( xhr.readyState === 4 && xhr.status >= 500 ) {
-						throw new Error(`Error has occured. error-code=${xhr.status}(Server-error).`);
 					} else if ( xhr.readyState === 4 && xhr.status >= 400 ) {
 						throw new Error(`Error has occured. error-code=${xhr.status}(Client-error).`);
 					} else {

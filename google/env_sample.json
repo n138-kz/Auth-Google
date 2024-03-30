@@ -138,6 +138,7 @@
 					"authgoogle_internallinks": {
 						"column": {
 							"userid": [ "numeric", "not null" ],
+							"privid": [ "integer", "not null", "default 15" ],
 							"links": [ "json", "not null", "default '[null]'" ],
 							"activate": [ "boolean", "not null", "default true" ]
 						},

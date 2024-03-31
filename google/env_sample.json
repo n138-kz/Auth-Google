@@ -120,7 +120,7 @@
 					},
 					"authgoogle_authnlog": {
 						"column": {
-							"timestamp": [ "numeric", "not null", "primary key" ],
+							"timestamp": [ "integer", "not null", "primary key" ],
 							"userid": [ "numeric", "not null" ],
 							"address": [ "text", "not null" ],
 							"referer": [ "text", "not null" ],
@@ -137,8 +137,7 @@
 							"address": [ "text", "not null" ],
 							"iat": [ "integer", "not null", "default 0" ],
 							"exp": [ "integer", "not null", "default 0" ],
-							"token": [ "text", "not null" ],
-							"UNIQUE": [ "(token)" ]
+							"token": [ "text", "not null" ]
 						},
 						"indexes": []
 					},
@@ -168,4 +167,3 @@
 		}
 	}
 }
-

@@ -109,32 +109,23 @@ $result['client'] = [
 	'origin' => ( isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '' ),
 ];
 $result['issue_at'] = microtime(TRUE);
-$result['error']['code'] = 0;
 $result['http']['code'] = http_response_code();
 if (!!$description['http-status-code']) {
 	$http = http_response_code();
 	$result['http']['text'] = $_SERVER['SERVER_PROTOCOL'] . ' ' . $description['http-status-code'][$http];
 }
+$result['http']['method'] = strtolower( $_SERVER['REQUEST_METHOD'] );
 $result['last_checkpoint'] = __LINE__;
-$result['google'] = [
-	'user' => [
-		'userid' => '',
-		'name' => '',
-		'icon' => '',
-	],
-	'session' => [
-		'iat' => 0,
-		'exp' => 0,
-	],
-];
-$result['authn'] = [
-	'sessions' => [
-		'id' => '',
-		'name' => '',
-	],
-];
 
 if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'options' ) {
+	set_http_response_code(200);
+	$result['issue_at'] = microtime(TRUE);
+	$result['last_checkpoint'] = __LINE__;
+
+	echo json_encode( $result );
+	exit(0);
+}
+if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'get' && isset( $_GET['ping'] ) ) {
 	set_http_response_code(200);
 	$result['issue_at'] = microtime(TRUE);
 	$result['last_checkpoint'] = __LINE__;

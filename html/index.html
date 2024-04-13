@@ -307,8 +307,8 @@
 			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',
 				setInterval(()=>{
 					/* 認証ボタン表示されていない時用 */
-					if ( document.querySelectorAll('.g_id_signin iframe').length === 0) {
-						//location.replace(location.href);
+					if ( ( document.querySelectorAll('.g_id_signin iframe').length === 0 ) && ( document.querySelectorAll('.authn_result').length === 0 ) ) {}
+						location.replace(location.href);
 					}
 
 					/* RTT */
@@ -500,6 +500,7 @@
 						sessionStorage.setItem( '_' + '.'+'googleauthn', JSON.stringify(token) );
 
 						authn_displayblock = document.createElement('div');
+						authn_displayblock.classList.add('authn_result');
 						authn_displayblock.style.backgroundColor = '#F0FFFF';
 
 						let debug;

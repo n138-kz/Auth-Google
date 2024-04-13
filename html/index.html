@@ -323,94 +323,32 @@
 
 					let connection_rtt_endpoint;
 					connection_rtt_endpoint = location.href;
-					let authn_token = pickout_token();
-					if (false) {
-					} else if (!authn_token) {
-						/* 認証トークンを持っていない時 */
-						console.debug( 'No have token' );
-						if ( document.querySelectorAll('.g_id_signin').length === 0) {
-							location.replace(location.href);
-						}
+					connection_rtt_endpoint = 'https://authn.n138.jp/google/?ping';
+					connection_rtt_endpoint = 'https://authz.n138.jp/google/?ping';
 
-						fetch(connection_rtt_endpoint, { method: 'GET', })
-						.then(r=>r.text())
-						.then(r=>{
-							process_2 = new Date().getTime();
-							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-								let rtt = process_2-process_1;
-								e.innerText = rtt+'ms';
-								if ( false ) {
-								} else if ( rtt < 250 ) {
-									e.style.color = 'var(--color-preset-green)';
-								} else if ( rtt < 500 ) {
-									e.style.color = 'var(--color-preset-yellow)';
-								} else {
-									e.style.color = 'var(--color-preset-red)';
-								}
-							});
-						})
-						.catch(e=>{
-							console.error(e);
-							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-								e.innerText = 'infinity';
-							});
-						});
-					} else {
-						/* 認証トークンを持っている時 */
-						console.debug( 'Have a token' );
-						authn_token = authn_token.credential;
-						console.debug( 'authn_token.iat <:', parseInt(new Date().getTime()/1000) > authn_token.iat );
-						console.debug( 'authn_token.exp >:', parseInt(new Date().getTime()/1000) < authn_token.exp );
-						if( !(parseInt(new Date().getTime()/1000) >= authn_token.iat) || !(parseInt(new Date().getTime()/1000) < authn_token.exp) ){
-							sessionStorage.clear();
-							location.replace(location.href);
-						}
-						console.debug( 'switched uri:', authn_token.requestUri );
-						connection_rtt_endpoint = authn_token.requestUri;
-
-						fetch(connection_rtt_endpoint, {
-							method: 'POST',
-							mode: 'cors',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify({
-								ts: (Math.floor((new Date()).getTime()/1000)),
-								credential: authn_token.credential,
-								clientId: authn_token.clientId,
-							})
-						})
-						.then(r=>r.text())
-						.then(r=>{
-							process_2 = new Date().getTime();
-							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-								let rtt = process_2-process_1;
-								e.innerText = rtt+'ms';
-								if ( false ) {
-								} else if ( rtt < 250 ) {
-									e.style.color = 'var(--color-preset-green)';
-								} else if ( rtt < 500 ) {
-									e.style.color = 'var(--color-preset-yellow)';
-								} else {
-									e.style.color = 'var(--color-preset-red)';
-								}
-							});
-						})
-						.catch(e=>{
-							console.error(e);
-							document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
-								e.innerText = 'infinity';
+					fetch(connection_rtt_endpoint, { method: 'GET', })
+					.then(r=>r.json())
+					.then(r=>{
+						process_2 = new Date().getTime();
+						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+							let rtt = process_2-process_1;
+							e.innerText = rtt+'ms';
+							if ( false ) {
+							} else if ( rtt < 250 ) {
+								e.style.color = 'var(--color-preset-green)';
+							} else if ( rtt < 500 ) {
+								e.style.color = 'var(--color-preset-yellow)';
+							} else {
 								e.style.color = 'var(--color-preset-red)';
-							});
+							}
 						});
-
-						/* auto reauth */
-						try {
-							onSignIn(pickout_token().credential, 1);
-						} catch (error) {
-							location.replace(location.href);
-						}
-					}
+					})
+					.catch(e=>{
+						console.error(e);
+						document.querySelectorAll('#connection_rtt>span').forEach((e)=>{
+							e.innerText = '999+';
+						});
+					});
 				}, 1000)
 			);
 		}, false);

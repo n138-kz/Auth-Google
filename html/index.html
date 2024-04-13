@@ -238,12 +238,6 @@
 	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			let content = document.createElement('div');
-			content.id = 'authn_status';
-			content.innerText = 'anonymous';
-			document.body.appendChild( content );
-		}, false);
-		window.addEventListener('DOMContentLoaded', (e)=>{
-			let content = document.createElement('div');
 			content.id = 'locate_clock';
 			content.innerText = '';
 			document.body.appendChild( content );
@@ -380,24 +374,6 @@
 		@media all and (max-width: 530px) {
 			#locate_clock {
 				max-width: 100%;
-			}
-		}
-		#authn_status {
-			position: fixed;
-			top: 2em;
-			right: 0;
-			max-width: 40%;
-			height: 1em;
-			font-family: "Myrica M", "Myrica N", "Myrica P", monospace;
-			background-color: var(--default-background-color);
-			background-repeat: no-repeat;
-			background-size: contain;
-			text-align: right;
-			background-position-x: right;
-		}
-		@media all and (max-width: 530px) {
-			#authn_status {
-				display: none;
 			}
 		}
 		#link_policy {
@@ -555,8 +531,6 @@
 
 						authn_displayblock = document.createElement('div');
 						authn_displayblock.style.backgroundColor = '#F0FFFF';
-						document.querySelector('#authn_status').innerText = response.google.user.name;
-						document.querySelector('#authn_status').style.backgroundImage = `url(${response.google.user.icon})`;
 
 						let debug;
 						debug = sessionStorage.getItem( (btoa(location.href)).slice(0, 16) + '.'+'http_query_array' );

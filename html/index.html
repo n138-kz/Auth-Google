@@ -315,7 +315,8 @@
 					let process_1 = new Date().getTime();
 					let process_2 = new Date().getTime();
 
-					let connection_rtt_endpoint = location.href;
+					let connection_rtt_endpoint;
+					connection_rtt_endpoint = location.href;
 					let authn_token = pickout_token();
 					if (false) {
 					} else if (!authn_token) {

@@ -461,20 +461,6 @@
 		}
 	</style>
 	<script>
-		function pickout_token() {
-			let params = JSON.parse( sessionStorage.getItem((btoa(location.href)).slice(0, 16) + '.'+'googleauthn') );
-
-			try {
-				/* time of expiry */
-				if ( !(new Date().getTime()/1000 > params.credential.iat) || !(new Date().getTime()/1000 < params.credential.exp) ) {
-					return null;
-				}
-	
-				return params;
-			} catch (error) {
-				return null;
-			}
-		}
 		function onSignIn(params, flagbit = 0) {
 			/* @author @n138-kz
 			 * @args:

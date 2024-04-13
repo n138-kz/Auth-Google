@@ -387,22 +387,10 @@
 			text-align: left;
 			margin-left: 5px;
 		}
-		table.authn_result_landscape {
-			background-color: var(--default-background-color);
-			margin: 0 auto;
-		}
-		table.authn_result_landscape th {
-			text-align: center;
-		}
-		table.authn_result_landscape td {
-			text-align: left;
-		}
-		table.authn_result_landscape img {
-			border-radius: 20%;
-		}
 		div.authn_result_portrait {
 			background-color: var(--default-background-color);
 			text-align: left;
+			display: grid;
 		}
 		div.authn_result_portrait .block2,
 		div.authn_result_portrait .block3,
@@ -416,24 +404,6 @@
 		}
 		div.authn_result_portrait img {
 			border-radius: 50%;
-		}
-		@media all {
-			.authn_result_landscape {
-				display: none;
-			}
-			.authn_result_portrait {
-				display: none;
-			}
-		}
-		@media screen and (orientation: landscape) {
-			table.authn_result_landscape {
-				display: table;
-			}
-		}
-		@media screen and (orientation: portrait) {
-			div.authn_result_portrait {
-				display: grid;
-			}
 		}
 	</style>
 	<script>
@@ -541,147 +511,6 @@
 							else { debug = false; }
 						} catch (error) {}
 
-						/* landscape */
-							authn_displayblock_table = document.createElement('table');
-							authn_displayblock_table.classList.add('authn_result_landscape');
-							authn_displayblock_table.border = 1;
-							authn_displayblock_table_section = document.createElement('tbody');
-
-							/* header */
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'header';authn_displayblock_table_td.rowSpan = 3;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'http status';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.http.text;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'issue at';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (new Date(response.issue_at*1000)).toLocaleString();authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'address';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');
-								var tmp = document.createElement('a');
-								tmp.innerText = `${response.remote}`;
-								tmp.href = `https://ipinfo.io/${response.client.address}`;
-								tmp.target = '_blank';
-								authn_displayblock_table_td.appendChild(tmp);
-								authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-							/* header */
-
-							/* google */
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'google';authn_displayblock_table_td.rowSpan = 9;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_td.rowSpan = 3;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'clientId';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');
-								var tmp = document.createElement('input');
-								if (debug) {
-									tmp.value = `CLIENT_ID='${params.clientId}'`;
-								} else {
-									tmp.value = `${params.clientId}`;
-								}
-								tmp.readOnly = true;
-								tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
-								authn_displayblock_table_td.appendChild(tmp);
-								authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'credential';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');
-								var tmp = document.createElement('input');
-								if (debug) {
-									tmp.value = `CLIENT_TOKEN='${params.credential}'`;
-								} else {
-									tmp.value = `${params.credential}`;
-								}
-								tmp.readOnly = true;
-								tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
-								authn_displayblock_table_td.appendChild(tmp);
-								authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'token';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');
-								var tmp = document.createElement('input');
-								var tmp_token = [];
-								tmp_token = {
-									clientId: params.clientId,
-									credential: params.credential,
-								}
-								tmp_token = JSON.stringify(tmp_token);
-								tmp_token = btoa(tmp_token);
-								if (debug) {
-									tmp.value = `TOKEN='${tmp_token}'`;
-								} else {
-									tmp.value = `${tmp_token}`;
-								}
-								tmp.readOnly = true;
-								tmp.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
-								authn_displayblock_table_td.appendChild(tmp);
-								authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'session';authn_displayblock_table_td.rowSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'iat';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (new Date(response.google.session.iat*1000)).toLocaleString();authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'exp';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = (new Date(response.google.session.exp*1000)).toLocaleString();authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'user';authn_displayblock_table_td.rowSpan = 4;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'userid';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.google.user.userid;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'email';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.google.user.email;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'name';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');authn_displayblock_table_td.innerText = response.google.user.name;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'icon';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								if ((flagbit&1)!==1) {
-									authn_displayblock_table_td_img = document.createElement('img');
-									authn_displayblock_table_td_img.src = response.google.user.icon;
-									authn_displayblock_table_td_img.alt = response.google.user.email;
-									authn_displayblock_table_td = document.createElement('td');
-									authn_displayblock_table_td.appendChild(authn_displayblock_table_td_img);
-									authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-									authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								} else {
-									authn_displayblock_table_td = document.createElement('td');
-									authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-									authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-								}
-							/* google */
-
-							/* links */
-								authn_displayblock_table_tr = document.createElement('tr');
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = 'links';authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('th');authn_displayblock_table_td.innerText = '';authn_displayblock_table_td.colSpan = 2;authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_td = document.createElement('td');
-								response.links.map((v1)=>{
-									var tmp1 = document.createElement('li');
-									var tmp2 = document.createElement('a');
-									tmp2.innerText = `${v1.name}`;
-									tmp2.href = `${v1.href}`;
-									tmp2.target = '_blank';
-									tmp1.appendChild(tmp2);
-									authn_displayblock_table_td.appendChild(tmp1);
-								});
-								
-								authn_displayblock_table_tr.appendChild(authn_displayblock_table_td);
-								authn_displayblock_table_section.appendChild(authn_displayblock_table_tr);
-							/* links */
-
-							authn_displayblock_table.appendChild(authn_displayblock_table_section);
-							authn_displayblock.appendChild(authn_displayblock_table);
-						/* landscape */
 						/* portrait */
 							document.querySelectorAll('.authn_result_portrait.block1').forEach((e)=>{
 								e.parentNode.remove();

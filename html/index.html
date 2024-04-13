@@ -312,6 +312,12 @@
 			document.body.appendChild( content1 );
 			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',
 				setInterval(()=>{
+					/* 認証ボタン表示されていない時用 */
+					if ( document.querySelectorAll('.g_id_signin iframe').length === 0) {
+						location.replace(location.href);
+					}
+
+					/* RTT */
 					let process_1 = new Date().getTime();
 					let process_2 = new Date().getTime();
 

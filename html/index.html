@@ -59,6 +59,18 @@
 		}
 	</style>
 	<script>
+		class authn {
+			endpoint;
+			onAuthParams;
+			onAuthFlagBit;
+			constructor(){
+				this.endpoint = 'https://authn.n138.jp/google/';
+				this.onAuthParams = [];
+				this.onAuthFlagBit = 0;
+			}
+		}
+	</script>
+	<script>
 		window.addEventListener('DOMContentLoaded', (e)=>{
 			const html_top = document.createElement('a');
 			html_top.name='_';

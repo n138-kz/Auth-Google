@@ -307,7 +307,7 @@
 			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_connection_rtt',
 				setInterval(()=>{
 					/* 認証ボタン表示されていない時用 */
-					if ( ( document.querySelectorAll('.g_id_signin iframe').length === 0 ) && ( document.querySelectorAll('.authn_result').length === 0 ) ) {}
+					if ( ( document.querySelectorAll('.g_id_signin iframe').length === 0 ) && ( document.querySelectorAll('.authn_result').length === 0 ) ) {
 						location.replace(location.href);
 					}
 

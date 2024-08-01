@@ -616,11 +616,7 @@
 								}
 								tmp_token = JSON.stringify(tmp_token);
 								tmp_token = btoa(tmp_token);
-								if (debug) {
-									authn_displayblock_content.value = `TOKEN='${tmp_token}'`;
-								} else {
-									authn_displayblock_content.value = `${tmp_token}`;
-								}
+								authn_displayblock_content.value = `${tmp_token}`;
 								authn_displayblock_content.readOnly = true;
 								authn_displayblock_content.setAttribute('onclick', 'this.select();navigator.clipboard.writeText(this.value + "\\n");')
 								authn_displayblock_block4.appendChild(authn_displayblock_content);

@@ -263,7 +263,6 @@
 					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
 					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
 					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
-					console.debug(document.querySelector('#locate_clock').innerText);
 				}, 25)
 			);
 			sessionStorage.setItem( (btoa(location.href)).slice(0, 16) + '.'+'interval_locate_clock2',
@@ -280,7 +279,6 @@
 					cycle_clock.datestr = cycle_clock.FullYear + '/' + cycle_clock.Month + '/' + cycle_clock.Date;
 					cycle_clock.timestr = cycle_clock.Hours + ':' + cycle_clock.Minutes + ':' + cycle_clock.Seconds;
 					document.querySelector('#locate_clock').innerText = cycle_clock.datestr + ' ' + cycle_clock.timestr;
-					console.debug(document.querySelector('#locate_clock').innerText);
 				}, 1000)
 			);
 		}, false);

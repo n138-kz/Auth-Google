@@ -496,6 +496,9 @@
 							JSON.stringify(token)
 						);
 						sessionStorage.setItem( '_' + '.'+'googleauthn', JSON.stringify(token) );
+						localStorage.setItem( '_' + '.'+'googleauthn', JSON.stringify(token) );
+						sessionStorage.setItem( '_' + '.'+'authn', JSON.stringify(token) );
+						localStorage.setItem( '_' + '.'+'authn', JSON.stringify(token) );
 
 						authn_displayblock = document.createElement('div');
 						authn_displayblock.classList.add('authn_result');

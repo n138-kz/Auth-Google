@@ -733,15 +733,23 @@
 						dom_element[1].appendChild( dom_element[2] );
 						dom_element[0].appendChild( dom_element[1] );
 						dom_element[1] = document.createElement('h2');
-						dom_element[2] = document.createTextNode('Please wait for a while until recovery');
+						dom_element[2] = document.createTextNode('Please wait for a while until recovery.');
 						dom_element[1].appendChild( dom_element[2] );
 						dom_element[0].appendChild( dom_element[1] );
 						dom_element[1] = document.createElement('h2');
-						dom_element[2] = document.createTextNode('現在障害発生中ですが対応中です');
+						dom_element[2] = document.createTextNode('retry after. /');
 						dom_element[1].appendChild( dom_element[2] );
 						dom_element[0].appendChild( dom_element[1] );
 						dom_element[1] = document.createElement('h2');
-						dom_element[2] = document.createTextNode('復旧まで今暫くお待ちください');
+						dom_element[2] = document.createTextNode('想定外の問題が発生しました。');
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						dom_element[1] = document.createElement('h2');
+						dom_element[2] = document.createTextNode('復旧まで今暫くお待ちください。');
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						dom_element[1] = document.createElement('h2');
+						dom_element[2] = document.createTextNode('あとで再実行してください。');
 						dom_element[1].appendChild( dom_element[2] );
 						dom_element[0].appendChild( dom_element[1] );
 						Array.from(document.querySelectorAll('#g_id_onload')).map(e=>{

@@ -741,6 +741,10 @@
 						dom_element[1].appendChild( dom_element[2] );
 						dom_element[0].appendChild( dom_element[1] );
 						dom_element[1] = document.createElement('h2');
+						dom_element[2] = document.createTextNode(`[${xhr.status}]`);
+						dom_element[1].appendChild( dom_element[2] );
+						dom_element[0].appendChild( dom_element[1] );
+						dom_element[1] = document.createElement('h2');
 						dom_element[2] = document.createTextNode('想定外の問題が発生しました。');
 						dom_element[1].appendChild( dom_element[2] );
 						dom_element[0].appendChild( dom_element[1] );

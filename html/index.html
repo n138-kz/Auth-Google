@@ -767,7 +767,10 @@
 						}
 					} else {
 						console.debug( [
-							xhr.responseText,
+							[
+								xhr.responseText,
+								JSON.parse(xhr.responseText),
+							]
 							xhr.readyState,
 							xhr.status,
 						] );

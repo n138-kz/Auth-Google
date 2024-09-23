@@ -587,6 +587,12 @@ try {
 				set_http_response_code(500);
 				error_log($th->getMessage());
 				$result['issue_at'] = microtime(TRUE);
+				$result['error'] = [
+					'line' => $th->getLine(),
+					'text' => str_replace( '', '',
+						preg_replace( '/1(\d+)\.(\d+)\.(\d+)\.(\d+)/i', 'DB01', $th->getMessage() )
+					),
+				];
 				$result['last_checkpoint'] = __LINE__;
 				if ($config['external']['discord']['activate']['alert']) {
 					(json_encode(push2discord(
